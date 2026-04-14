@@ -3092,6 +3092,33 @@ function openCompositeCobordism() {
     .catch(e => { console.error('Composite cobordism load error:', e); alert('Failed to load diagram data'); });
 }
 
+// ── Cobordism colour conventions ────────────────────────────────
+// Shared by the single-edge and composite cobordism renderers.
+//   merge saddle  → light green   (Frobenius m)
+//   split saddle  → light red     (Frobenius Δ)
+//   identity tube → light-blue family with small HSL variation by index
+const COB_MERGE_COLOR = 0x81c784;
+const COB_SPLIT_COLOR = 0xef9a9a;
+const COB_BOUNDARY_COLOR = 0xb0b0b0;
+function cobSaddleColor(type) { return type === 'merge' ? COB_MERGE_COLOR : COB_SPLIT_COLOR; }
+function cobIdentityColor(i) {
+  const hue = 200 + ((i * 19) % 40) - 20;   // 180°..220°
+  const sat = 70  + ((i * 13) % 20);        // 70..90
+  const lum = 68  + ((i * 7)  % 14) - 7;    // 61..75
+  const h = hue / 360, s = sat / 100, l = lum / 100;
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h * 6) % 2) - 1));
+  const m = l - c / 2;
+  let r, g, b; const hp = h * 6;
+  if (hp < 1)      [r, g, b] = [c, x, 0];
+  else if (hp < 2) [r, g, b] = [x, c, 0];
+  else if (hp < 3) [r, g, b] = [0, c, x];
+  else if (hp < 4) [r, g, b] = [0, x, c];
+  else if (hp < 5) [r, g, b] = [x, 0, c];
+  else             [r, g, b] = [c, 0, x];
+  return (Math.round((r + m) * 255) << 16) | (Math.round((g + m) * 255) << 8) | Math.round((b + m) * 255);
+}
+
 function _renderCompositeCobordism(diagram, path, vertices, n, knotName, variant) {
   // Compute all individual cobordism correspondences
   const layers = [];
@@ -3310,9 +3337,6 @@ function _renderCompositeCobordism(diagram, path, vertices, n, knotName, variant
       }
     }
 
-    // Colors for layers
-    const layerColors = [0x4caf50, 0x2196f3, 0xff9800, 0x9c27b0, 0xf44336, 0x00bcd4, 0x795548, 0x607d8b];
-
     // Render each layer — source (lower weight) at TOP, target (higher weight) at BOTTOM
     // matching the existing single cobordism convention.
     // Layer 0 (first edge, lowest weight source) is at the top of the stack.
@@ -3322,27 +3346,28 @@ function _renderCompositeCobordism(diagram, path, vertices, n, knotName, variant
       const zTop = (layers.length - li) * layerHeight;      // source z (higher)
       const zBottom = (layers.length - 1 - li) * layerHeight; // target z (lower)
       const zMid = (zBottom + zTop) / 2;
-      const color = layerColors[li % layerColors.length];
+      const saddleColor = cobSaddleColor(layer.type);
 
       // Source boundary circles at zTop (higher z = top of this layer)
       for (const circle of layer.srcCircles) {
-        scene.add(buildTubeAtZ(circle, zTop, 0x888888, 0.6));
+        scene.add(buildTubeAtZ(circle, zTop, COB_BOUNDARY_COLOR, 0.7));
       }
 
       // Target boundary circles at zBottom — only for the last layer (lowest z)
       if (li === layers.length - 1) {
         for (const circle of layer.tgtCircles) {
-          scene.add(buildTubeAtZ(circle, zBottom, 0x888888, 0.6));
+          scene.add(buildTubeAtZ(circle, zBottom, COB_BOUNDARY_COLOR, 0.7));
         }
       }
 
       // Identity surfaces (unchanged circles): src at zTop, tgt at zBottom
-      for (const u of layer.unchanged) {
+      for (let ui = 0; ui < layer.unchanged.length; ui++) {
+        const u = layer.unchanged[ui];
         const srcResampled = resamplePath(layer.srcCircles[u.src], 64);
         const tgtResampled = resamplePath(layer.tgtCircles[u.tgt], 64);
         // buildSurfaceStrip interpolates first arg at zBottom, second at zTop
         // so pass tgt at zBottom, src at zTop
-        scene.add(buildSurfaceStrip(tgtResampled, srcResampled, zBottom, zTop, 0x4488cc, 0.35));
+        scene.add(buildSurfaceStrip(tgtResampled, srcResampled, zBottom, zTop, cobIdentityColor(ui), 0.55));
       }
 
       // Saddle surface (merge or split): src at zTop, tgt at zBottom
@@ -3353,7 +3378,7 @@ function _renderCompositeCobordism(diagram, path, vertices, n, knotName, variant
       const srcNearCircles = layer.srcNear.map(i => layer.srcCircles[i]);
       const tgtNearCircles = layer.tgtNear.map(i => layer.tgtCircles[i]);
       const invertedType = layer.type === 'merge' ? 'split' : 'merge';
-      const saddleMeshes = buildSaddleSurface(tgtNearCircles, srcNearCircles, zBottom, zTop, invertedType, color, 0.55);
+      const saddleMeshes = buildSaddleSurface(tgtNearCircles, srcNearCircles, zBottom, zTop, invertedType, saddleColor, 0.7);
       for (const mesh of saddleMeshes) scene.add(mesh);
 
       // Layer separator plane (thin disc) between layers
@@ -4329,44 +4354,17 @@ function _renderCobordism(diagram, srcBits, tgtBits, changedBit, vertices, n, kn
     }
   }
 
-  // Identity tubes: light-blue family. Small hue/lightness variations
-  // per tube so multiple identities can still be told apart, while
-  // "blue = identity" remains the at-a-glance rule.
-  function identityColor(i, total) {
-    // Base: HSL(205°, 75%, 70%) ≈ 0x7dc3ec (light cornflower)
-    const hue = 200 + ((i * 19) % 40) - 20;        // 180°..220° cyan↔blue
-    const sat = 70 + ((i * 13) % 20);              // 70..90%
-    const lum = 68 + ((i * 7)  % 14) - 7;          // 61..75%
-    // HSL → RGB
-    const h = hue / 360, s = sat / 100, l = lum / 100;
-    const c = (1 - Math.abs(2 * l - 1)) * s;
-    const x = c * (1 - Math.abs(((h * 6) % 2) - 1));
-    const m = l - c / 2;
-    let r, g, b;
-    const hp = h * 6;
-    if (hp < 1)      [r, g, b] = [c, x, 0];
-    else if (hp < 2) [r, g, b] = [x, c, 0];
-    else if (hp < 3) [r, g, b] = [0, c, x];
-    else if (hp < 4) [r, g, b] = [0, x, c];
-    else if (hp < 5) [r, g, b] = [x, 0, c];
-    else             [r, g, b] = [c, 0, x];
-    const R = Math.round((r + m) * 255);
-    const G = Math.round((g + m) * 255);
-    const B = Math.round((b + m) * 255);
-    return (R << 16) | (G << 8) | B;
-  }
-
-  // Draw unchanged circles as tubes
+  // Draw unchanged circles as tubes (shared cobIdentityColor from module scope)
   for (let i = 0; i < unchanged.length; i++) {
     const { src, tgt } = unchanged[i];
-    const col = identityColor(i, unchanged.length);
+    const col = cobIdentityColor(i);
     createTube(srcCircles[src], 0, zSpan, col);
     drawBoundaryCircle(srcCircles[src], zSpan, col);
     drawBoundaryCircle(tgtCircles[tgt], 0, col);
   }
 
   // Draw merge/split surface
-  const saddleColor = type === 'merge' ? 0x81c784 : 0xef9a9a; // light green merge, light red split
+  const saddleColor = cobSaddleColor(type);
   const srcInvolved = srcNear.map(i => srcCircles[i]);
   const tgtInvolved = tgtNear.map(i => tgtCircles[i]);
   if (srcInvolved.length > 0 && tgtInvolved.length > 0) {
