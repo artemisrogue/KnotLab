@@ -342,6 +342,9 @@
   </svg>`;
   }
 
+  // Expose for reuse in other tabs (e.g. Linking → Reidemeister & Framing).
+  window._reidemeisterSVGs = { RI: svgRI, RII: svgRII, RIII: svgRIII };
+
   /* ── Knot selector widget ── */
   function createKnotSelector(parent, knotsData, linksData, viewer) {
     const wrap = document.createElement('div');

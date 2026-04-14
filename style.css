@@ -429,3 +429,257 @@ header p { font-size: 0.9rem; opacity: 0.85; }
   .home-container { padding: 1rem; }
   .module-cards { grid-template-columns: 1fr; }
 }
+
+/* ── Admin mode ── */
+body.admin-mode .admin-editable {
+  outline: 1px dashed rgba(200, 120, 0, 0.45);
+  outline-offset: 3px;
+  cursor: text;
+  transition: outline-color 0.15s;
+}
+body.admin-mode .admin-editable:hover {
+  outline-color: rgba(200, 120, 0, 0.95);
+  background: rgba(255, 220, 150, 0.12);
+}
+body.admin-mode .admin-editable[data-edited="1"] {
+  outline-color: rgba(0, 150, 80, 0.7);
+  background: rgba(0, 200, 100, 0.06);
+}
+body.admin-mode .admin-editable.admin-editing {
+  outline: 2px solid #0a84ff;
+  background: rgba(10, 132, 255, 0.07);
+  cursor: text;
+}
+body.admin-revert-pick * { cursor: crosshair !important; }
+
+#admin-toolbar {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  z-index: 9999;
+  background: #1c1c1e;
+  color: #eee;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  font-family: system-ui, sans-serif;
+}
+#admin-toolbar .admin-badge {
+  background: #c87800;
+  color: white;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+#admin-toolbar button {
+  background: #333;
+  color: #eee;
+  border: 1px solid #555;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+#admin-toolbar button:hover { background: #444; }
+#admin-status { min-width: 140px; color: #8fd18f; font-size: 12px; }
+
+/* ── Insert buttons ── */
+.admin-editable { position: relative; }
+.admin-insert-btn, .admin-delete-btn {
+  position: absolute;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+}
+.admin-editable:hover .admin-insert-btn,
+.admin-editable:hover .admin-delete-btn { opacity: 1; }
+.admin-insert-btn {
+  bottom: -14px; left: -30px;
+  background: #0a84ff; color: white;
+}
+.admin-insert-btn:hover { background: #2a94ff; }
+.admin-delete-btn {
+  top: -10px; right: -26px;
+  background: #e53935; color: white;
+}
+.admin-delete-btn:hover { background: #ef5350; }
+
+#admin-insert-menu {
+  position: absolute;
+  background: #1c1c1e; color: #eee;
+  border-radius: 6px;
+  padding: 4px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  z-index: 10000;
+  display: flex; flex-direction: column;
+  font-family: system-ui, sans-serif;
+  min-width: 180px;
+}
+#admin-insert-menu button {
+  background: transparent; color: #eee;
+  border: none; text-align: left;
+  padding: 6px 10px; font-size: 13px;
+  cursor: pointer; border-radius: 4px;
+}
+#admin-insert-menu button:hover { background: #333; }
+
+/* ── Equation editor modal ── */
+#admin-eq-modal {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 10001;
+  display: flex; align-items: center; justify-content: center;
+  font-family: system-ui, sans-serif;
+}
+.eq-modal-box {
+  background: white; border-radius: 10px;
+  padding: 20px; width: 860px; max-width: 95vw;
+  max-height: 90vh; overflow: auto;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+.eq-modal-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+.eq-modal-body { display: flex; gap: 14px; }
+.eq-snips {
+  width: 260px; max-height: 480px; overflow-y: auto;
+  border: 1px solid #e0e0e0; border-radius: 6px;
+  padding: 8px; background: #fafbfc;
+  font-size: 12px;
+}
+.eq-snips-head {
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 700; font-size: 13px; margin-bottom: 6px;
+}
+.eq-add-snip {
+  font-size: 11px; padding: 2px 8px;
+  background: #0a84ff; color: white; border: none;
+  border-radius: 4px; cursor: pointer;
+}
+.eq-snip-group {
+  font-size: 11px; font-weight: 700;
+  color: #666; text-transform: uppercase;
+  margin: 8px 0 4px; letter-spacing: 0.5px;
+}
+.eq-snip-item {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 6px; border-radius: 4px;
+  cursor: pointer; position: relative;
+}
+.eq-snip-item:hover { background: #e7f0ff; }
+.eq-snip-name { min-width: 70px; font-size: 12px; color: #333; }
+.eq-snip-preview { flex: 1; font-size: 12px; overflow: hidden; }
+.eq-snip-preview .katex { font-size: 1em; }
+.eq-snip-del {
+  background: transparent; border: none;
+  color: #c00; font-size: 14px; cursor: pointer;
+  padding: 0 4px;
+}
+.eq-main { flex: 1; display: flex; flex-direction: column; }
+.eq-mode { display: flex; gap: 18px; font-size: 13px; margin-bottom: 10px; }
+.eq-mode input { margin-right: 4px; }
+.eq-src {
+  width: 100%; min-height: 90px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 13px;
+  padding: 8px; box-sizing: border-box;
+  border: 1px solid #ccc; border-radius: 6px;
+  resize: vertical;
+}
+.eq-preview-label { font-size: 12px; color: #888; margin: 10px 0 4px; }
+.eq-preview {
+  min-height: 50px; padding: 10px;
+  background: #f6f7f9; border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  overflow-x: auto;
+}
+.eq-modal-actions {
+  margin-top: 14px;
+  display: flex; gap: 8px; justify-content: flex-end;
+}
+.eq-modal-actions button {
+  padding: 6px 14px; font-size: 13px;
+  border-radius: 5px; border: 1px solid #ccc;
+  background: #f0f0f0; cursor: pointer;
+}
+.eq-insert { background: #0a84ff !important; color: white; border-color: #0a84ff !important; }
+.eq-insert:hover { background: #2a94ff !important; }
+
+/* ── Admin help panel ── */
+#admin-help-panel {
+  position: fixed; right: 16px; bottom: 68px; width: 360px;
+  background: #1e1e22; color: #eee; border: 1px solid #3a3a42;
+  border-radius: 8px; padding: 12px 14px; font-size: 13px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45); z-index: 9999;
+}
+#admin-help-panel .help-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px;
+}
+#admin-help-panel .help-close {
+  background: transparent; color: #aaa; border: none; font-size: 18px;
+  cursor: pointer; padding: 0 4px;
+}
+#admin-help-panel .help-close:hover { color: #fff; }
+#admin-help-panel dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; }
+#admin-help-panel dt { color: #7ec4ff; font-weight: 600; }
+#admin-help-panel dd { margin: 0; color: #ddd; }
+#admin-help-panel .help-math {
+  margin-top: 10px; padding-top: 8px; border-top: 1px solid #3a3a42;
+  color: #ddd; line-height: 1.5;
+}
+#admin-help-panel code { background: #2a2a30; padding: 1px 4px; border-radius: 3px; color: #ffd39a; }
+
+/* Save button — make it pop */
+#admin-save { background: #28a745 !important; color: white !important; border-color: #28a745 !important; }
+#admin-save:hover { background: #34c759 !important; }
+#admin-help { min-width: 28px; }
+
+/* Inline snippet-name input (replaces window.prompt) */
+.eq-snip-nameinput { display: flex; gap: 4px; margin-top: 6px; }
+.eq-snip-nameinput input { flex: 1; padding: 4px 6px; font-size: 12px;
+  border: 1px solid #999; border-radius: 3px; }
+.eq-snip-nameinput button { padding: 2px 8px; font-size: 12px; cursor: pointer; }
+.eq-snip-ok { background: #28a745; color: white; border: 1px solid #28a745; border-radius: 3px; }
+.eq-snip-no { background: #f0f0f0; border: 1px solid #ccc; border-radius: 3px; }
+
+/* Collapsible snippet groups */
+.eq-snip-groupwrap { margin-bottom: 4px; }
+.eq-snip-group {
+  display: flex; align-items: center; gap: 4px;
+  padding: 4px 6px; cursor: pointer; user-select: none;
+  background: #f0f0f3; border-radius: 3px; font-weight: 600; font-size: 12px;
+  color: #333;
+}
+.eq-snip-group:hover { background: #e4e4ea; }
+.eq-snip-caret { width: 10px; display: inline-block; color: #666; }
+.eq-snip-gname { flex: 1; }
+.eq-snip-count { color: #888; font-weight: normal; font-size: 11px; }
+.eq-snip-groupbody { padding: 2px 0 4px 8px; }
+
+#admin-img { background: #6f42c1 !important; color: white !important; border-color: #6f42c1 !important; }
+#admin-img:hover { background: #8352d6 !important; }
+
+#admin-snapshot { background: #fd7e14 !important; color: white !important; border-color: #fd7e14 !important; }
+#admin-snapshot:hover { background: #ff9030 !important; }
+#admin-commit { background: #d6336c !important; color: white !important; border-color: #d6336c !important; }
+#admin-commit:hover { background: #eb4982 !important; }
+
+/* Wider modal + multi-column snippet list */
+#admin-eq-modal .eq-modal-box { width: min(1200px, 96vw) !important; max-width: 96vw !important; }
+#admin-eq-modal .eq-snips { width: 520px !important; }
+#admin-eq-modal .eq-snips-list { column-count: 2; column-gap: 12px; }
+.eq-snip-groupwrap { break-inside: avoid; -webkit-column-break-inside: avoid; }
+.eq-snip-groupbody .eq-snip-item { break-inside: avoid; }

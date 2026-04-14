@@ -847,15 +847,25 @@
             at every point &mdash; equivalently, a ribbon or thin strip tied into a knot. The framing
             keeps track of how many times the ribbon twists as it travels along the knot.</p>
             <p>The three Reidemeister moves interact differently with framing:</p>
-            <ul style="line-height:1.8;">
-              <li><strong>RI</strong> (twist/untwist) <em>changes</em> the framing by &plusmn;1. A framed knot invariant
-              must therefore be invariant only under RII and RIII, or must account for the twist introduced by RI.
-              This is why the <em>Kauffman bracket</em> is not a knot invariant until corrected by the writhe.</li>
-              <li><strong>RII</strong> (poke/unpoke) preserves the framing. Two crossings are added or removed simultaneously,
-              contributing opposite signs that cancel.</li>
-              <li><strong>RIII</strong> (slide) preserves the framing. No crossings are created or destroyed,
-              so the total twist is unchanged.</li>
-            </ul>
+            ${(function(){
+              var S = window._reidemeisterSVGs || {};
+              var row = 'display:flex;gap:1rem;align-items:center;margin:0.75rem 0;padding:0.5rem 0;border-top:1px solid #eee;';
+              var svgcol = 'flex:0 0 340px;text-align:center;';
+              var txtcol = 'flex:1;line-height:1.6;';
+              return `
+              <div style="${row}border-top:none;">
+                <div style="${svgcol}">${S.RI ? S.RI() : ''}</div>
+                <div style="${txtcol}"><strong>RI</strong> (twist/untwist) <em>changes</em> the framing by &plusmn;1. A framed knot invariant must therefore be invariant only under RII and RIII, or must account for the twist introduced by RI. This is why the <em>Kauffman bracket</em> is not a knot invariant until corrected by the writhe.</div>
+              </div>
+              <div style="${row}">
+                <div style="${svgcol}">${S.RII ? S.RII() : ''}</div>
+                <div style="${txtcol}"><strong>RII</strong> (poke/unpoke) preserves the framing. Two crossings are added or removed simultaneously, contributing opposite signs that cancel.</div>
+              </div>
+              <div style="${row}">
+                <div style="${svgcol}">${S.RIII ? S.RIII() : ''}</div>
+                <div style="${txtcol}"><strong>RIII</strong> (slide) preserves the framing. No crossings are created or destroyed, so the total twist is unchanged.</div>
+              </div>`;
+            })()}
             <p>The visualizations below show how framing appears on tubes and surfaces
             around knots and links. You can adjust the number of strands and twists to see
             how the framing changes the geometry of the ribbon.</p>
