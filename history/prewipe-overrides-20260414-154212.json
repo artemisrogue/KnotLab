@@ -1,0 +1,12 @@
+{
+  "_inserts": {
+    "home": [
+      {
+        "id": "ins::home::testx",
+        "after": "anything",
+        "tag": "p",
+        "html": "hello"
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "gauss-linking": {
+    "gauss-linking::h10mh8h4": "<br>            $$\\mathrm{Lk}(K, L) = \\frac{1}{4\\pi}\\oint_K\\oint_L \\frac{(\\mathbf{r}_1 - \\mathbf{r}_2) \\cdot (d\\mathbf{r}_1 \\times d\\mathbf{r}_2)}{|\\mathbf{r}_1 - \\mathbf{r}_2|^3}$$<br>          ",
+    "gauss-linking::h1ugx1ir": "The formula arises naturally from <strong>Ampère’s law</strong> and <strong>Biot–Savart’s law</strong>.<br>          Consider a steady current \\(I\\) flowing through a closed loop \\(L\\). The magnetic field at a point<br>          \\(\\mathbf{r}\\) is given by Biot–Savart:",
+    "gauss-linking::h1k0gb77": "<br>            $$\\mathbf{B}(\\mathbf{r}) = \\frac{\\mu_0 I}{4\\pi}\\oint_L \\frac{d\\mathbf{r}_2 \\times (\\mathbf{r} - \\mathbf{r}_2)}{|\\mathbf{r} - \\mathbf{r}_2|^3}$$<br>          ",
+    "gauss-linking::hdn4r4y": "In 1833, Gauss discovered that the <em>linking number</em> of two closed curves<br>          \\(K\\) and \\(L\\) in \\(\\mathbb{R}^3\\) can be computed by a double integral:",
+    "gauss-linking::h1jo5cbh": "By Ampère’s law, the circulation of \\(\\mathbf{B}\\) around another loop \\(K\\) counts<br>          how many times \\(K\\) passes through \\(L\\) — precisely the linking number.",
+    "gauss-linking::h16w3j84": "Equivalently, the linking number is the <strong>degree</strong> of the Gauss map<br>          \\(G: T^2 \\to S^2\\) defined by:",
+    "gauss-linking::h1cycjly": "<br>            $$G(t, s) = \\frac{\\gamma_1(t) - \\gamma_2(s)}{|\\gamma_1(t) - \\gamma_2(s)|}$$<br>          ",
+    "gauss-linking::h16yzp6f": "The degree counts (with sign) how many times the image covers the sphere.<br>          Since degrees are integers, \\(\\mathrm{Lk}(K,L) \\in \\mathbb{Z}\\).",
+    "gauss-linking::hrs1ff0": "Select a link below and compute its linking number numerically via the Gauss integral.<br>          The heatmap shows the integrand \\(\\frac{(\\mathbf{r}_1 - \\mathbf{r}_2) \\cdot (d\\mathbf{r}_1 \\times d\\mathbf{r}_2)}{|\\mathbf{r}_1 - \\mathbf{r}_2|^3}\\) as a function of the parameters \\((t,s)\\)."
+  }
+}

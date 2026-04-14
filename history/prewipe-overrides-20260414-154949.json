@@ -1,0 +1,18 @@
+{
+  "_inserts": {
+    "home": [
+      {
+        "id": "ins::home::diag1",
+        "after": "home::h3n6fx1n",
+        "tag": "p",
+        "html": "TEST-INSERT-XYZ"
+      },
+      {
+        "id": "ins::home::realtest",
+        "after": "home::h14av1mq",
+        "tag": "p",
+        "html": "INSERTED-PARAGRAPH-BAZ"
+      }
+    ]
+  }
+}

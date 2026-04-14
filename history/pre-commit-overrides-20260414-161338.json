@@ -1,0 +1,12 @@
+{
+  "_inserts": {
+    "home": [
+      {
+        "id": "ins::home::ins_ws4g5a07",
+        "after": "home::h14av1mq",
+        "tag": "p",
+        "html": "baz"
+      }
+    ]
+  }
+}

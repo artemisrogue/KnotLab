@@ -1,0 +1,16 @@
+{
+  "home": {
+    "home::h1pul17a": "<br>        <span>$$B_n = \\left\\langle \\sigma_1, \\ldots, \\sigma_{n-1} \\;\\middle|\\;\n        \\begin{array}{l}\n        \\sigma_i \\sigma_j = \\sigma_j \\sigma_i \\quad \\text{if } |i-j| \\geq 2 \\\\\n        \\sigma_i \\sigma_{i+1} \\sigma_i = \\sigma_{i+1} \\sigma_i \\sigma_{i+1}\n        \\end{array}\n        \\right\\rangle$$</span><br>      ",
+    "home::h6zsfyk": "<br>          A knot, mathematically, is a closed loop embedded in three-dimensional space.<br>          Take a piece of string, tangle it up, and glue the ends together — that’s a knot.<br>          Two knots are <em>equivalent</em> if you can deform one into the other without cutting or<br>          passing the string through itself. The fundamental problem of knot theory is determining<br>          when two knots are equivalent and when they are not.<br>        "
+  },
+  "_inserts": {
+    "home": [
+      {
+        "id": "ins::home::ins_lio11d5a",
+        "after": "home::h1fefib1",
+        "tag": "p",
+        "html": "foobar"
+      }
+    ]
+  }
+}

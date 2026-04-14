@@ -468,6 +468,56 @@ body.admin-revert-pick * { cursor: crosshair !important; }
   box-shadow: 0 4px 16px rgba(0,0,0,0.4);
   font-family: system-ui, sans-serif;
 }
+#admin-fmt-bar {
+  position: fixed;
+  bottom: 58px;
+  right: 12px;
+  z-index: 9999;
+  background: #2a2a2c;
+  color: #eee;
+  padding: 6px 8px;
+  border-radius: 8px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  font-family: system-ui, sans-serif;
+}
+#admin-fmt-bar button {
+  background: #3c3c3e;
+  color: #eee;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 28px;
+}
+#admin-fmt-bar button:hover { background: #555; }
+#admin-fmt-color {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 24px;
+  background: #3c3c3e;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+}
+#admin-fmt-color input[type=color] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+#admin-fmt-color span {
+  font-weight: 700;
+  color: #fff;
+  pointer-events: none;
+}
 #admin-toolbar .admin-badge {
   background: #c87800;
   color: white;

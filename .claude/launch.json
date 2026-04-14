@@ -4,8 +4,8 @@
     {
       "name": "knotlab",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["C:/Users/seand/Claude_projects/KnotLab/launch.py", "--no-browser", "--no-shiny"],
-      "port": 8770
+      "runtimeArgs": ["C:/Users/seand/Claude_projects/KnotLab/serve.py"],
+      "port": 8780
     }
   ]
 }

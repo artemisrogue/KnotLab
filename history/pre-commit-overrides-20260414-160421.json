@@ -1,0 +1,12 @@
+{
+  "_inserts": {
+    "home": [
+      {
+        "id": "ins::home::ins_mmy8srrd",
+        "after": "ins::home::ins_so01r4jr",
+        "tag": "p",
+        "html": "bazNew p…"
+      }
+    ]
+  }
+}

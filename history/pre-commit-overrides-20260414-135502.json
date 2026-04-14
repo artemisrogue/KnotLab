@@ -1,0 +1,15 @@
+{
+  "_inserts": {
+    "home": [
+      {
+        "id": "ins::home::ins_gmwyumff",
+        "after": "home::2",
+        "tag": "p",
+        "html": "\\(S^1 \\hookrightarrow S^3\\)\n\n"
+      }
+    ]
+  },
+  "home": {
+    "home::3": "\n          A knot, mathematically, is a closed loop embedded in three-dimensional space.\n          Take a piece of string, tangle it up, and glue the ends together — that’s a knot.\n          Two knots are <em>equivalent</em> if you can deform one into the other without cutting or\n          passing the string through itself. The fundamental problem of knot theory is determining\n          when two knots are equivalent and when they are not.\n        "
+  }
+}

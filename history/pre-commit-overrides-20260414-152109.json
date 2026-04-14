@@ -1,0 +1,20 @@
+{
+  "gauss-linking": {
+    "gauss-linking::h1ccpmzj": "In 1833, Gauss discovered that the <em>linking </em><em><em><em>number</em> </em></em>of two closed curves<br>          <span>\\(K\\)</span> and <span>\\(L\\)</span> in <span>\\(\\mathbb{R}^3\\)</span> can be computed by a double integral: ",
+    "gauss-linking::hdn4r4y": "In 1833, Gauss discovered that the <em>linking </em><em><em><em></em><em><em><em>number</em> </em></em></em></em>of two closed curves<br>          \\(K\\) and \\(L\\) in \\(\\mathbb{R}^3\\) can be computed by a double integral:"
+  },
+  "home": {
+    "home::ht9vhef": "A <strong>braid</strong> on <span>\\(n\\)</span> strands is a collection of <span>\\(n\\)</span> non-intersecting curves<br>      (strands) running from one horizontal line to another, where each strand moves monotonically<br>      downward. Two braids are equivalent if one can be deformed into the other while keeping<br>      the endpoints fixed. ",
+    "home::h1tyn39y": "<br>          This is harder than it sounds. Even the question “is this knot actually knotted, or<br>          can it be untangled into a simple circle?” has no obvious answer in general.<br>          The tools developed to attack this problem — polynomial invariants, homological algebra,<br>          quantum groups — connect knot theory to areas throughout mathematics and physics.<br>        "
+  },
+  "_inserts": {
+    "home": [
+      {
+        "id": "ins::home::ins_tv6hj5o1",
+        "after": "home::hk5fmtn",
+        "tag": "p",
+        "html": "foobar"
+      }
+    ]
+  }
+}

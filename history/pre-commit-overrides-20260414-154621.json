@@ -1,0 +1,19 @@
+{
+  "_deletes": {
+    "_inserts": {
+      "home": [
+        "ins::home::ins_oumn05g2"
+      ]
+    }
+  },
+  "_inserts": {
+    "home": [
+      {
+        "id": "ins::home::ins_i75hbtn2",
+        "after": "home::h1fefib1",
+        "tag": "p",
+        "html": "foo"
+      }
+    ]
+  }
+}

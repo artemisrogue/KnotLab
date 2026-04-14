@@ -136,16 +136,28 @@
       // Never re-index user-inserted elements — their IDs are stable.
       if (el.hasAttribute('data-inserted')) return;
 
-      // Compute a content-based hash id. If two elements happen to have
-      // identical text (rare), de-dupe by appending a counter.
-      var seed = el.tagName + '|' + (el.textContent || '').trim();
-      var base = hashStr(seed);
-      var h = base;
-      var n = 0;
-      while (seen[h]) { n++; h = base + '-' + n; }
-      seen[h] = true;
-      var id = tabId + '::h' + h;
-      el.setAttribute('data-edit-id', id);
+      // Compute a content-based hash id. Once set, it's stable — never
+      // recompute, because later DOM mutations (admin insert-buttons,
+      // user edits) change textContent and would produce a different hash.
+      var id = el.getAttribute('data-edit-id');
+      if (!id) {
+        // Exclude admin-injected button text from the seed so hashes are
+        // identical regardless of admin mode.
+        var clone = el.cloneNode(true);
+        clone.querySelectorAll('.admin-insert-btn, .admin-delete-btn').forEach(function (b) { b.remove(); });
+        var seed = el.tagName + '|' + (clone.textContent || '').trim();
+        var base = hashStr(seed);
+        var h = base;
+        var n = 0;
+        while (seen[h]) { n++; h = base + '-' + n; }
+        seen[h] = true;
+        id = tabId + '::h' + h;
+        el.setAttribute('data-edit-id', id);
+      } else {
+        // Track id in seen so fresh nodes later don't collide.
+        var existing = id.replace(tabId + '::h', '');
+        seen[existing] = true;
+      }
 
       // Capture raw source (with \( ... \) etc.) BEFORE KaTeX rewrites it,
       // unless it's already been captured.
@@ -157,7 +169,8 @@
       if (Object.prototype.hasOwnProperty.call(tabOverrides, id) &&
           el.getAttribute('data-override-applied') !== id) {
         el.innerHTML = tabOverrides[id];
-        el.setAttribute('data-raw', tabOverrides[id]);
+        unbreakMathInElement(el);
+        el.setAttribute('data-raw', el.innerHTML);
         el.setAttribute('data-edited', '1');
         el.setAttribute('data-override-applied', id);
       }
@@ -174,8 +187,9 @@
       var el = document.createElement(rec.tag || 'p');
       el.setAttribute('data-edit-id', rec.id);
       el.setAttribute('data-inserted', '1');
-      el.setAttribute('data-raw', rec.html || '');
       el.innerHTML = rec.html || '';
+      unbreakMathInElement(el);
+      el.setAttribute('data-raw', el.innerHTML);
       anchor.parentNode.insertBefore(el, anchor.nextSibling);
       if (adminMode) attachEditor(el, tabId, rec.id);
     });
@@ -356,6 +370,29 @@
   // the LaTeX source from the <annotation encoding="application/x-tex"> tags
   // that KaTeX leaves behind. This lets us recover sources even when the
   // module rendered KaTeX before our observer captured data-raw.
+  // Strip <br>s that fell inside math delimiters — KaTeX auto-render
+  // can't match $$…$$ or \(…\) across <br> element boundaries.
+  function unbreakMathInElement(root) {
+    var html = root.innerHTML;
+    function scrub(open, close) {
+      var result = '', i = 0;
+      while (i < html.length) {
+        var a = html.indexOf(open, i);
+        if (a < 0) { result += html.slice(i); break; }
+        var b = html.indexOf(close, a + open.length);
+        if (b < 0) { result += html.slice(i); break; }
+        result += html.slice(i, a);
+        var inner = html.slice(a + open.length, b).replace(/<br\s*\/?>/gi, '\n');
+        result += open + inner + close;
+        i = b + close.length;
+      }
+      html = result;
+    }
+    scrub('$$', '$$');
+    scrub('\\(', '\\)');
+    root.innerHTML = html;
+  }
+
   function unrenderKatex(html) {
     var container = document.createElement('div');
     container.innerHTML = html;
@@ -430,6 +467,7 @@
           n.parentNode.replaceChild(frag, n);
         });
       })(el);
+      unbreakMathInElement(el);
       var newRaw = el.innerHTML;
 
       var forced = !!(editorState && editorState.el === el && editorState.force);
@@ -1135,13 +1173,21 @@
 
     document.getElementById('admin-commit').onclick = function () {
       if (!confirm('Commit current overrides into content.json?\n\nThis merges all overrides into the permanent baseline and clears overrides.json. A snapshot is taken automatically before the merge.')) return;
+      // Flush any in-progress edit so its latest text is saved before merge.
+      if (editorState && editorState.el && editorState.el.classList.contains('admin-editing')) {
+        editorState.force = true;
+        editorState.el.blur();
+      }
       setStatus('Committing…');
+      // Give the save POST a moment to land before triggering the merge.
+      setTimeout(function () {
       fetch('/admin/commit', {method: 'POST'}).then(function (r) { return r.json(); })
         .then(function (j) {
           if (!j.ok) throw new Error(j.error || 'failed');
           setStatus('Committed ✓ (reloading)', 2000);
           setTimeout(function () { location.reload(); }, 800);
         }).catch(function (err) { setStatus('Commit failed: ' + err.message, 4000); });
+      }, 400);
     };
 
     document.getElementById('admin-img').onclick = function () {
@@ -1169,6 +1215,8 @@
       window.location.href = url.toString();
     };
 
+    buildFormatBar();
+
     document.getElementById('admin-revert-hover').onclick = function () {
       setStatus('Click an edited element to revert it…', 4000);
       document.body.classList.add('admin-revert-pick');
@@ -1184,6 +1232,133 @@
       }
       document.addEventListener('click', pick, true);
     };
+  }
+
+  // ── Format bar: bold/italic/underline/size/color/link ──
+  var savedFmtRange = null;
+  function rememberRange() {
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return;
+    var r = sel.getRangeAt(0);
+    if (editorState && editorState.el && editorState.el.contains(r.commonAncestorContainer)) {
+      savedFmtRange = r.cloneRange();
+    }
+  }
+  function restoreRange() {
+    if (!savedFmtRange) return null;
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedFmtRange);
+    return savedFmtRange;
+  }
+  function wrapRange(r, makeWrapper) {
+    if (!r || r.collapsed) return null;
+    var wrapper = makeWrapper();
+    try { r.surroundContents(wrapper); }
+    catch (e) {
+      var frag = r.extractContents();
+      wrapper.appendChild(frag);
+      r.insertNode(wrapper);
+    }
+    var nr = document.createRange();
+    nr.selectNodeContents(wrapper);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(nr);
+    savedFmtRange = nr.cloneRange();
+    return wrapper;
+  }
+
+  function inlinePromptURL(defaultUrl, cb) {
+    var ov = document.createElement('div');
+    ov.id = 'admin-link-prompt';
+    ov.style.cssText = 'position:fixed;z-index:10000;left:50%;top:40%;transform:translateX(-50%);background:#fff;border:1px solid #888;border-radius:8px;padding:0.8rem 1rem;box-shadow:0 6px 24px rgba(0,0,0,0.2);font-family:system-ui;';
+    ov.innerHTML = '<div style="margin-bottom:0.4rem;">Link URL:</div>' +
+      '<input type="text" style="width:360px;padding:0.3rem 0.5rem;font-size:0.95rem;" />' +
+      '<div style="margin-top:0.6rem;text-align:right;">' +
+      '<button id="lp-cancel" style="margin-right:0.4rem;">Cancel</button>' +
+      '<button id="lp-ok">OK</button></div>';
+    document.body.appendChild(ov);
+    var inp = ov.querySelector('input');
+    inp.value = defaultUrl || 'https://';
+    inp.focus(); inp.select();
+    function done(val) { ov.remove(); cb(val); }
+    ov.querySelector('#lp-ok').onclick = function(){ done(inp.value.trim() || null); };
+    ov.querySelector('#lp-cancel').onclick = function(){ done(null); };
+    inp.addEventListener('keydown', function(e){
+      if (e.key==='Enter') done(inp.value.trim()||null);
+      else if (e.key==='Escape') done(null);
+    });
+  }
+
+  function applyFormat(fmt) {
+    if (!editorState || !editorState.el) { setStatus('Click a paragraph first, then format', 2500); return; }
+    var r = restoreRange();
+    if (!r) { setStatus('Select some text first', 2500); return; }
+    if (fmt === 'bold') wrapRange(r, function(){ return document.createElement('strong'); });
+    else if (fmt === 'italic') wrapRange(r, function(){ return document.createElement('em'); });
+    else if (fmt === 'underline') wrapRange(r, function(){ var s=document.createElement('span'); s.style.textDecoration='underline'; return s; });
+    else if (fmt === 'sizeUp' || fmt === 'sizeDown') {
+      var anc = r.commonAncestorContainer;
+      if (anc.nodeType===3) anc = anc.parentElement;
+      var cur = parseFloat(getComputedStyle(anc).fontSize) || 16;
+      var next = fmt==='sizeUp' ? Math.round(cur+2) : Math.max(8, Math.round(cur-2));
+      wrapRange(r, function(){ var s=document.createElement('span'); s.style.fontSize=next+'px'; return s; });
+    }
+    else if (fmt === 'link') {
+      inlinePromptURL('https://', function(url){
+        if (!url) return;
+        restoreRange();
+        var rr = window.getSelection().rangeCount ? window.getSelection().getRangeAt(0) : null;
+        if (!rr) return;
+        wrapRange(rr, function(){ var a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener'; return a; });
+      });
+    }
+    else if (fmt === 'unlink') {
+      var node = r.commonAncestorContainer;
+      if (node.nodeType===3) node = node.parentNode;
+      while (node && node !== editorState.el && node.tagName !== 'A') node = node.parentNode;
+      if (node && node.tagName === 'A') {
+        var parent = node.parentNode;
+        while (node.firstChild) parent.insertBefore(node.firstChild, node);
+        parent.removeChild(node);
+      }
+    }
+  }
+
+  function buildFormatBar() {
+    var bar = document.createElement('div');
+    bar.id = 'admin-fmt-bar';
+    bar.innerHTML =
+      '<button data-fmt="sizeDown" title="Decrease font size">A−</button>' +
+      '<button data-fmt="sizeUp" title="Increase font size">A+</button>' +
+      '<button data-fmt="bold" title="Bold"><b>B</b></button>' +
+      '<button data-fmt="italic" title="Italic"><i>I</i></button>' +
+      '<button data-fmt="underline" title="Underline"><u>U</u></button>' +
+      '<label id="admin-fmt-color" title="Text color"><input type="color" value="#2171b5"><span>A</span></label>' +
+      '<button data-fmt="link" title="Insert hyperlink">🔗</button>' +
+      '<button data-fmt="unlink" title="Remove hyperlink">⊘</button>';
+    document.body.appendChild(bar);
+    // Keep selection alive when interacting with the bar.
+    bar.addEventListener('mousedown', function(ev){ ev.preventDefault(); });
+    // Remember selection on every mouseup/keyup inside the editable.
+    document.addEventListener('selectionchange', function(){
+      if (!editorState || !editorState.el) return;
+      var sel = window.getSelection();
+      if (!sel || !sel.rangeCount) return;
+      var r = sel.getRangeAt(0);
+      if (editorState.el.contains(r.commonAncestorContainer)) savedFmtRange = r.cloneRange();
+    });
+    bar.querySelectorAll('button[data-fmt]').forEach(function(b){
+      b.addEventListener('click', function(){ applyFormat(b.getAttribute('data-fmt')); });
+    });
+    var colorInput = bar.querySelector('input[type=color]');
+    colorInput.addEventListener('input', function(){
+      if (!editorState || !editorState.el) { setStatus('Click a paragraph first', 2500); return; }
+      var r = restoreRange(); if (!r || r.collapsed) { setStatus('Select some text first', 2500); return; }
+      var c = colorInput.value;
+      wrapRange(r, function(){ var s=document.createElement('span'); s.style.color=c; return s; });
+    });
   }
 
   function pickAndUploadImage(targetEl) {

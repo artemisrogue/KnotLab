@@ -1,0 +1,12 @@
+{
+  "_inserts": {
+    "home": [
+      {
+        "id": "ins::home::check1",
+        "after": "home::h14av1mq",
+        "tag": "p",
+        "html": "CHECK1"
+      }
+    ]
+  }
+}
