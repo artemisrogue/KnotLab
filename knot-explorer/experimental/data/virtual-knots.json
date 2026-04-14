@@ -1,0 +1,187 @@
+{
+  "2.1": {
+    "name": "Virtual Trefoil",
+    "gauss_code": "1 -2v 3 -1 2v -3",
+    "classical_crossings": [1, 3],
+    "virtual_crossings": [2],
+    "crossing_signs": { "1": 1, "3": -1 },
+    "jones": "1",
+    "odd_writhe": 0,
+    "index_polynomial": "0",
+    "note": "Simplest virtual knot; trivial Jones but non-trivial as virtual"
+  },
+  "2.2": {
+    "name": "Virtual Hopf Link",
+    "gauss_code": "{1v -2}, {-1v 2}",
+    "classical_crossings": [2],
+    "virtual_crossings": [1],
+    "crossing_signs": { "2": 1 },
+    "jones": "-q^{1/2} - q^{-1/2}",
+    "odd_writhe": 1,
+    "note": "Virtual link with one classical and one virtual crossing"
+  },
+  "3.1": {
+    "name": "Kishino Knot",
+    "gauss_code": "1 -2 3v -1 2 -3v",
+    "classical_crossings": [1, 2],
+    "virtual_crossings": [3],
+    "crossing_signs": { "1": 1, "2": -1 },
+    "jones": "1",
+    "odd_writhe": 0,
+    "index_polynomial": "0",
+    "note": "Non-trivial virtual knot with trivial Jones and trivial odd writhe; detected by arrow polynomial"
+  },
+  "3.2": {
+    "name": "Virtual Knot 3.2",
+    "gauss_code": "1 2v -3 -1 -2v 3",
+    "classical_crossings": [1, 3],
+    "virtual_crossings": [2],
+    "crossing_signs": { "1": 1, "3": 1 },
+    "jones": "-q^2 + q - 1 + q^{-1} - q^{-2}",
+    "odd_writhe": 2,
+    "note": "Non-zero odd writhe proves genuinely virtual"
+  },
+  "3.3": {
+    "name": "Virtual Knot 3.3",
+    "gauss_code": "1v -2 3 -1v 2 -3",
+    "classical_crossings": [2, 3],
+    "virtual_crossings": [1],
+    "crossing_signs": { "2": 1, "3": -1 },
+    "jones": "1",
+    "odd_writhe": 0,
+    "index_polynomial": "t - 1 + t^{-1}",
+    "note": "Detected by index polynomial but not by Jones or odd writhe"
+  },
+  "3.4": {
+    "name": "Virtual Knot 3.4",
+    "gauss_code": "1 -2 3v -4 -1 2 -3v 4",
+    "classical_crossings": [1, 2, 4],
+    "virtual_crossings": [3],
+    "crossing_signs": { "1": 1, "2": -1, "4": 1 },
+    "jones": "q + 1 + q^{-1}",
+    "odd_writhe": 1,
+    "note": "Three classical crossings with one virtual"
+  },
+  "3.5": {
+    "name": "Virtual Figure Eight",
+    "gauss_code": "1 -2v -3 4v -1 2v 3 -4v",
+    "classical_crossings": [1, 3],
+    "virtual_crossings": [2, 4],
+    "crossing_signs": { "1": 1, "3": -1 },
+    "jones": "q^2 - q + 1 - q^{-1} + q^{-2}",
+    "odd_writhe": 0,
+    "note": "Virtual analogue of the figure-eight knot"
+  },
+  "4.1": {
+    "name": "Kauffman Virtual Knot 4.1",
+    "gauss_code": "1 -2 3v -4 -1 2 -3v 4",
+    "classical_crossings": [1, 2, 4],
+    "virtual_crossings": [3],
+    "crossing_signs": { "1": 1, "2": 1, "4": -1 },
+    "jones": "q^3 - q^2 + q - 1 + q^{-1}",
+    "odd_writhe": 1,
+    "note": "Four-crossing virtual knot from Kauffman's table"
+  },
+  "4.2": {
+    "name": "Virtual Knot 4.2",
+    "gauss_code": "1 2v -3 -4v -1 -2v 3 4v",
+    "classical_crossings": [1, 3],
+    "virtual_crossings": [2, 4],
+    "crossing_signs": { "1": 1, "3": 1 },
+    "jones": "-q^3 + 2q^2 - 2q + 3 - 2q^{-1} + 2q^{-2} - q^{-3}",
+    "odd_writhe": 2,
+    "note": "Two virtual crossings separating classical crossings"
+  },
+  "4.3": {
+    "name": "Dye-Kauffman Example",
+    "gauss_code": "1v -2 3 -4v -1v 2 -3 4v",
+    "classical_crossings": [2, 3],
+    "virtual_crossings": [1, 4],
+    "crossing_signs": { "2": -1, "3": 1 },
+    "jones": "1",
+    "odd_writhe": 0,
+    "arrow_polynomial_nontrivial": true,
+    "note": "Detected by arrow polynomial but not by Jones; Dye-Kauffman's key example"
+  },
+  "4.4": {
+    "name": "Virtual Knot 4.4",
+    "gauss_code": "-1 2v 3 -4 1 -2v -3 4",
+    "classical_crossings": [1, 3, 4],
+    "virtual_crossings": [2],
+    "crossing_signs": { "1": -1, "3": 1, "4": -1 },
+    "jones": "-q^{-1} + 1 - q + q^2",
+    "odd_writhe": -1,
+    "note": "Negative odd writhe example"
+  },
+  "4.5": {
+    "name": "Virtual Knot 4.5",
+    "gauss_code": "1 -2 3v -4 5v -1 2 -3v 4 -5v",
+    "classical_crossings": [1, 2, 4],
+    "virtual_crossings": [3, 5],
+    "crossing_signs": { "1": 1, "2": -1, "4": 1 },
+    "jones": "q^2 - 1 + q^{-2}",
+    "odd_writhe": 1,
+    "note": "Five-element Gauss code with two virtual crossings"
+  },
+  "4.6": {
+    "name": "Manturov Parity Example",
+    "gauss_code": "1 -2v -3 4 -1 2v 3 -4",
+    "classical_crossings": [1, 3, 4],
+    "virtual_crossings": [2],
+    "crossing_signs": { "1": 1, "3": -1, "4": 1 },
+    "jones": "q + 1 + q^{-1}",
+    "odd_writhe": 1,
+    "parity_nontrivial": true,
+    "note": "Example where parity bracket gives extra information beyond Jones"
+  },
+  "5.1": {
+    "name": "Virtual Knot 5.1",
+    "gauss_code": "1 -2v 3 -4v 5 -1 2v -3 4v -5",
+    "classical_crossings": [1, 3, 5],
+    "virtual_crossings": [2, 4],
+    "crossing_signs": { "1": 1, "3": 1, "5": -1 },
+    "jones": "q^3 - q^2 + 2q - 2 + 2q^{-1} - q^{-2} + q^{-3}",
+    "odd_writhe": 1,
+    "note": "Five-crossing virtual knot alternating classical and virtual"
+  },
+  "5.2": {
+    "name": "Virtual Knot 5.2",
+    "gauss_code": "1 2 -3v -4 -1 -2 3v 4",
+    "classical_crossings": [1, 2, 4],
+    "virtual_crossings": [3],
+    "crossing_signs": { "1": 1, "2": -1, "4": -1 },
+    "jones": "-q + 2 - q^{-1}",
+    "odd_writhe": -1,
+    "note": "Example with mixed crossing signs"
+  },
+  "5.3": {
+    "name": "Green Virtual Knot 5.3",
+    "gauss_code": "1v 2 -3 4v -5 -1v -2 3 -4v 5",
+    "classical_crossings": [2, 3, 5],
+    "virtual_crossings": [1, 4],
+    "crossing_signs": { "2": 1, "3": -1, "5": 1 },
+    "jones": "q^2 + 1 + q^{-2}",
+    "odd_writhe": 1,
+    "note": "From Green's virtual knot table"
+  },
+  "5.4": {
+    "name": "Virtual Link 5.4",
+    "gauss_code": "{1 -2v 3}, {-1 2v -3}",
+    "classical_crossings": [1, 3],
+    "virtual_crossings": [2],
+    "crossing_signs": { "1": 1, "3": 1 },
+    "jones": "-q - q^{-1}",
+    "odd_writhe": 2,
+    "note": "Two-component virtual link"
+  },
+  "5.5": {
+    "name": "Virtual Knot 5.5",
+    "gauss_code": "1v -2 3v -4 5 -1v 2 -3v 4 -5",
+    "classical_crossings": [2, 4, 5],
+    "virtual_crossings": [1, 3],
+    "crossing_signs": { "2": -1, "4": 1, "5": -1 },
+    "jones": "-q^{-2} + q^{-1} - 1 + q - q^2",
+    "odd_writhe": -1,
+    "note": "Virtual knot with alternating virtual and classical crossings"
+  }
+}

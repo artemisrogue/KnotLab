@@ -1,0 +1,4424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knot &amp; Link Explorer</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+:root {
+  --bg: #fafafa;
+  --card-bg: #ffffff;
+  --border: #ddd;
+  --accent: #2171b5;
+  --mirror-accent: #d6604d;
+  --text: #222;
+  --text-muted: #666;
+  --skein-bg: #f8f6f0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+header {
+  background: linear-gradient(135deg, #1a365d 0%, #2171b5 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+header h1 { font-size: 1.6rem; font-weight: 700; }
+header p { font-size: 0.9rem; opacity: 0.85; }
+.controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+.controls button {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.controls button:hover { background: rgba(255,255,255,0.25); }
+
+/* Skein relations banner */
+.skein-relations {
+  background: var(--skein-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 2rem;
+  overflow-x: auto;
+}
+.skein-relations h2 {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+.skein-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.skein-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+.skein-card h3 {
+  font-size: 0.85rem;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.skein-card .katex-display { margin: 0.25rem 0; font-size: 0.85rem; }
+.skein-card p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+/* Knot instances container */
+#instances {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Individual knot instance */
+.knot-instance {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+  margin-top: -1px;
+}
+.instance-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: #f0f4f8;
+  border-bottom: 1px solid var(--border);
+}
+.instance-header select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+  min-width: 200px;
+}
+.instance-header .knot-meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.instance-header .remove-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.25rem;
+}
+.instance-header .remove-btn:hover { color: #d32f2f; }
+
+.instance-body {
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+/* The main data table — 2 rows per knot (original + mirror) */
+.knot-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.knot-table th {
+  background: #f0f4f8;
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-muted);
+  vertical-align: bottom;
+}
+.knot-table td {
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+  text-align: center;
+  vertical-align: top;
+}
+.knot-table td img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.knot-table td img:hover { opacity: 0.85; }
+.knot-table .poly-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  word-break: break-word;
+  line-height: 1.4;
+}
+.knot-table .row-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.4rem 0.5rem;
+  white-space: nowrap;
+  min-width: 60px;
+}
+.knot-table .row-label-orig { background: #e8f0f8; color: var(--accent); }
+.knot-table .row-label-mirror { background: #fbe8e4; color: var(--mirror-accent); }
+
+.knot-table .col-info { width: 14%; min-width: 140px; max-width: 180px; }
+.knot-table .col-diagram { width: 8%; min-width: 80px; }
+.knot-table .col-poly { width: 17%; }
+.knot-table td canvas {
+  max-width: 200px;
+  width: 200px;
+  height: 200px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.knot-table td canvas:hover { opacity: 0.85; }
+.aug-row td { border-top: 2px solid #ccc; }
+
+/* Collapsible long polynomial (details/summary) */
+.poly-collapse {
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+}
+.poly-collapse summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: var(--accent);
+  text-align: center;
+}
+.poly-collapse summary:hover { text-decoration: underline; }
+.poly-collapse .poly-full {
+  margin-top: 0.3rem;
+  word-break: break-word;
+}
+
+/* Rep selector */
+.rep-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  justify-content: center;
+}
+.rep-selector select {
+  padding: 0.15rem 0.25rem;
+  font-size: 0.7rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+.rep-selector label {
+  font-weight: 600;
+}
+
+/* Zeros & poles */
+.zeros-poles {
+  margin-top: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: left;
+}
+.zeros-poles summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: var(--accent);
+  text-align: center;
+}
+.zeros-poles summary:hover { text-decoration: underline; }
+.zp-content { margin-top: 0.3rem; }
+.zp-pole {
+  color: #c62828;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.zp-zero { margin-bottom: 0.15rem; }
+.zp-list {
+  list-style: none;
+  padding-left: 0.3rem;
+  max-height: 120px;
+  overflow-y: auto;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 0.65rem;
+  line-height: 1.5;
+}
+.zp-list li { padding-left: 0.5rem; position: relative; }
+.zp-list li::before { content: '\2022\00a0'; color: var(--accent); }
+
+/* Fullscreen lightbox */
+.lightbox {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.88);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  cursor: zoom-out;
+}
+.lightbox.active { display: flex; }
+.lightbox img {
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.5);
+}
+.lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  opacity: 0.7;
+}
+.lightbox-close:hover { opacity: 1; }
+
+/* Cube vertex neighborhood overlay */
+#cube-vertex-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.88);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+  cursor: zoom-out;
+}
+#cube-vertex-overlay.active { display: flex; }
+#cube-vertex-overlay .cvo-inner {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  max-width: 95vw;
+  max-height: 95vh;
+  overflow: auto;
+  cursor: default;
+}
+
+/* Cobordism 3D overlay */
+#cobordism-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.92);
+  z-index: 10001;
+  justify-content: center;
+  align-items: center;
+}
+#cobordism-overlay.active { display: flex; }
+#cobordism-overlay .cob-inner {
+  position: relative;
+  background: #1a1a2e;
+  border-radius: 12px;
+  width: 94vw; height: 94vh;
+  overflow: hidden;
+  cursor: default;
+}
+#cobordism-overlay .cob-toolbar {
+  position: absolute;
+  top: 0.5rem; left: 0.5rem; right: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+#cobordism-overlay .cob-toolbar > * { pointer-events: auto; }
+#cobordism-overlay canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+#cobordism-overlay .cob-info {
+  color: #aaa;
+  font-size: 0.8rem;
+  font-family: monospace;
+  background: rgba(0,0,0,0.5);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-muted);
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Tab navigation ── */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  background: #1a4a7a;
+  padding: 0 2rem;
+}
+.tab-btn {
+  padding: 0.8rem 1.6rem;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.65);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+.tab-btn:hover { color: #fff; background: rgba(255,255,255,0.08); }
+.tab-btn.active { color: #fff; border-bottom-color: #fff; background: rgba(255,255,255,0.1); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── Cube of Resolutions ── */
+.cor-container { max-width: 1400px; margin: 1.5rem auto; padding: 0 1rem; }
+.cor-controls { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+.cor-controls select, .cor-controls button {
+  padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border); font-size: 0.9rem;
+}
+.cor-controls button { background: var(--accent); color: #fff; border: none; cursor: pointer; font-weight: 600; }
+.cor-controls button:hover { opacity: 0.9; }
+.cor-facts { background: #f0f7ff; border: 1px solid #c8ddf0; border-radius: 8px; padding: 0.6rem 1rem; margin-bottom: 1rem; font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; }
+.cor-cube-container { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+.cor-vertex {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.5rem; text-align: center; width: 180px;
+}
+.cor-vertex canvas { width: 160px; height: 160px; border-radius: 4px; }
+.cor-vertex .label { font-family: monospace; font-size: 0.8rem; font-weight: 700; margin-top: 0.3rem; }
+.cor-vertex .sublabel { font-size: 0.7rem; color: var(--text-muted); }
+.cor-cube-graph { margin: 1.5rem auto; }
+</style>
+<link rel="stylesheet" href="experimental/experimental.css">
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Knot &amp; Link Explorer</h1>
+    <p>Interactive invariant viewer &mdash; Rolfsen table, quantum group representations, domain coloring</p>
+  </div>
+  <div class="controls">
+  </div>
+</header>
+
+<nav class="tab-bar">
+  <button class="tab-btn active" data-tab="invariants" onclick="switchTab('invariants')">Invariants</button>
+  <button class="tab-btn" data-tab="cube" onclick="switchTab('cube')">Cube of Resolutions</button>
+  <button class="tab-btn" data-tab="homological" onclick="switchTab('homological')">Homological</button>
+  <button class="tab-btn" data-tab="khovanov-complex" onclick="switchTab('khovanov-complex')">Khovanov Complex</button>
+  <!-- Virtual Knots tab button removed; container kept -->
+
+  <!-- MOY tab temporarily disabled -->
+  <!-- <button class="tab-btn" data-tab="moy" onclick="switchTab('moy')">MOY / sl_n</button> -->
+</nav>
+
+<div id="tab-invariants" class="tab-content active">
+<!-- Skein relations — appear only once at the top -->
+<div class="skein-relations">
+  <h2>Skein Relations</h2>
+  <div class="skein-grid">
+    <div class="skein-card">
+      <h3>Alexander Polynomial \(\Delta(q)\)</h3>
+      <div class="skein-eq">$$\Delta_{L_+}(q) - \Delta_{L_-}(q) = (q^{1/2} - q^{-1/2})\,\Delta_{L_0}(q)$$</div>
+      <p>Normalized so \(\Delta(\text{unknot}) = 1\). Invariant under mutation. Plotted in variable \(q\).</p>
+    </div>
+    <div class="skein-card">
+      <h3>Jones Polynomial \(V(q)\)</h3>
+      <div class="skein-eq">$$q^{-1} V_{L_+}(q) - q\, V_{L_-}(q) = (q^{1/2} - q^{-1/2})\, V_{L_0}(q)$$</div>
+      <p>Discovered by V. Jones (1984). Distinguishes trefoil from unknot and detects chirality.</p>
+    </div>
+    <div class="skein-card">
+      <h3>HOMFLY-PT \(\mathfrak{sl}(3)\) fund.</h3>
+      <div class="skein-eq">$$q^{3}\, P_{L_+} - q^{-3}\, P_{L_-} = (q - q^{-1})\, P_{L_0}$$</div>
+      <p>Quantum \(\mathfrak{sl}(3)\) invariant, fundamental representation \(\square\). The \(A_2\) Reshetikhin&ndash;Turaev invariant.</p>
+    </div>
+    <div class="skein-card">
+      <h3>HOMFLY-PT \(\mathfrak{sl}(4)\) fund.</h3>
+      <div class="skein-eq">$$q^{4}\, P_{L_+} - q^{-4}\, P_{L_-} = (q - q^{-1})\, P_{L_0}$$</div>
+      <p>Quantum \(\mathfrak{sl}(4)\) invariant, fundamental representation \(\square\). The \(A_3\) Reshetikhin&ndash;Turaev invariant.</p>
+    </div>
+  </div>
+  <p style="margin-top:0.75rem;font-size:0.8rem;color:var(--text-muted)">
+    Plots use standard <strong>domain coloring</strong>: hue&nbsp;=&nbsp;arg&thinsp;f(z),
+    brightness&nbsp;modulated&nbsp;by&nbsp;|f(z)|. The dashed white circle marks&nbsp;|q|&nbsp;=&nbsp;1.
+    Click any plot to view full screen.
+  </p>
+</div>
+
+<div id="instances">
+  <div class="loading" id="loading">Loading knot data...</div>
+</div>
+</div><!-- end tab-invariants -->
+
+<div id="tab-cube" class="tab-content">
+<div class="cor-container">
+  <h2 style="margin-bottom:0.5rem">Cube of Resolutions</h2>
+  <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem">
+    For each crossing in a knot/link diagram, compute the 0-smoothing (A-resolution) and 1-smoothing (B-resolution).
+    The 2<sup>n</sup> vertices of the <em>n</em>-cube correspond to all possible resolution choices. Vertices connected by
+    edges differ by exactly one crossing resolution.
+  </p>
+  <div class="cor-controls">
+    <label><strong>Knot/Link:</strong>
+      <select id="cor-knot-sel" onchange="updateCubeOfResolutions()"></select>
+    </label>
+    <label><strong>Variant:</strong>
+      <select id="cor-variant-sel" onchange="updateCubeOfResolutions()">
+        <option value="original">Original</option>
+        <option value="mirror">Mirror</option>
+      </select>
+    </label>
+  </div>
+  <div id="cor-facts" class="cor-facts" style="display:none"></div>
+  <div id="cor-output"></div>
+</div>
+</div><!-- end tab-cube -->
+
+<div id="tab-homological" class="tab-content"></div>
+<div id="tab-khovanov-complex" class="tab-content"></div>
+<div id="tab-virtual" class="tab-content"></div>
+<div id="tab-moy" class="tab-content"></div>
+
+<!-- Fullscreen lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+  <img id="lightbox-img" src="" alt="Full-size plot">
+</div>
+
+<!-- Cube vertex neighborhood overlay -->
+<div id="cube-vertex-overlay" onclick="if(event.target===this)closeCubeVertexOverlay()"></div>
+<div id="cobordism-overlay" onclick="if(event.target===this)closeCobordismOverlay()"></div>
+
+<footer>
+  Knot &amp; Link Explorer &mdash; Data from the Knot Atlas (katlas.org) Take Home Database.
+  Domain coloring: hue = arg, lightness &prop; |f|. Mirror polynomials: \(P(q) \to P(q^{-1})\).
+</footer>
+
+<script>
+let KNOT_DATA = {};
+let LINK_DATA = {};
+let CACHE_TERMS = null;   // pre-parsed polynomial terms + derived + plot paths
+let CACHE_ZEROS = null;   // pre-computed zeros & poles
+let CACHE_FACTORS = null; // polynomial factorizations
+let instanceCount = 0;
+const mirrorInstances = new Set();
+
+const ALGEBRA_LABELS = {
+  'A1': 'sl(2)', 'A2': 'sl(3)', 'A3': 'sl(4)', 'A4': 'sl(5)', 'A5': 'sl(6)', 'A6': 'sl(7)',
+  'B2': 'so(5)', 'B3': 'so(7)', 'B4': 'so(9)', 'B5': 'so(11)',
+  'C3': 'sp(6)', 'C4': 'sp(8)', 'C5': 'sp(10)',
+  'D4': 'so(8)',
+  'G2': 'G\u2082',
+};
+
+// Knot group presentations (Wirtinger) for Rolfsen knots ≤ 7 crossings
+const KNOT_GROUPS = {
+  '0_1': { generators: '—', relations: '—', note: 'Trivial (unknot): \\(\\pi_1 \\cong \\mathbb{Z}\\)' },
+  '3_1': { generators: 'a, b', relations: 'aba = bab', note: 'Braid group \\(B_3\\); \\(\\pi_1 \\cong \\langle a,b \\mid aba=bab \\rangle\\)' },
+  '4_1': { generators: 'a, b', relations: 'a b^{-1} a^{-1} b a = b a b^{-1} a^{-1} b', note: '\\(\\pi_1 \\cong \\langle a,b \\mid ab^{-1}a^{-1}ba = bab^{-1}a^{-1}b \\rangle\\)' },
+  '5_1': { generators: 'a, b', relations: 'abab^{-1}a^{-1} = bab^{-1}a^{-1}b^{-1}', note: 'Torus knot \\(T(5,2)\\): \\(\\pi_1 \\cong \\langle a,b \\mid a^5 = b^2 \\rangle\\)' },
+  '5_2': { generators: 'a, b, c', relations: 'bcb^{-1} = a,\\; cac^{-1} = b', note: '\\(\\pi_1 \\cong \\langle a,b,c \\mid bcb^{-1}=a,\\, cac^{-1}=b \\rangle\\)' },
+  '6_1': { generators: 'a, b, c', relations: 'bab^{-1} = c,\\; aca^{-1}c^{-1}a = b', note: '' },
+  '6_2': { generators: 'a, b, c', relations: 'bcb^{-1}c^{-1}b = a,\\; cac^{-1} = b', note: '' },
+  '6_3': { generators: 'a, b, c', relations: 'bab^{-1} = c,\\; bcb^{-1}c^{-1}bc = a', note: '' },
+  '7_1': { generators: 'a, b', relations: 'a^7 = b^2', note: 'Torus knot \\(T(7,2)\\): \\(\\pi_1 \\cong \\langle a,b \\mid a^7 = b^2 \\rangle\\)' },
+  '7_2': { generators: 'a, b, c', relations: 'bcb^{-1} = a,\\; c^{-1}a c a^{-1} c = b', note: '' },
+  '7_3': { generators: 'a, b, c', relations: 'bab^{-1}a^{-1}ba = c,\\; cbc^{-1} = a', note: '' },
+  '7_4': { generators: 'a, b, c', relations: 'bab^{-1} = c,\\; c^{-1}bcb^{-1}c = a', note: '' },
+  '7_5': { generators: 'a, b, c', relations: 'bcb^{-1}c^{-1}b = a,\\; c^{-1}ac = b', note: '' },
+  '7_6': { generators: 'a, b, c', relations: 'b^{-1}cbc^{-1}b = a,\\; cac^{-1} = b', note: '' },
+  '7_7': { generators: 'a, b, c', relations: 'bab^{-1} = c,\\; b^{-1}c^{-1}bcb^{-1}cb = a', note: '' },
+};
+
+/**
+ * Wrap a KaTeX polynomial string in a collapsible <details> if it has > 20 terms.
+ * terms: parsed term array (used only for counting), latexInner: the full \\(...\\) HTML.
+ * Returns HTML string — either the polynomial directly or wrapped in a <details>.
+ */
+function collapsiblePoly(terms, latexInner) {
+  if (!terms || terms.length <= 20) return `<div class="poly-text">${latexInner}</div>`;
+  return `<div class="poly-text"><details class="poly-collapse"><summary>Polynomial (${terms.length} terms)</summary><div class="poly-full">${latexInner}</div></details></div>`;
+}
+
+/**
+ * Like collapsiblePoly but returns only the inner content (no wrapping div).
+ * Use when the outer div already exists with an id attribute.
+ */
+function collapsiblePolyInner(terms, latexInner) {
+  if (!terms || terms.length <= 20) return latexInner;
+  return `<details class="poly-collapse"><summary>Polynomial (${terms.length} terms)</summary><div class="poly-full">${latexInner}</div></details>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  CACHE LOOKUP HELPERS
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Map an app column identifier to a cache invariant key.
+ * col: 'alex', 'A1', 'A2', 'A3', or custom algebra key
+ * rep: representation string like '1', '2,0', '1,0,0'
+ */
+function cacheInvKey(col, rep) {
+  if (col === 'alex') return 'alexander';
+  if (col === 'A1') return rep && rep !== '1' ? `A1/${rep}` : 'jones';
+  if (col === 'A2') return `A2/${rep || '1,0'}`;
+  if (col === 'A3') return `A3/${rep || '1,0,0'}`;
+  // Custom / other algebras
+  return `${col}/${rep || ''}`;
+}
+
+/**
+ * Get cached terms for a knot/link + invariant.
+ * Returns the cached entry {terms, mirror, radius, derived, plots} or null.
+ */
+function getCached(name, col, rep) {
+  if (!CACHE_TERMS || !CACHE_TERMS[name]) return null;
+  const key = cacheInvKey(col, rep);
+  return CACHE_TERMS[name][key] || null;
+}
+
+/**
+ * Get cached zeros/poles for a knot/link + invariant + derived key.
+ * derivedKey: 'original', 'mirror', 'sum', 'fmg', 'gmf', 'prod', 'fog', 'gof'
+ */
+function getCachedZP(name, col, rep, derivedKey) {
+  if (!CACHE_ZEROS || !CACHE_ZEROS[name]) return null;
+  const key = cacheInvKey(col, rep);
+  const entry = CACHE_ZEROS[name][key];
+  if (!entry) return null;
+  return entry[derivedKey || 'original'] || null;
+}
+
+/**
+ * Get cached factorization LaTeX for a knot/link + invariant + derived key.
+ */
+function getCachedFactorLatex(name, col, rep, derivedKey) {
+  if (!CACHE_FACTORS || !CACHE_FACTORS[name]) return null;
+  const key = cacheInvKey(col, rep);
+  const entry = CACHE_FACTORS[name][key];
+  if (!entry || !entry.latex) return null;
+  return entry.latex[derivedKey || 'original'] || null;
+}
+
+/**
+ * Get cached plot image path. Returns path string or null.
+ */
+function getCachedPlotPath(name, col, rep, plotKey) {
+  const cached = getCached(name, col, rep);
+  if (!cached || !cached.plots) return null;
+  return cached.plots[plotKey] || null;
+}
+
+/**
+ * Draw a domain coloring: use cached image if available, else compute client-side.
+ * canvasId: the canvas element ID
+ * terms: parsed polynomial terms (for fallback computation)
+ * knotName: knot/link name for cache lookup
+ * col: column identifier for cache lookup
+ * rep: representation string for cache lookup
+ * plotKey: 'original', 'mirror', 'sum', etc.
+ * radius: plot radius
+ * mirror: whether to evaluate at 1/q (only used in fallback)
+ */
+function drawCachedOrCompute(canvasId, terms, knotName, col, rep, plotKey, radius, mirror) {
+  const plotPath = getCachedPlotPath(knotName, col, rep, plotKey);
+  if (plotPath) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = 400;
+    canvas.height = 400;
+    const img = new window.Image();
+    img.onload = function() { ctx.drawImage(img, 0, 0, 400, 400); };
+    img.onerror = function() { if (terms) drawDomainColoring(terms, canvasId, radius, mirror); };
+    img.src = plotPath;
+  } else if (terms) {
+    drawDomainColoring(terms, canvasId, radius, mirror);
+  }
+}
+
+/**
+ * Build HTML for factorization display (collapsible).
+ */
+function buildFactorizationHtml(knotName, col, rep, derivedKey, idPrefix) {
+  const latex = getCachedFactorLatex(knotName, col, rep, derivedKey || 'original');
+  if (!latex) return '';
+  const id = `${idPrefix}-factor`;
+  return `<details class="poly-collapse" style="margin-top:0.2rem">
+    <summary style="font-size:0.7rem">Factorization <span style="cursor:help;color:#888" title="&#934;_n(q) = n-th cyclotomic polynomial, the minimal polynomial whose roots are the primitive n-th roots of unity. Cyclotomic factors in quantum invariants reflect representation-theoretic structure at roots of unity.">&#9432;</span></summary>
+    <div class="poly-full" style="font-size:0.75rem">\\(${latex}\\)</div>
+  </details>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  A-POLYNOMIAL (2-variable) PARSER & NEWTON POLYGON
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Parse A-polynomial LaTeX (in L, M) into list of {c, eL, eM} terms.
+ * Handles: L^2 M^4, M^6+L, L(-M^8+M^6+...), etc.
+ */
+function parseAPolyTerms(latex) {
+  if (!latex || latex.trim() === '') return null;
+  let s = latex.trim();
+  s = s.replace(/\\left/g, '').replace(/\\right/g, '');
+  // Strip escaped parens \( \) -> ( )
+  s = s.replace(/\\\(/g, '(').replace(/\\\)/g, ')');
+
+  // Parse single-variable terms like "-M^8+M^6+2 M^4+M^2-1"
+  function parseSimpleTerms(str, varName) {
+    const terms = [];
+    let s2 = str.replace(/\s+/g, ' ').trim();
+    s2 = s2.replace(/([^({+\-])\s*-/g, '$1+-');
+    if (s2.startsWith('+')) s2 = s2.substring(1);
+    const parts = s2.split('+').filter(p => p.trim());
+    for (let part of parts) {
+      part = part.trim();
+      if (!part) continue;
+      let sign = 1;
+      if (part.startsWith('-')) { sign = -1; part = part.substring(1).trim(); }
+      const varPat = new RegExp('(\\d*)\\s*' + varName + '\\^\\{?(-?\\d+)\\}?');
+      const vm = varPat.exec(part);
+      if (vm) {
+        const c = vm[1] ? parseInt(vm[1]) : 1;
+        const e = parseInt(vm[2]);
+        terms.push({ c: sign * c, e });
+      } else if (part.includes(varName)) {
+        const cm = part.match(/^(\d*)\s*/);
+        const c = cm && cm[1] ? parseInt(cm[1]) : 1;
+        terms.push({ c: sign * c, e: 1 });
+      } else {
+        const val = parseInt(part) || 1;
+        terms.push({ c: sign * val, e: 0 });
+      }
+    }
+    return terms;
+  }
+
+  // Parse raw L^a M^b terms
+  function parseLMTerms(str) {
+    const terms = [];
+    let s2 = str.replace(/\s+/g, ' ').trim();
+    if (!s2) return terms;
+    s2 = s2.replace(/([^({+\-])\s*-/g, '$1+-');
+    if (s2.startsWith('+')) s2 = s2.substring(1);
+    const parts = s2.split('+').filter(p => p.trim());
+    for (let part of parts) {
+      part = part.trim();
+      if (!part) continue;
+      let sign = 1;
+      if (part.startsWith('-')) { sign = -1; part = part.substring(1).trim(); }
+      let c = 1, eL = 0, eM = 0;
+      // Extract leading coefficient
+      const coeffMatch = part.match(/^(\d+)\s*/);
+      if (coeffMatch && part.substring(coeffMatch[0].length).match(/^[LM]/)) {
+        c = parseInt(coeffMatch[1]);
+        part = part.substring(coeffMatch[0].length).trim();
+      } else if (coeffMatch && !part.substring(coeffMatch[0].length).match(/^[_a-zA-Z]/)) {
+        c = parseInt(coeffMatch[1]);
+        part = part.substring(coeffMatch[0].length).trim();
+      }
+      const lMatch = part.match(/L\^\{?(-?\d+)\}?/);
+      if (lMatch) { eL = parseInt(lMatch[1]); }
+      else if (part.includes('L')) { eL = 1; }
+      const mMatch = part.match(/M\^\{?(-?\d+)\}?/);
+      if (mMatch) { eM = parseInt(mMatch[1]); }
+      else if (part.includes('M')) { eM = 1; }
+      if (!part.includes('L') && !part.includes('M') && coeffMatch) {
+        c = parseInt(coeffMatch[1]);
+      }
+      terms.push({ c: sign * c, eL, eM });
+    }
+    return terms;
+  }
+
+  // Expand L^n(...) products
+  const allTerms = [];
+  let remaining = s;
+  const prodPat = /([+-]?\s*)(\d*)\s*L\^?\{?(\d*)\}?\s*\(([^)]+)\)/g;
+  let match, lastIdx = 0;
+  const pieces = [];
+  while ((match = prodPat.exec(remaining)) !== null) {
+    if (match.index > lastIdx) {
+      pieces.push({ type: 'raw', text: remaining.substring(lastIdx, match.index) });
+    }
+    const sign = match[1].trim() === '-' ? -1 : 1;
+    const outerCoeff = match[2] ? parseInt(match[2]) : 1;
+    const lExp = match[3] ? parseInt(match[3]) : 1;
+    const inner = match[4];
+    pieces.push({ type: 'product', sign, outerCoeff, lExp, inner });
+    lastIdx = match.index + match[0].length;
+  }
+  if (lastIdx < remaining.length) {
+    pieces.push({ type: 'raw', text: remaining.substring(lastIdx) });
+  }
+  for (const p of pieces) {
+    if (p.type === 'product') {
+      const innerTerms = parseSimpleTerms(p.inner, 'M');
+      for (const t of innerTerms) {
+        allTerms.push({ c: p.sign * p.outerCoeff * t.c, eL: p.lExp, eM: t.e });
+      }
+    } else {
+      for (const t of parseLMTerms(p.text)) allTerms.push(t);
+    }
+  }
+  return allTerms.length > 0 ? allTerms : null;
+}
+
+/**
+ * Draw the Newton polygon of an A-polynomial on a canvas.
+ * Newton polygon = convex hull of exponent pairs (eM, eL).
+ */
+function drawNewtonPolygon(terms, canvasId) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !terms || terms.length === 0) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width || 400, H = canvas.height || 400;
+
+  // Collect unique lattice points
+  const pointMap = {};
+  for (const t of terms) {
+    const key = t.eM + ',' + t.eL;
+    if (!pointMap[key]) pointMap[key] = { x: t.eM, y: t.eL, c: 0 };
+    pointMap[key].c += t.c;
+  }
+  const points = Object.values(pointMap).filter(p => p.c !== 0);
+  if (points.length === 0) return;
+
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  for (const p of points) {
+    minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+    minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+  }
+  const pad = 1;
+  minX -= pad; maxX += pad; minY -= pad; maxY += pad;
+  const rangeX = maxX - minX || 1;
+  const rangeY = maxY - minY || 1;
+  const margin = Math.round(W * 0.1);
+  const plotW = W - 2 * margin, plotH = H - 2 * margin;
+  const scale = Math.min(plotW / rangeX, plotH / rangeY);
+
+  function toCanvas(px, py) {
+    return [
+      margin + (px - minX) * scale + (plotW - rangeX * scale) / 2,
+      H - margin - (py - minY) * scale - (plotH - rangeY * scale) / 2
+    ];
+  }
+
+  // Background
+  ctx.fillStyle = '#fafafa'; ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = '#e8e8e8'; ctx.lineWidth = 0.5;
+  for (let x = Math.ceil(minX); x <= Math.floor(maxX); x++) {
+    const [cx] = toCanvas(x, 0);
+    ctx.beginPath(); ctx.moveTo(cx, margin); ctx.lineTo(cx, H - margin); ctx.stroke();
+  }
+  for (let y = Math.ceil(minY); y <= Math.floor(maxY); y++) {
+    const [, cy] = toCanvas(0, y);
+    ctx.beginPath(); ctx.moveTo(margin, cy); ctx.lineTo(W - margin, cy); ctx.stroke();
+  }
+
+  // Axes
+  const [ox, oy] = toCanvas(0, 0);
+  ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1;
+  if (ox >= margin && ox <= W - margin) {
+    ctx.beginPath(); ctx.moveTo(ox, margin); ctx.lineTo(ox, H - margin); ctx.stroke();
+  }
+  if (oy >= margin && oy <= H - margin) {
+    ctx.beginPath(); ctx.moveTo(margin, oy); ctx.lineTo(W - margin, oy); ctx.stroke();
+  }
+
+  // Convex hull (Graham scan)
+  if (points.length >= 3) {
+    const sorted = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
+    const cross = (O, A, B) => (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
+    const lower = [];
+    for (const p of sorted) {
+      while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) lower.pop();
+      lower.push(p);
+    }
+    const upper = [];
+    for (let i = sorted.length - 1; i >= 0; i--) {
+      const p = sorted[i];
+      while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) upper.pop();
+      upper.push(p);
+    }
+    const hull = lower.slice(0, -1).concat(upper.slice(0, -1));
+
+    ctx.fillStyle = 'rgba(66, 133, 244, 0.12)';
+    ctx.beginPath();
+    const [hx0, hy0] = toCanvas(hull[0].x, hull[0].y);
+    ctx.moveTo(hx0, hy0);
+    for (let i = 1; i < hull.length; i++) {
+      const [hx, hy] = toCanvas(hull[i].x, hull[i].y);
+      ctx.lineTo(hx, hy);
+    }
+    ctx.closePath(); ctx.fill();
+
+    ctx.strokeStyle = 'rgba(66, 133, 244, 0.6)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(hx0, hy0);
+    for (let i = 1; i < hull.length; i++) {
+      const [hx, hy] = toCanvas(hull[i].x, hull[i].y);
+      ctx.lineTo(hx, hy);
+    }
+    ctx.closePath(); ctx.stroke();
+  } else if (points.length === 2) {
+    ctx.strokeStyle = 'rgba(66, 133, 244, 0.6)'; ctx.lineWidth = 2;
+    const [x1, y1] = toCanvas(points[0].x, points[0].y);
+    const [x2, y2] = toCanvas(points[1].x, points[1].y);
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  }
+
+  // Lattice points with coefficient labels
+  const ptR = Math.round(W / 60);
+  const smFont = Math.round(W / 30) + 'px sans-serif';
+  for (const p of points) {
+    const [cx, cy] = toCanvas(p.x, p.y);
+    ctx.fillStyle = '#1a73e8';
+    ctx.beginPath(); ctx.arc(cx, cy, ptR, 0, 2 * Math.PI); ctx.fill();
+    if (Math.abs(p.c) !== 1 || (p.x === 0 && p.y === 0)) {
+      ctx.fillStyle = '#333'; ctx.font = smFont; ctx.textAlign = 'center';
+      ctx.fillText(p.c, cx, cy - ptR - 3);
+    }
+  }
+
+  // Labels
+  const labelFont = Math.round(W / 28) + 'px sans-serif';
+  const titleFont = 'bold ' + Math.round(W / 25) + 'px sans-serif';
+  ctx.fillStyle = '#666'; ctx.font = labelFont; ctx.textAlign = 'center';
+  ctx.fillText('M exponent', W / 2, H - 4);
+  ctx.save(); ctx.translate(10, H / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('L exponent', 0, 0); ctx.restore();
+
+  ctx.fillStyle = '#333'; ctx.font = titleFont; ctx.textAlign = 'center';
+  ctx.fillText('Newton Polygon', W / 2, Math.round(W / 20));
+
+  // Tick labels
+  const tickFont = Math.round(W / 35) + 'px sans-serif';
+  ctx.fillStyle = '#888'; ctx.font = tickFont; ctx.textAlign = 'center';
+  for (let x = Math.ceil(minX); x <= Math.floor(maxX); x++) {
+    const [cx] = toCanvas(x, minY);
+    ctx.fillText(x, cx, H - margin + Math.round(W / 28));
+  }
+  ctx.textAlign = 'right';
+  for (let y = Math.ceil(minY); y <= Math.floor(maxY); y++) {
+    const [, cy] = toCanvas(minX, y);
+    ctx.fillText(y, margin - 4, cy + 4);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  CLIENT-SIDE DOMAIN COLORING ENGINE
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Parse a KnotAtlas LaTeX polynomial string into a list of {coeff, exp} terms.
+ * Handles forms like: q^{24}-q^{20}+3 q^{2}+1+q^{-2}+ q^{-4}
+ * Returns array of {c: number, e: number} where polynomial = sum c * q^e
+ */
+function parsePolyTerms(latexStr) {
+  if (!latexStr || latexStr.trim() === '' || latexStr.trim() === '1') {
+    return latexStr && latexStr.trim() === '1' ? [{c: 1, e: 0}] : null;
+  }
+  let s = latexStr.trim();
+
+  // Remove \textrm{...}, \mathrm{...}
+  s = s.replace(/\\textrm\{[^}]*\}/g, '');
+  s = s.replace(/\\mathrm\{[^}]*\}/g, '');
+
+  // Handle \sqrt{q} -> q^{0.5}
+  s = s.replace(/\\sqrt\{q\}/g, 'q^{0.5}');
+
+  // Handle fractional exponents q^{\frac{n}{m}} -> q^{n/m as decimal}
+  s = s.replace(/q\^\{\\frac\{([^}]+)\}\{([^}]+)\}\}/g, (_, n, d) => {
+    return `q^{${parseFloat(n)/parseFloat(d)}}`;
+  });
+
+  // Handle q^{n/m} -> q^{decimal}
+  s = s.replace(/q\^\{(-?\d+)\/(\d+)\}/g, (_, n, d) => {
+    return `q^{${parseFloat(n)/parseFloat(d)}}`;
+  });
+
+  // Tokenise into terms by splitting on + and - while keeping sign
+  // First normalise whitespace
+  s = s.replace(/\s+/g, ' ');
+
+  const terms = [];
+  // Regex to match each term: optional sign, optional integer coeff, optional q^{exp} or q or 1/q^{exp}
+  // Strategy: split by + or - at term boundaries, then parse each term
+  // Insert '+' before '-' that is a term separator (not inside braces)
+  let normalized = '';
+  let braceDepth = 0;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === '{') braceDepth++;
+    else if (ch === '}') braceDepth--;
+    if (braceDepth === 0 && (ch === '+' || ch === '-') && i > 0) {
+      normalized += '|' + ch; // separator
+    } else {
+      normalized += ch;
+    }
+  }
+
+  const rawTerms = normalized.split('|').map(t => t.trim()).filter(t => t !== '');
+
+  for (const term of rawTerms) {
+    const parsed = parseSingleTerm(term.trim());
+    if (parsed !== null) terms.push(parsed);
+  }
+
+  return terms.length > 0 ? terms : null;
+}
+
+/**
+ * Extract consecutive {content} groups from a string starting at pos.
+ * Returns array of content strings.
+ */
+function extractBraceGroups(s, pos) {
+  const groups = [];
+  let i = pos;
+  while (i < s.length && groups.length < 2) {
+    if (s[i] !== '{') { i++; continue; }
+    let depth = 1;
+    let start = i + 1;
+    i++;
+    while (i < s.length && depth > 0) {
+      if (s[i] === '{') depth++;
+      else if (s[i] === '}') depth--;
+      i++;
+    }
+    groups.push(s.substring(start, i - 1));
+  }
+  return groups;
+}
+
+function parseSingleTerm(t) {
+  if (!t || t.trim() === '') return null;
+  t = t.trim();
+
+  // Extract leading sign
+  let sign = 1;
+  if (t.startsWith('-')) { sign = -1; t = t.substring(1).trim(); }
+  else if (t.startsWith('+')) { t = t.substring(1).trim(); }
+
+  // Handle \frac{num}{den} — brace-aware extraction
+  if (t.startsWith('\\frac{') || t.match(/^\d+\s*\\frac\{/)) {
+    const leadingDigits = t.match(/^(\d*)\s*\\frac/);
+    const outerCoeff = (leadingDigits && leadingDigits[1] !== '') ? parseFloat(leadingDigits[1]) : 1;
+    // Extract brace groups manually to handle nested braces
+    const fracStart = t.indexOf('\\frac{');
+    const groups = extractBraceGroups(t, fracStart + 5);
+    if (groups && groups.length === 2) {
+      const num = groups[0].trim();
+      const den = groups[1].trim();
+      const numVal = (num === '' || num === '1') ? 1 : parseFloat(num);
+      let denExp = 0;
+      const denExpMatch = den.match(/q\^\{([^}]+)\}/);
+      if (denExpMatch) denExp = parseFloat(denExpMatch[1]);
+      else if (den === 'q') denExp = 1;
+      return { c: sign * outerCoeff * numVal, e: -denExp };
+    }
+  }
+
+  // q^{exp}
+  const qExpMatch = t.match(/^(\d*)\s*q\^\{([^}]+)\}$/);
+  if (qExpMatch) {
+    const coeff = qExpMatch[1] === '' ? 1 : parseFloat(qExpMatch[1]);
+    return { c: sign * coeff, e: parseFloat(qExpMatch[2]) };
+  }
+
+  // q^exp (no braces, single digit)
+  const qExpNoBrace = t.match(/^(\d*)\s*q\^(\d+)$/);
+  if (qExpNoBrace) {
+    const coeff = qExpNoBrace[1] === '' ? 1 : parseFloat(qExpNoBrace[1]);
+    return { c: sign * coeff, e: parseFloat(qExpNoBrace[2]) };
+  }
+
+  // Just q (exponent 1)
+  const qOnly = t.match(/^(\d*)\s*q$/);
+  if (qOnly) {
+    const coeff = qOnly[1] === '' ? 1 : parseFloat(qOnly[1]);
+    return { c: sign * coeff, e: 1 };
+  }
+
+  // Constant (just a number)
+  const constMatch = t.match(/^(\d+\.?\d*)$/);
+  if (constMatch) {
+    return { c: sign * parseFloat(constMatch[1]), e: 0 };
+  }
+
+  return null;
+}
+
+/**
+ * Evaluate polynomial (as terms) at a complex number q = {re, im}.
+ * Returns {re, im}.
+ */
+function evalPoly(terms, qRe, qIm) {
+  let sumRe = 0, sumIm = 0;
+  for (const {c, e} of terms) {
+    // q^e via polar form
+    const r = Math.sqrt(qRe * qRe + qIm * qIm);
+    const theta = Math.atan2(qIm, qRe);
+    const rPow = Math.pow(r, e);
+    const ang = e * theta;
+    sumRe += c * rPow * Math.cos(ang);
+    sumIm += c * rPow * Math.sin(ang);
+  }
+  return { re: sumRe, im: sumIm };
+}
+
+/**
+ * Add two polynomials (merge terms with same exponent).
+ */
+function addTerms(a, b) {
+  if (!a) return b; if (!b) return a;
+  const map = new Map();
+  for (const {c, e} of a) map.set(e, (map.get(e) || 0) + c);
+  for (const {c, e} of b) map.set(e, (map.get(e) || 0) + c);
+  const out = [];
+  for (const [e, c] of map) if (Math.abs(c) > 1e-12) out.push({c, e});
+  out.sort((x, y) => y.e - x.e);
+  return out;
+}
+
+/**
+ * Subtract two polynomials: a - b.
+ */
+function subtractTerms(a, b) {
+  if (!b) return a; if (!a) return b.map(({c, e}) => ({c: -c, e}));
+  const map = new Map();
+  for (const {c, e} of a) map.set(e, (map.get(e) || 0) + c);
+  for (const {c, e} of b) map.set(e, (map.get(e) || 0) - c);
+  const out = [];
+  for (const [e, c] of map) if (Math.abs(c) > 1e-12) out.push({c, e});
+  out.sort((x, y) => y.e - x.e);
+  return out;
+}
+
+/**
+ * Multiply two polynomials (convolve terms).
+ */
+function multiplyTerms(a, b) {
+  if (!a || !b) return null;
+  const map = new Map();
+  for (const t1 of a) for (const t2 of b) {
+    const e = t1.e + t2.e;
+    map.set(e, (map.get(e) || 0) + t1.c * t2.c);
+  }
+  const out = [];
+  for (const [e, c] of map) if (Math.abs(c) > 1e-12) out.push({c, e});
+  out.sort((x, y) => y.e - x.e);
+  return out;
+}
+
+/**
+ * Raise polynomial to a non-negative integer power.
+ */
+function powerTerms(terms, n) {
+  if (n === 0) return [{c: 1, e: 0}];
+  if (n === 1) return terms;
+  let result = [{c: 1, e: 0}];
+  for (let i = 0; i < n; i++) result = multiplyTerms(result, terms);
+  return result;
+}
+
+/**
+ * Compose f(g(q)): substitute g for q in f.
+ * Returns {num, den} as term arrays (rational function).
+ * num/den = f(g(q)) where den = g(q)^(max negative exponent in f).
+ */
+function composeTerms(f, g) {
+  if (!f || !g) return null;
+  let minE = 0;
+  for (const t of f) if (t.e < minE) minE = t.e;
+  const shift = -minE; // multiply through by g^shift to clear negative powers
+  // f(g) * g^shift = sum_i c_i * g^(e_i + shift)
+  let num = [];
+  for (const {c, e} of f) {
+    const power = e + shift;
+    const gPow = powerTerms(g, power);
+    const scaled = gPow.map(t => ({c: t.c * c, e: t.e}));
+    num = addTerms(num, scaled);
+  }
+  const den = shift > 0 ? powerTerms(g, shift) : [{c: 1, e: 0}];
+  return { num, den };
+}
+
+/**
+ * Normalize LaTeX polynomial: convert sqrt notation to exponent notation.
+ */
+function formatGaussCode(gc) {
+  if (!gc) return '';
+  const tokens = gc.trim().split(/[\s,]+/).filter(t => t);
+  return '[' + tokens.join(', ') + ']';
+}
+
+function formatPDCode(pd) {
+  if (!pd || pd.length === 0) return '';
+  return pd.map(x => '[' + x.join(',') + ']').join(' ');
+}
+
+function formatDTCode(dt) {
+  if (!dt) return '';
+  return dt.trim();
+}
+
+function buildSelectOptions(selectedKey) {
+  let html = '<optgroup label="Knots">';
+  for (const k of Object.keys(KNOT_DATA)) {
+    const d = KNOT_DATA[k];
+    html += `<option value="${k}" ${k===selectedKey?'selected':''}>${k} (${d.crossings} cr.)</option>`;
+  }
+  html += '</optgroup>';
+  const linkKeys = Object.keys(LINK_DATA);
+  if (linkKeys.length > 0) {
+    html += '<optgroup label="Links">';
+    for (const k of linkKeys) {
+      const d = LINK_DATA[k];
+      html += `<option value="${k}" ${k===selectedKey?'selected':''}>${k} (${d.crossings} cr.)</option>`;
+    }
+    html += '</optgroup>';
+  }
+  return html;
+}
+
+function buildIdentifiersHtml(d, isMirror) {
+  const parts = [];
+  const gc = isMirror ? d.mirror_gauss_code : d.gauss_code;
+  const pd = d.pd_code;
+  const dt = d.dt_code;
+  const braid = isMirror ? d.mirror_braid_word : d.braid_word;
+  const sty = `font-size:0.6rem;color:${isMirror ? '#c99' : '#999'};white-space:nowrap;margin-top:1px;cursor:help`;
+  if (gc) parts.push(`<div style="${sty}" title="Extended Gauss code: traverse the knot following orientation. Each crossing is visited twice: positive crossing number means you cross OVER, negative means you cross UNDER. The sign encodes over/under status at each visit.">GC: ${formatGaussCode(gc)}</div>`);
+  if (pd && !isMirror) parts.push(`<div style="${sty}" title="Planar Diagram (PD) code: each crossing [a,b,c,d] lists the four arc labels encountered going counterclockwise from the incoming under-strand. 0-resolution connects a↔d and b↔c; 1-resolution connects a↔b and c↔d.">PD: ${formatPDCode(pd)}</div>`);
+  if (pd && isMirror) parts.push(`<div style="${sty}" title="Mirror PD code: obtained by swapping over/under at each crossing, i.e. [a,b,c,d] → [a,d,c,b].">PD: ${formatPDCode(pd.map(([a,b,c,dd]) => [a,dd,c,b]))}</div>`);
+  if (dt && !isMirror) parts.push(`<div style="${sty}" title="Dowker-Thistlethwaite (DT) notation: a compact encoding where crossings are numbered 1..2n along the knot. Each odd number maps to its paired even number; the sign of the even number encodes over/under.">DT: ${formatDTCode(dt)}</div>`);
+  if (braid) parts.push(`<div style="${sty}" title="Braid word: sequence of Artin generators σᵢ. Positive values mean σᵢ (strand i crosses over i+1), negative means σᵢ⁻¹ (strand i crosses under i+1).">Braid: [${braid.join(', ')}]</div>`);
+  return parts.join('');
+}
+
+function normalizeSqrtLatex(latex) {
+  if (!latex) return latex;
+  return latex
+    .replace(/\\sqrt\{q\}/g, 'q^{1/2}')
+    .replace(/\\frac\{1\}\{q\^?\{?\\frac\{(\d+)\}\{2\}\}?\}/g, (_, n) => `q^{-${n}/2}`)
+    .replace(/q\^\{?\\frac\{(\d+)\}\{2\}\}?/g, (_, n) => `q^{${n}/2}`)
+    .replace(/\\frac\{1\}\{q\^\{(\d+)\/2\}\}/g, (_, n) => `q^{-${n}/2}`);
+}
+
+/**
+ * Format polynomial terms as LaTeX string.
+ */
+function termsToLatex(terms) {
+  if (!terms || terms.length === 0) return '0';
+  let s = '';
+  for (let i = 0; i < terms.length; i++) {
+    const {c, e} = terms[i];
+    const absC = Math.abs(c);
+    const sign = c < 0 ? '-' : (i > 0 ? '+' : '');
+    let coefStr = '';
+    if (Math.abs(absC - Math.round(absC)) < 1e-8) {
+      const ic = Math.round(absC);
+      if (e === 0 || ic !== 1) coefStr = '' + ic;
+    } else {
+      coefStr = absC.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
+    }
+    let varStr = '';
+    if (e === 1) varStr = 'q';
+    else if (e === -1) varStr = 'q^{-1}';
+    else if (e !== 0 && e % 1 !== 0) {
+      // Fractional exponent: display as q^{n/2}
+      const num = Math.round(e * 2);
+      varStr = `q^{${num}/2}`;
+    }
+    else if (e !== 0) varStr = 'q^{' + e + '}';
+    if (e !== 0 && coefStr === '') coefStr = '';
+    const term = (coefStr || (e === 0 ? '0' : '')) + varStr;
+    s += sign + term;
+  }
+  return s || '0';
+}
+
+/**
+ * Draw domain coloring using an arbitrary evaluation function.
+ * evalFn: (qRe, qIm) => {re, im}
+ */
+function drawDomainColoringFn(evalFn, canvasId, radius) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
+  const size = 400;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const imgData = ctx.createImageData(size, size);
+  const data = imgData.data;
+  const R = radius || 2.5;
+
+  for (let py = 0; py < size; py++) {
+    for (let px = 0; px < size; px++) {
+      const qRe = (px / (size - 1)) * 2 * R - R;
+      const qIm = R - (py / (size - 1)) * 2 * R;
+
+      const w = evalFn(qRe, qIm);
+      const mag = Math.sqrt(w.re * w.re + w.im * w.im);
+      const arg = Math.atan2(w.im, w.re);
+
+      const hue = ((arg / (2 * Math.PI)) % 1 + 1) % 1;
+      let L = 1.0 - 1.0 / (1.0 + Math.pow(mag, 0.3));
+      const ring = 0.5 * (1.0 + Math.cos(2 * Math.PI * Math.log2(mag + 1e-12)));
+      L = L * (0.85 + 0.15 * ring);
+      const S = mag < 1e-10 ? 0 : 0.9;
+
+      const [r, g, b] = hlsToRgb(hue, L, S);
+      const idx = (py * size + px) * 4;
+      data[idx] = Math.round(r * 255);
+      data[idx + 1] = Math.round(g * 255);
+      data[idx + 2] = Math.round(b * 255);
+      data[idx + 3] = 255;
+    }
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+
+  // Draw unit circle
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  const centerX = ((0 + R) / (2 * R)) * (size - 1);
+  const centerY = ((R - 0) / (2 * R)) * (size - 1);
+  const rPx = (1 / (2 * R)) * (size - 1);
+  ctx.arc(centerX, centerY, rPx, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(0, centerY); ctx.lineTo(size, centerY);
+  ctx.moveTo(centerX, 0); ctx.lineTo(centerX, size);
+  ctx.stroke();
+}
+
+/**
+ * HLS to RGB (for domain coloring).
+ */
+function hlsToRgb(h, l, s) {
+  if (s === 0) return [l, l, l];
+  const hk = h - Math.floor(h);
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  function hue2rgb(p, q, t) {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1/6) return p + (q - p) * 6 * t;
+    if (t < 1/2) return q;
+    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+    return p;
+  }
+  return [hue2rgb(p, q, hk + 1/3), hue2rgb(p, q, hk), hue2rgb(p, q, hk - 1/3)];
+}
+
+/**
+ * Draw domain coloring of polynomial on a canvas.
+ * terms: parsed polynomial terms [{c, e}, ...]
+ * canvasId: id of the <canvas> element
+ * radius: extent of the plot
+ * mirror: if true, evaluate P(1/q) instead of P(q)
+ */
+function drawDomainColoring(terms, canvasId, radius, mirror) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !terms) return;
+
+  const size = 400;
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const imgData = ctx.createImageData(size, size);
+  const data = imgData.data;
+  const R = radius || 2.5;
+
+  for (let py = 0; py < size; py++) {
+    for (let px = 0; px < size; px++) {
+      let qRe = (px / (size - 1)) * 2 * R - R;
+      let qIm = R - (py / (size - 1)) * 2 * R; // flip y
+
+      if (mirror) {
+        // Evaluate at 1/q: if q = re+i*im, then 1/q = conj(q)/|q|^2
+        const mag2 = qRe * qRe + qIm * qIm;
+        if (mag2 < 1e-20) { qRe = 0; qIm = 0; }
+        else { const inv = 1 / mag2; qRe = qRe * inv; qIm = -qIm * inv; }
+      }
+
+      const w = evalPoly(terms, qRe, qIm);
+      const mag = Math.sqrt(w.re * w.re + w.im * w.im);
+      const arg = Math.atan2(w.im, w.re);
+
+      // Hue = arg / 2pi
+      const hue = ((arg / (2 * Math.PI)) % 1 + 1) % 1;
+      // Lightness
+      let L = 1.0 - 1.0 / (1.0 + Math.pow(mag, 0.3));
+      // Log-modular rings
+      const ring = 0.5 * (1.0 + Math.cos(2 * Math.PI * Math.log2(mag + 1e-12)));
+      L = L * (0.85 + 0.15 * ring);
+      const S = mag < 1e-10 ? 0 : 0.9;
+
+      const [r, g, b] = hlsToRgb(hue, L, S);
+      const idx = (py * size + px) * 4;
+      data[idx] = Math.round(r * 255);
+      data[idx + 1] = Math.round(g * 255);
+      data[idx + 2] = Math.round(b * 255);
+      data[idx + 3] = 255;
+    }
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+
+  // Draw unit circle
+  ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  const cx = (size - 1) / 2 + (0 + R) / (2 * R) * (size - 1) - (size - 1) / 2;
+  const cxPx = (1 + R) / (2 * R) * (size - 1) - (size - 1) * 0 ;
+  const centerX = ((0 + R) / (2 * R)) * (size - 1);
+  const centerY = ((R - 0) / (2 * R)) * (size - 1);
+  const rPx = (1 / (2 * R)) * (size - 1);
+  ctx.arc(centerX, centerY, rPx, 0, 2 * Math.PI);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(0, centerY); ctx.lineTo(size, centerY);
+  ctx.moveTo(centerX, 0); ctx.lineTo(centerX, size);
+  ctx.stroke();
+}
+
+/**
+ * Show a high-resolution version of a canvas in the lightbox.
+ * Re-renders at 800x800 for crisp full-screen viewing.
+ */
+function canvasLightbox(canvasId) {
+  const src = document.getElementById(canvasId);
+  if (!src) return;
+  // Create offscreen canvas at 2x resolution
+  const big = document.createElement('canvas');
+  big.width = 800; big.height = 800;
+  const ctx = big.getContext('2d');
+  ctx.drawImage(src, 0, 0, 800, 800);
+  openLightbox(big.toDataURL('image/png'));
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  ZEROS & POLES FINDER (Durand-Kerner / Weierstrass iteration)
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Given parsed terms [{c, e}, ...], convert to a proper polynomial
+ * by multiplying through by q^{-minExp}, returning {coeffs, shift}
+ * where coeffs[i] is the coefficient of q^i in the proper polynomial,
+ * and shift = -minExp (the pole order at q=0).
+ */
+function termsToCoeffs(terms) {
+  if (!terms || terms.length === 0) return null;
+  let minExp = Infinity, maxExp = -Infinity;
+  for (const {c, e} of terms) {
+    if (e < minExp) minExp = e;
+    if (e > maxExp) maxExp = e;
+  }
+  const shift = -minExp; // multiply by q^shift to clear negative exponents
+  const degree = maxExp - minExp;
+  if (degree < 0 || degree > 500) return null; // safety
+  const coeffs = new Float64Array(degree + 1);
+  for (const {c, e} of terms) {
+    coeffs[e - minExp] += c;
+  }
+  return { coeffs, shift, degree };
+}
+
+/**
+ * Evaluate polynomial with real coefficients at complex z.
+ * coeffs[i] = coefficient of z^i. Returns [re, im].
+ */
+function evalCoeffs(coeffs, zRe, zIm) {
+  // Horner's method
+  const n = coeffs.length - 1;
+  let re = coeffs[n], im = 0;
+  for (let i = n - 1; i >= 0; i--) {
+    const newRe = re * zRe - im * zIm + coeffs[i];
+    const newIm = re * zIm + im * zRe;
+    re = newRe;
+    im = newIm;
+  }
+  return [re, im];
+}
+
+/**
+ * Find all roots of a polynomial using Durand-Kerner iteration.
+ * Returns array of {re, im} complex roots.
+ */
+function findRoots(coeffs) {
+  const n = coeffs.length - 1; // degree
+  if (n <= 0) return [];
+  if (n > 200) return []; // too high degree, skip
+
+  // Normalize so leading coeff = 1
+  const lc = coeffs[n];
+  const c = new Float64Array(n + 1);
+  for (let i = 0; i <= n; i++) c[i] = coeffs[i] / lc;
+
+  // Initial guesses: spread on a circle
+  const roots = [];
+  const r0 = Math.pow(Math.abs(c[0]) + 1, 1/n) * 1.1;
+  for (let k = 0; k < n; k++) {
+    const angle = (2 * Math.PI * k / n) + 0.4; // offset to avoid symmetry
+    roots.push({ re: r0 * Math.cos(angle), im: r0 * Math.sin(angle) });
+  }
+
+  // Iterate
+  const maxIter = 200;
+  const tol = 1e-12;
+  for (let iter = 0; iter < maxIter; iter++) {
+    let maxDelta = 0;
+    for (let i = 0; i < n; i++) {
+      const [fRe, fIm] = evalCoeffs(c, roots[i].re, roots[i].im);
+
+      // Compute product of (z_i - z_j) for j != i
+      let prodRe = 1, prodIm = 0;
+      for (let j = 0; j < n; j++) {
+        if (j === i) continue;
+        const dRe = roots[i].re - roots[j].re;
+        const dIm = roots[i].im - roots[j].im;
+        const newProdRe = prodRe * dRe - prodIm * dIm;
+        const newProdIm = prodRe * dIm + prodIm * dRe;
+        prodRe = newProdRe;
+        prodIm = newProdIm;
+      }
+
+      // delta = f(z_i) / prod(z_i - z_j)
+      const denom = prodRe * prodRe + prodIm * prodIm;
+      if (denom < 1e-30) continue;
+      const deltaRe = (fRe * prodRe + fIm * prodIm) / denom;
+      const deltaIm = (fIm * prodRe - fRe * prodIm) / denom;
+
+      roots[i].re -= deltaRe;
+      roots[i].im -= deltaIm;
+      maxDelta = Math.max(maxDelta, deltaRe * deltaRe + deltaIm * deltaIm);
+    }
+    if (maxDelta < tol * tol) break;
+  }
+
+  return roots;
+}
+
+/**
+ * Find zeros and poles of a Laurent polynomial given as parsed terms.
+ * Returns { zeros: [{re, im}], poleOrder: number }
+ * where poleOrder is the order of the pole at q=0.
+ */
+function findZerosAndPoles(terms) {
+  if (!terms) return { zeros: [], poleOrder: 0 };
+  const info = termsToCoeffs(terms);
+  if (!info) return { zeros: [], poleOrder: 0 };
+
+  const { coeffs, shift, degree } = info;
+  const zeros = findRoots(coeffs);
+  return { zeros, poleOrder: shift };
+}
+
+/**
+ * Format a complex number nicely.
+ */
+function fmtComplex(re, im) {
+  const tol = 1e-6;
+  const rr = Math.abs(re) < tol ? 0 : re;
+  const ii = Math.abs(im) < tol ? 0 : im;
+  function fmt(v) { return v.toFixed(4).replace(/\.?0+$/, ''); }
+
+  if (ii === 0 && rr === 0) return '\\(0\\)';
+  if (ii === 0) return `\\(${fmt(rr)}\\)`;
+  if (rr === 0) {
+    if (Math.abs(ii - 1) < tol) return '\\(i\\)';
+    if (Math.abs(ii + 1) < tol) return '\\(-i\\)';
+    return `\\(${fmt(ii)}i\\)`;
+  }
+  const sign = ii >= 0 ? '+' : '-';
+  const absIm = Math.abs(ii);
+  const imStr = Math.abs(absIm - 1) < tol ? '' : fmt(absIm);
+  return `\\(${fmt(rr)} ${sign} ${imStr}i\\)`;
+}
+
+/**
+ * Build an HTML string summarizing zeros and poles.
+ */
+function buildZerosPolesHtml(terms, elementId) {
+  if (!terms) return '';
+  const { zeros, poleOrder } = findZerosAndPoles(terms);
+
+  // Group conjugate pairs and real roots
+  const tol = 1e-5;
+  const used = new Array(zeros.length).fill(false);
+  const displayed = [];
+
+  for (let i = 0; i < zeros.length; i++) {
+    if (used[i]) continue;
+    used[i] = true;
+    const z = zeros[i];
+    // Check if purely real
+    if (Math.abs(z.im) < tol) {
+      displayed.push(fmtComplex(z.re, 0));
+      continue;
+    }
+    // Look for conjugate
+    let foundConj = false;
+    for (let j = i + 1; j < zeros.length; j++) {
+      if (used[j]) continue;
+      if (Math.abs(z.re - zeros[j].re) < tol && Math.abs(z.im + zeros[j].im) < tol) {
+        used[j] = true;
+        foundConj = true;
+        break;
+      }
+    }
+    if (foundConj) {
+      displayed.push(fmtComplex(z.re, Math.abs(z.im)) + ' (conj. pair)');
+    } else {
+      displayed.push(fmtComplex(z.re, z.im));
+    }
+  }
+
+  let html = `<details class="zeros-poles" id="${elementId}"><summary>Zeros &amp; poles</summary><div class="zp-content">`;
+
+  if (poleOrder > 0) {
+    html += `<div class="zp-pole">Pole at \\(q = 0\\) of order ${poleOrder}</div>`;
+  }
+
+  if (displayed.length === 0) {
+    html += `<div class="zp-zero">No finite zeros</div>`;
+  } else {
+    html += `<div class="zp-zero"><strong>Zeros</strong> (${zeros.length} total):</div>`;
+    html += '<ul class="zp-list">';
+    for (const z of displayed) {
+      html += `<li>${z}</li>`;
+    }
+    html += '</ul>';
+  }
+
+  html += '</div></details>';
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  LIGHTBOX
+// ═══════════════════════════════════════════════════════════════════
+
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = src;
+  lb.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeLightbox();
+});
+
+// ═══════════════════════════════════════════════════════════════════
+//  DATA LOADING
+// ═══════════════════════════════════════════════════════════════════
+
+async function loadData() {
+  try {
+    const [knotResp, linkResp, termsResp, zerosResp, factorsResp] = await Promise.all([
+      fetch('data/knots.json'),
+      fetch('data/links.json').catch(() => null),
+      fetch('data/cache/terms.json').catch(() => null),
+      fetch('data/cache/zeros.json').catch(() => null),
+      fetch('data/cache/factors.json').catch(() => null),
+    ]);
+    KNOT_DATA = await knotResp.json();
+    if (linkResp && linkResp.ok) {
+      LINK_DATA = await linkResp.json();
+    }
+    if (termsResp && termsResp.ok) CACHE_TERMS = await termsResp.json();
+    if (zerosResp && zerosResp.ok) CACHE_ZEROS = await zerosResp.json();
+    if (factorsResp && factorsResp.ok) CACHE_FACTORS = await factorsResp.json();
+    const cacheStatus = CACHE_TERMS ? `Cache: ${Object.keys(CACHE_TERMS).length} items` : 'No cache';
+    console.log(cacheStatus);
+    document.getElementById('loading').remove();
+    addInstance('3_1');
+    addInstance('3_1');
+    // Set second instance to mirror mode
+    const secondId = 'inst-2';
+    mirrorInstances.add(secondId);
+    const mirrorToggle = document.getElementById(`${secondId}-mirror-toggle`);
+    if (mirrorToggle) mirrorToggle.checked = true;
+    const secondSel = document.getElementById(secondId)?.querySelector('select');
+    if (secondSel) renderInstance(secondId, secondSel.value);
+  } catch(e) {
+    document.getElementById('loading').textContent =
+      'Error loading data. Serve via: python -m http.server 8080 --directory knot-explorer/app';
+  }
+}
+
+function getAllItems() {
+  const items = {};
+  for (const [k, v] of Object.entries(KNOT_DATA)) items[k] = v;
+  for (const [k, v] of Object.entries(LINK_DATA)) items[k] = v;
+  return items;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  INSTANCE MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════
+
+function addInstance(defaultKey) {
+  instanceCount++;
+  const id = `inst-${instanceCount}`;
+  const items = getAllItems();
+  const keys = Object.keys(items);
+  const selected = defaultKey || keys[0];
+
+  const div = document.createElement('div');
+  div.className = 'knot-instance';
+  div.id = id;
+
+  div.innerHTML = `<div class="instance-body" id="${id}-body"></div>`;
+
+  document.getElementById('instances').appendChild(div);
+  renderInstance(id, selected);
+}
+
+function removeInstance(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function toggleMirror(instanceId, on) {
+  if (on) mirrorInstances.add(instanceId);
+  else mirrorInstances.delete(instanceId);
+  const inst = document.getElementById(instanceId);
+  const sel = inst?.querySelector('select');
+  if (sel) renderInstance(instanceId, sel.value);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  REP SELECTORS & CHANGE HANDLER
+// ═══════════════════════════════════════════════════════════════════
+
+function getRepsForAlgebra(qi, algebraType) {
+  const reps = [];
+  const prefix = `QuantumInvariant/${algebraType}/`;
+  for (const key in qi) {
+    if (key.startsWith(prefix)) {
+      reps.push(key.substring(prefix.length));
+    }
+  }
+  return reps;
+}
+
+function buildRepSelector(instanceId, knotName, algebraType, currentRep) {
+  const items = getAllItems();
+  const d = items[knotName];
+  const qi = d.quantum_invariants || {};
+  const reps = getRepsForAlgebra(qi, algebraType);
+
+  if (reps.length === 0) return '';
+
+  const options = reps.map(r => {
+    return `<option value="${r}" ${r === currentRep ? 'selected' : ''}>${r}</option>`;
+  }).join('');
+
+  return `<div class="rep-selector">
+    <label>Rep:</label>
+    <select onchange="changeRep('${instanceId}', '${knotName}', '${algebraType}', this.value)">${options}</select>
+  </div>`;
+}
+
+/**
+ * Get all available Lie algebra types from quantum_invariants.
+ * Returns sorted array of algebra type strings like ['A1','A2','A3','B2','G2',...]
+ */
+function getAvailableAlgebras(qi) {
+  const algebras = new Set();
+  for (const key in qi) {
+    const m = key.match(/^QuantumInvariant\/([^/]+)\//);
+    if (m) algebras.add(m[1]);
+  }
+  return [...algebras].sort();
+}
+
+/**
+ * Build the "custom" column algebra + rep selectors.
+ */
+function buildCustomSelector(instanceId, knotName, currentAlgebra, currentRep) {
+  const items = getAllItems();
+  const d = items[knotName];
+  const qi = d.quantum_invariants || {};
+  const algebras = getAvailableAlgebras(qi);
+
+  if (algebras.length === 0) return '<div class="poly-text" style="color:#aaa;padding:1rem 0">No quantum invariants</div>';
+
+  const selAlg = currentAlgebra || algebras[0];
+  const reps = getRepsForAlgebra(qi, selAlg);
+  const selRep = currentRep || reps[0] || '';
+
+  const algOptions = algebras.map(a => {
+    const label = ALGEBRA_LABELS[a] || a;
+    return `<option value="${a}" ${a === selAlg ? 'selected' : ''}>${label} (${a})</option>`;
+  }).join('');
+
+  const repOptions = reps.map(r => {
+    return `<option value="${r}" ${r === selRep ? 'selected' : ''}>${r}</option>`;
+  }).join('');
+
+  return `<div class="rep-selector" style="flex-wrap:wrap">
+    <label>Algebra:</label>
+    <select id="${instanceId}-custom-alg-sel" onchange="changeCustomAlgebra('${instanceId}', '${knotName}', this.value)">${algOptions}</select>
+    <label>Rep:</label>
+    <select id="${instanceId}-custom-rep-sel" onchange="updateCustomColumn('${instanceId}', '${knotName}', document.getElementById('${instanceId}-custom-alg-sel').value, this.value)">${repOptions}</select>
+  </div>`;
+}
+
+/**
+ * Called when user changes the algebra in the custom column.
+ * Rebuilds the rep dropdown and renders the first rep.
+ */
+function changeCustomAlgebra(instanceId, knotName, algebraType) {
+  const items = getAllItems();
+  const d = items[knotName];
+  const qi = d.quantum_invariants || {};
+  const reps = getRepsForAlgebra(qi, algebraType);
+  const rep = reps[0] || '';
+
+  // Update rep dropdown
+  const repSel = document.getElementById(`${instanceId}-custom-rep-sel`);
+  if (repSel) {
+    repSel.innerHTML = reps.map(r => `<option value="${r}">${r}</option>`).join('');
+  }
+
+  // Treat custom column as algebraType for canvas/poly IDs
+  changeRep(instanceId, knotName, algebraType, rep);
+
+  // But we need to redirect to the 'custom' canvas/poly IDs
+  // So let's call a dedicated custom updater
+  updateCustomColumn(instanceId, knotName, algebraType, rep);
+}
+
+function updateCustomColumn(instanceId, knotName, algebraType, rep) {
+  const items = getAllItems();
+  const d = items[knotName];
+  const qi = d.quantum_invariants || {};
+  const key = `QuantumInvariant/${algebraType}/${rep}`;
+  const polyRaw = qi[key] || '';
+  const label = ALGEBRA_LABELS[algebraType] || algebraType;
+  const isMirror = mirrorInstances.has(instanceId);
+
+  // Parse terms (needed for canvas)
+  const termsOrig = parsePolyTerms(polyRaw);
+  const terms = isMirror && termsOrig ? termsOrig.map(({c,e})=>({c,e:-e})) : termsOrig;
+
+  // Update polynomial text
+  const cell = document.getElementById(`${instanceId}-custom-poly`);
+  if (cell) {
+    const polyText = isMirror && terms ? termsToLatex(terms) : (normalizeSqrtLatex(polyRaw) || '\\text{n/a}');
+    const inner = `\\(P${isMirror ? '_{\\text{mirror}}' : `_{\\mathfrak{${label}},\\,${rep.replace(/,/g, ',\\,')}}`} = ${polyText}\\)`;
+    cell.innerHTML = collapsiblePolyInner(terms, inner);
+    if (window.renderMathInElement) {
+      renderMathInElement(cell, {
+        delimiters: [{left: '\\(', right: '\\)', display: false}],
+        throwOnError: false,
+      });
+    }
+  }
+
+  // Update canvas
+  let radius = 2.5;
+  if (terms) {
+    let maxExp = 1;
+    for (const t of (termsOrig || terms)) maxExp = Math.max(maxExp, Math.abs(t.e));
+    radius = Math.min(3.0, Math.max(1.5, 1.0 + maxExp * 0.05));
+    drawDomainColoring(terms, `${instanceId}-custom-canvas`, radius, false);
+  } else {
+    const c = document.getElementById(`${instanceId}-custom-canvas`);
+    if (c) {
+      const ctx = c.getContext('2d');
+      ctx.clearRect(0, 0, c.width, c.height);
+      ctx.fillStyle = '#f5f5f5'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = '#aaa'; ctx.font = '14px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('No data', c.width/2, c.height/2);
+    }
+  }
+
+  // Update zeros/poles
+  const zpContainer = document.getElementById(`${instanceId}-custom-zp`);
+  if (zpContainer) {
+    zpContainer.innerHTML = buildZerosPolesHtml(terms, `${instanceId}-custom-zp-inner`);
+    if (window.renderMathInElement) {
+      renderMathInElement(zpContainer, {
+        delimiters: [{left: '\\(', right: '\\)', display: false}],
+        throwOnError: false,
+      });
+    }
+  }
+
+  // Update factorization
+  const factContainer = document.getElementById(`${instanceId}-custom-factor`);
+  if (factContainer) {
+    factContainer.innerHTML = buildFactorizationHtml(knotName, algebraType, rep, isMirror ? 'mirror' : 'original', `${instanceId}-custom`);
+    if (window.renderMathInElement) renderMathInElement(factContainer, { delimiters: [{left: '\\(', right: '\\)', display: false}], throwOnError: false });
+  }
+
+  // Attach cyclotomic tooltips
+  const instBody = document.getElementById(`${instanceId}-body`);
+  if (instBody) setTimeout(() => attachCyclotomicTooltips(instBody), 50);
+}
+
+/**
+ * Called when user changes the representation selector.
+ * Updates BOTH the polynomial LaTeX AND the domain coloring canvas.
+ */
+function changeRep(instanceId, knotName, algebraType, rep) {
+  const items = getAllItems();
+  const d = items[knotName];
+  const qi = d.quantum_invariants || {};
+  const key = `QuantumInvariant/${algebraType}/${rep}`;
+  const polyRaw = qi[key] || '';
+  const label = ALGEBRA_LABELS[algebraType] || algebraType;
+  const isMirror = mirrorInstances.has(instanceId);
+
+  // ── Parse terms — prefer cache ──
+  const cached = getCached(knotName, algebraType, rep);
+  const termsOrig = cached ? cached.terms : parsePolyTerms(polyRaw);
+  const terms = isMirror && termsOrig ? termsOrig.map(({c,e})=>({c,e:-e})) : termsOrig;
+
+  // ── Update polynomial text ──
+  const cellId = `${instanceId}-${algebraType}-poly`;
+  const cell = document.getElementById(cellId);
+  if (cell) {
+    const polyText = isMirror && terms ? termsToLatex(terms) : (normalizeSqrtLatex(polyRaw) || '\\text{n/a}');
+    const inner = `\\(P${isMirror ? '_{\\text{mirror}}' : `_{\\mathfrak{${label}},\\,${rep.replace(/,/g, ',\\,')}}`} = ${polyText}\\)`;
+    cell.innerHTML = collapsiblePolyInner(terms, inner);
+    if (window.renderMathInElement) {
+      renderMathInElement(cell, {
+        delimiters: [{left: '\\(', right: '\\)', display: false}],
+        throwOnError: false,
+      });
+    }
+  }
+
+  // ── Update domain coloring plot ──
+  const canvasId = `${instanceId}-${algebraType}-canvas`;
+
+  if (terms) {
+    let radius;
+    if (cached) {
+      radius = cached.radius;
+    } else {
+      let maxExp = 1;
+      for (const t of termsOrig) maxExp = Math.max(maxExp, Math.abs(t.e));
+      radius = Math.min(3.0, Math.max(1.5, 1.0 + maxExp * 0.05));
+    }
+
+    const plotKey = isMirror ? 'mirror' : 'original';
+    const plotPath = getCachedPlotPath(knotName, algebraType, rep, plotKey);
+    if (plotPath) {
+      const c = document.getElementById(canvasId);
+      if (c) { c.width=400; c.height=400; const img = new window.Image();
+        img.onload = function() { c.getContext('2d').drawImage(img,0,0,400,400); };
+        img.onerror = function() { drawDomainColoring(terms, canvasId, radius, false); };
+        img.src = plotPath; }
+    } else { drawDomainColoring(terms, canvasId, radius, false); }
+  } else {
+    const c = document.getElementById(canvasId);
+    if (c) {
+      const ctx = c.getContext('2d');
+      ctx.clearRect(0, 0, c.width, c.height);
+      ctx.fillStyle = '#f5f5f5';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = '#aaa';
+      ctx.font = '14px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('No polynomial data', c.width/2, c.height/2);
+    }
+  }
+
+  // ── Update zeros & poles ──
+  const zpContainer = document.getElementById(`${instanceId}-${algebraType}-zp`);
+  if (zpContainer) {
+    zpContainer.innerHTML = buildZerosPolesHtml(terms, `${instanceId}-${algebraType}-zp-inner`);
+    if (window.renderMathInElement) {
+      renderMathInElement(zpContainer, {
+        delimiters: [{left: '\\(', right: '\\)', display: false}],
+        throwOnError: false,
+      });
+    }
+  }
+
+  // ── Update factorization display ──
+  const factorEl = document.getElementById(`${instanceId}-${algebraType}-factor`);
+  if (factorEl) {
+    factorEl.innerHTML = buildFactorizationHtml(knotName, algebraType, rep, isMirror ? 'mirror' : 'original', `${instanceId}-${algebraType}`);
+    if (window.renderMathInElement) renderMathInElement(factorEl, { delimiters: [{left: '\\(', right: '\\)', display: false}], throwOnError: false });
+  }
+
+  // Attach cyclotomic tooltips to new factorizations
+  const instBody = document.getElementById(`${instanceId}-body`);
+  if (instBody) setTimeout(() => attachCyclotomicTooltips(instBody), 50);
+}
+
+function imgTag(src, alt) {
+  if (!src) return '';
+  return `<img src="${src}" alt="${alt}" onclick="openLightbox('${src}')">`;
+}
+
+/**
+ * Draw augmented data (sum, product, f∘g, g∘f) for one column.
+ * f = original polynomial terms, mirror = f(1/q).
+ */
+function drawAugmentedColumn(f, instanceId, col, radius, knotName, rep, cacheCol) {
+  cacheCol = cacheCol || col;  // cacheCol is the algebra type for cache lookup; col is the DOM ID fragment
+  if (!f) return;
+  const mirrorTerms = f.map(({c, e}) => ({c, e: -e}));
+  const fLatex = termsToLatex(f);
+  const gLatex = termsToLatex(mirrorTerms);
+  const rm = window.renderMathInElement;
+  const katexOpts = {delimiters: [{left: '\\(', right: '\\)', display: false}], throwOnError: false};
+
+  function setPolyAndZP(key, terms, labelLatex) {
+    const polyEl = document.getElementById(`${instanceId}-${key}-${col}-poly`);
+    if (polyEl) {
+      const inner = `\\(${labelLatex} = ${termsToLatex(terms)}\\)`;
+      if (terms && terms.length > 20) {
+        polyEl.innerHTML = `<details class="poly-collapse"><summary>Polynomial (${terms.length} terms)</summary><div class="poly-full">${inner}</div></details>`;
+      } else {
+        polyEl.innerHTML = inner;
+      }
+      if (rm) rm(polyEl, katexOpts);
+    }
+    const zpEl = document.getElementById(`${instanceId}-${key}-${col}-zp`);
+    if (zpEl) {
+      zpEl.innerHTML = buildZerosPolesHtml(terms, `${instanceId}-${key}-${col}-zp-inner`);
+      if (rm) rm(zpEl, katexOpts);
+    }
+    const factEl = document.getElementById(`${instanceId}-${key}-${col}-factor`);
+    if (factEl) {
+      factEl.innerHTML = buildFactorizationHtml(knotName, cacheCol, rep, key, `${instanceId}-${key}-${col}`);
+      if (rm) rm(factEl, katexOpts);
+    }
+  }
+
+  // Build explicit composition LaTeX: substitute innerLatex for q in outerTerms
+  function compositionLatex(outer, innerStr) {
+    const wrap = outer.length > 1 || (outer[0] && (outer[0].e < -1 || outer[0].e > 1))
+      ? `(${innerStr})` : innerStr;
+    let s = '';
+    for (let i = 0; i < outer.length; i++) {
+      const {c, e} = outer[i];
+      const absC = Math.abs(c);
+      const sign = c < 0 ? '-' : (i > 0 ? '+' : '');
+      let coefStr = '';
+      if (Math.abs(absC - Math.round(absC)) < 1e-8) {
+        const ic = Math.round(absC);
+        if (e === 0 || ic !== 1) coefStr = '' + ic;
+      } else {
+        coefStr = absC.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
+      }
+      let varStr = '';
+      if (e === 1) varStr = wrap;
+      else if (e === -1) varStr = `\\frac{1}{${wrap}}`;
+      else if (e > 1) varStr = `${wrap}^{${e}}`;
+      else if (e < -1) varStr = `\\frac{1}{${wrap}^{${-e}}}`;
+      if (e !== 0 && coefStr === '' && e > 0) coefStr = '';
+      if (e !== 0 && coefStr === '' && e < 0) coefStr = '';
+      // Build term
+      let term;
+      if (e === 0) term = coefStr || '0';
+      else if (e < 0 && coefStr && coefStr !== '1') term = coefStr + '\\cdot ' + varStr;
+      else if (e < 0) term = varStr;
+      else term = coefStr + varStr;
+      s += sign + term;
+    }
+    return s || '0';
+  }
+
+  // Sum
+  const sumTerms = addTerms(f, mirrorTerms);
+  drawCachedOrCompute(`${instanceId}-sum-${col}-canvas`, sumTerms, knotName, cacheCol, rep, 'sum', radius, false);
+  setPolyAndZP('sum', sumTerms, 'f+g');
+
+  // f - g
+  const fmgTerms = subtractTerms(f, mirrorTerms);
+  drawCachedOrCompute(`${instanceId}-fmg-${col}-canvas`, fmgTerms, knotName, cacheCol, rep, 'fmg', radius, false);
+  setPolyAndZP('fmg', fmgTerms, 'f-g');
+
+  // g - f
+  const gmfTerms = subtractTerms(mirrorTerms, f);
+  drawCachedOrCompute(`${instanceId}-gmf-${col}-canvas`, gmfTerms, knotName, cacheCol, rep, 'gmf', radius, false);
+  setPolyAndZP('gmf', gmfTerms, 'g-f');
+
+  // Product
+  const prodTerms = multiplyTerms(f, mirrorTerms);
+  drawCachedOrCompute(`${instanceId}-prod-${col}-canvas`, prodTerms, knotName, cacheCol, rep, 'prod', radius, false);
+  setPolyAndZP('prod', prodTerms, 'f \\cdot g');
+
+  // f(g(q)): substitute g into f — expanded rational function
+  {
+    const fogPlotPath = getCachedPlotPath(knotName, cacheCol, rep, 'fog');
+    const fogCanvasId = `${instanceId}-fog-${col}-canvas`;
+    const fogFallback = () => {
+      drawDomainColoringFn((qRe, qIm) => {
+        const mag2 = qRe * qRe + qIm * qIm;
+        let iqRe, iqIm;
+        if (mag2 < 1e-20) { iqRe = 0; iqIm = 0; }
+        else { iqRe = qRe / mag2; iqIm = -qIm / mag2; }
+        const gVal = evalPoly(f, iqRe, iqIm);
+        return evalPoly(f, gVal.re, gVal.im);
+      }, fogCanvasId, radius);
+    };
+    if (fogPlotPath) {
+      const canvas = document.getElementById(fogCanvasId);
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        canvas.width = 400; canvas.height = 400;
+        const img = new window.Image();
+        img.onload = function() { ctx.drawImage(img, 0, 0, 400, 400); };
+        img.onerror = fogFallback;
+        img.src = fogPlotPath;
+      }
+    } else { fogFallback(); }
+  }
+  const fogComp = composeTerms(f, mirrorTerms);
+  if (fogComp) {
+    const fogEl = document.getElementById(`${instanceId}-fog-${col}-poly`);
+    if (fogEl) {
+      const isTriv = fogComp.den.length === 1 && fogComp.den[0].c === 1 && fogComp.den[0].e === 0;
+      const numLatex = termsToLatex(fogComp.num);
+      const inner = isTriv ? `\\(f \\circ g = ${numLatex}\\)` :
+        `\\(f \\circ g = \\frac{${numLatex}}{${termsToLatex(fogComp.den)}}\\)`;
+      const total = fogComp.num.length + (isTriv ? 0 : fogComp.den.length);
+      if (total > 20) {
+        fogEl.innerHTML = `<details class="poly-collapse"><summary>Polynomial (${total} terms)</summary><div class="poly-full">${inner}</div></details>`;
+      } else {
+        fogEl.innerHTML = inner;
+      }
+      if (rm) rm(fogEl, katexOpts);
+    }
+    const fogZpEl = document.getElementById(`${instanceId}-fog-${col}-zp`);
+    if (fogZpEl) {
+      fogZpEl.innerHTML = buildZerosPolesHtml(fogComp.num, `${instanceId}-fog-${col}-zp-inner`);
+      if (rm) rm(fogZpEl, katexOpts);
+    }
+    const fogFactEl = document.getElementById(`${instanceId}-fog-${col}-factor`);
+    if (fogFactEl) {
+      fogFactEl.innerHTML = buildFactorizationHtml(knotName, cacheCol, rep, 'fog', `${instanceId}-fog-${col}`);
+      if (rm) rm(fogFactEl, katexOpts);
+    }
+  }
+
+  // g(f(q)): substitute f into g — expanded rational function
+  {
+    const gofCanvasId = `${instanceId}-gof-${col}-canvas`;
+    const gofPlotPath = getCachedPlotPath(knotName, cacheCol, rep, 'gof');
+    const gofFallback = () => {
+      drawDomainColoringFn((qRe, qIm) => {
+        const fVal = evalPoly(f, qRe, qIm);
+        const mag2 = fVal.re * fVal.re + fVal.im * fVal.im;
+        let iqRe, iqIm;
+        if (mag2 < 1e-20) { iqRe = 0; iqIm = 0; }
+        else { iqRe = fVal.re / mag2; iqIm = -fVal.im / mag2; }
+        return evalPoly(f, iqRe, iqIm);
+      }, gofCanvasId, radius);
+    };
+    if (gofPlotPath) {
+      const canvas = document.getElementById(gofCanvasId);
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        canvas.width = 400; canvas.height = 400;
+        const img = new window.Image();
+        img.onload = function() { ctx.drawImage(img, 0, 0, 400, 400); };
+        img.onerror = gofFallback;
+        img.src = gofPlotPath;
+      }
+    } else { gofFallback(); }
+  }
+  const gofComp = composeTerms(mirrorTerms, f);
+  if (gofComp) {
+    const gofEl = document.getElementById(`${instanceId}-gof-${col}-poly`);
+    if (gofEl) {
+      const isTriv = gofComp.den.length === 1 && gofComp.den[0].c === 1 && gofComp.den[0].e === 0;
+      const numLatex = termsToLatex(gofComp.num);
+      const inner = isTriv ? `\\(g \\circ f = ${numLatex}\\)` :
+        `\\(g \\circ f = \\frac{${numLatex}}{${termsToLatex(gofComp.den)}}\\)`;
+      const total = gofComp.num.length + (isTriv ? 0 : gofComp.den.length);
+      if (total > 20) {
+        gofEl.innerHTML = `<details class="poly-collapse"><summary>Polynomial (${total} terms)</summary><div class="poly-full">${inner}</div></details>`;
+      } else {
+        gofEl.innerHTML = inner;
+      }
+      if (rm) rm(gofEl, katexOpts);
+    }
+    const gofZpEl = document.getElementById(`${instanceId}-gof-${col}-zp`);
+    if (gofZpEl) {
+      gofZpEl.innerHTML = buildZerosPolesHtml(gofComp.num, `${instanceId}-gof-${col}-zp-inner`);
+      if (rm) rm(gofZpEl, katexOpts);
+    }
+    const gofFactEl = document.getElementById(`${instanceId}-gof-${col}-factor`);
+    if (gofFactEl) {
+      gofFactEl.innerHTML = buildFactorizationHtml(knotName, cacheCol, rep, 'gof', `${instanceId}-gof-${col}`);
+      if (rm) rm(gofFactEl, katexOpts);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  RENDER INSTANCE
+// ═══════════════════════════════════════════════════════════════════
+
+function renderInstance(id, knotName) {
+  const items = getAllItems();
+  const d = items[knotName];
+  if (!d) return;
+
+  const isMirror = mirrorInstances.has(id);
+
+  // meta info now integrated into the table row info cell
+
+  const qi = d.quantum_invariants || {};
+
+  const sl3Rep = getRepsForAlgebra(qi, 'A2').includes('1,0') ? '1,0' : (getRepsForAlgebra(qi, 'A2')[0] || '');
+  const sl4Rep = getRepsForAlgebra(qi, 'A3').includes('1,0,0') ? '1,0,0' : (getRepsForAlgebra(qi, 'A3')[0] || '');
+  const hasSl3 = (d.sl3_latex && d.sl3_latex !== '') || (qi['QuantumInvariant/A2/' + sl3Rep]);
+  const hasSl4 = (d.sl4_latex && d.sl4_latex !== '') || (qi['QuantumInvariant/A3/' + sl4Rep]);
+
+  const body = document.getElementById(`${id}-body`);
+
+  // ── Knot facts panel ──
+  const isKnot = !!KNOT_DATA[knotName];
+  const sep = ' <span style="color:#ccc">|</span> ';
+  let factsHtml = '';
+  {
+    const facts = [];
+    if (d.three_genus !== undefined && d.three_genus !== '') facts.push(`<span title="The minimum genus of a Seifert surface for the knot. Equals the degree of the Alexander polynomial for fibered knots." style="cursor:help"><strong>Genus:</strong> ${d.three_genus}</span>`);
+    if (d.symmetry_type) {
+      const symMap = {'Reversible': 'Reversible (amphichiral: no)', 'FullyAmphichiral': 'Fully amphichiral', 'NegativeAmphichiral': 'Negative amphichiral', 'Chiral': 'Chiral'};
+      facts.push(`<span title="Symmetry type under orientation reversal and mirror reflection. Amphichiral knots are equivalent to their mirror image." style="cursor:help"><strong>Symmetry:</strong> ${symMap[d.symmetry_type] || d.symmetry_type}</span>`);
+    }
+    if (d.bridge_index !== undefined && d.bridge_index !== '') facts.push(`<span title="Minimum number of local maxima when the knot is in bridge position. Bridge index 2 = two-bridge (rational) knot." style="cursor:help"><strong>Bridge index:</strong> ${d.bridge_index}</span>`);
+    if (d.unknotting_number !== undefined && d.unknotting_number !== '') facts.push(`<span title="Minimum number of crossing changes needed to transform the knot into the unknot." style="cursor:help"><strong>Unknotting #:</strong> ${d.unknotting_number}</span>`);
+    if (d.signature !== undefined && d.signature !== '') facts.push(`<span title="Knot signature: signature of the symmetrized Seifert matrix. A concordance invariant; gives a lower bound on the unknotting number via |&sigma;| &le; 2u(K)." style="cursor:help"><strong>Signature:</strong> ${d.signature}</span>`);
+    if (d.determinant !== undefined && d.determinant !== '') facts.push(`<span title="Knot determinant: |&Delta;(-1)|, the absolute value of the Alexander polynomial evaluated at -1. Equals the order of the first homology of the double branched cover." style="cursor:help"><strong>Det:</strong> ${d.determinant}</span>`);
+    if (d.arf_invariant !== undefined && d.arf_invariant !== '') facts.push(`<span title="Arf invariant (0 or 1): equals 0 iff det(K) &equiv; &plusmn;1 (mod 8). A concordance invariant related to the Kervaire invariant. Also computable from the Jones polynomial: Arf(K) = V(i)." style="cursor:help"><strong>Arf:</strong> ${d.arf_invariant}</span>`);
+    if (d.fibered !== undefined) facts.push(`<span title="A fibered knot has complement that fibers over the circle, with fiber a Seifert surface. Fibered knots have monic Alexander polynomials of degree = 2g." style="cursor:help"><strong>Fibered:</strong> ${d.fibered ? 'Yes' : 'No'}</span>`);
+    if (d.torus_knot) facts.push(`<span title="Torus knots T(p,q) lie on the surface of a standard torus. They are always fibered and have known closed-form polynomials." style="cursor:help"><strong>Torus knot:</strong> ${d.torus_knot}</span>`);
+    if (d.torus_link) facts.push(`<span title="Torus links T(p,q) lie on the surface of a standard torus." style="cursor:help"><strong>Torus link:</strong> ${d.torus_link}</span>`);
+
+    // Knot group
+    const kg = isKnot ? KNOT_GROUPS[knotName] : null;
+    let groupHtml = '';
+    if (kg) {
+      groupHtml = `<div style="background:#f5f0ff;border:1px solid #d4c8f0;border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.75rem;font-size:0.82rem">
+        <span style="font-weight:700;color:#6a1b9a;margin-right:0.5rem" title="The fundamental group of the knot complement in S&sup3;. A complete invariant for prime knots (Gordon&ndash;Luecke theorem).">Knot group</span>
+        \\(\\pi_1(S^3 \\setminus K)\\)
+        <span style="color:#ccc">|</span>
+        <strong>Generators:</strong> \\(${kg.generators}\\)
+        <span style="color:#ccc">|</span>
+        <strong>Relations:</strong> \\(${kg.relations}\\)
+        ${kg.note ? `<span style="color:#ccc">|</span> <span style="color:var(--text-muted);font-style:italic">${kg.note}</span>` : ''}
+      </div>`;
+    }
+
+    if (facts.length > 0) {
+      factsHtml = `<div style="background:#f0f7ff;border:1px solid #c8ddf0;border-radius:4px;padding:0.25rem 0.4rem;margin-top:0.4rem;font-size:0.6rem;line-height:1.4;">
+        <span style="font-weight:700;color:var(--accent)">${isKnot ? 'Knot' : 'Link'} facts</span><br>
+        ${facts.join('<br>')}
+      </div>`;
+    }
+    if (kg) {
+      factsHtml += `<div style="background:#f5f0ff;border:1px solid #d4c8f0;border-radius:4px;padding:0.25rem 0.4rem;margin-top:0.3rem;font-size:0.6rem;line-height:1.4;overflow-wrap:break-word;">
+        <span style="font-weight:700;color:#6a1b9a" title="The fundamental group of the knot complement in S³.">Knot group</span><br>
+        <strong>Gen:</strong> \\(${kg.generators}\\)<br>
+        <strong>Rel:</strong> \\(${kg.relations}\\)
+        ${kg.note ? `<br><span style="color:var(--text-muted);font-style:italic;font-size:0.55rem">${kg.note}</span>` : ''}
+      </div>`;
+    }
+  }
+
+  let html = `<table class="knot-table"><thead><tr>
+    <th class="col-info"></th>
+    <th class="col-diagram">Diagram</th>
+    <th class="col-poly" title="The Jones polynomial V(q) / quantum sl(2) invariant: discovered by V. Jones (1984). The fundamental representation (rep 1) gives the Jones polynomial; higher reps give colored Jones polynomials. Domain coloring: hue = arg(V(q)), brightness ~ |V(q)|.">Jones / \\(\\mathfrak{sl}(2)\\)</th>
+    <th class="col-poly" title="Quantum sl(3) invariant: the Reshetikhin&ndash;Turaev invariant for the Lie algebra A2 = sl(3). The fundamental representation (1,0) generalizes the HOMFLY-PT polynomial. Higher representations probe finer knot structure.">\\(\\mathfrak{sl}(3)\\)</th>
+    <th class="col-poly" title="Quantum sl(4) invariant: the Reshetikhin&ndash;Turaev invariant for A3 = sl(4). Part of the family of quantum group invariants that categorify to Khovanov&ndash;Rozansky homology.">\\(\\mathfrak{sl}(4)\\)</th>
+    <th class="col-poly" title="Quantum invariants for other Lie algebras (B, C, D, G2, etc.) and higher representations. Select an algebra and representation from the dropdowns. Each invariant is a Laurent polynomial in q arising from the corresponding quantum group.">Other Lie algebras</th>
+  </tr></thead><tbody>`;
+
+  // Parse polynomial terms — prefer cache, fall back to client-side parsing
+  const alexCached = getCached(knotName, 'alex');
+  const jonesCached = getCached(knotName, 'A1', '1');
+  const sl3Latex0 = d.sl3_latex || qi[`QuantumInvariant/A2/${sl3Rep}`] || '';
+  const sl4Latex0 = d.sl4_latex || qi[`QuantumInvariant/A3/${sl4Rep}`] || '';
+  const sl3Cached = getCached(knotName, 'A2', sl3Rep);
+  const sl4Cached = getCached(knotName, 'A3', sl4Rep);
+
+  const alexTermsOrig = alexCached ? alexCached.terms : parsePolyTerms(d.alexander_latex);
+  const jonesTermsOrig = jonesCached ? jonesCached.terms : parsePolyTerms(d.jones_latex);
+  const sl3TermsOrig = sl3Cached ? sl3Cached.terms : parsePolyTerms(sl3Latex0);
+  const sl4TermsOrig = sl4Cached ? sl4Cached.terms : parsePolyTerms(sl4Latex0);
+
+  // If mirror mode, negate exponents (evaluate at 1/q)
+  const alexTerms = isMirror && alexTermsOrig ? alexTermsOrig.map(({c,e})=>({c,e:-e})) : alexTermsOrig;
+  const jonesTerms0 = isMirror && jonesTermsOrig ? jonesTermsOrig.map(({c,e})=>({c,e:-e})) : jonesTermsOrig;
+  const sl3Terms0 = isMirror && sl3TermsOrig ? sl3TermsOrig.map(({c,e})=>({c,e:-e})) : sl3TermsOrig;
+  const sl4Terms0 = isMirror && sl4TermsOrig ? sl4TermsOrig.map(({c,e})=>({c,e:-e})) : sl4TermsOrig;
+
+  // ── Row 1: Original (or Mirror if mirror mode active) ──
+  const rowDiagram = isMirror ? (d.mirror_diagram || d.diagram) : d.diagram;
+  const rowBraidLatex = isMirror ? (d.mirror_braid_latex || d.braid_latex) : d.braid_latex;
+  const rowBraidDiagram = isMirror ? (d.mirror_braid_diagram || d.braid_diagram) : d.braid_diagram;
+  const rowGaussCode = isMirror ? (d.mirror_gauss_code || d.gauss_code) : d.gauss_code;
+  const rowLabel = isMirror ? `${d.name} (Mirror)` : d.name;
+  const rowLabelClass = isMirror ? 'row-label row-label-mirror' : 'row-label row-label-orig';
+  const rowLabelColor = isMirror ? 'color:var(--mirror-accent)' : '';
+
+  html += `<tr${isMirror ? ' style="background:#fdf8f6"' : ''}>
+    <td class="${rowLabelClass}">
+      <div style="margin-bottom:0.4rem;">
+        <select onchange="renderInstance('${id}', this.value)" style="padding:2px 4px;border-radius:4px;border:1px solid #ccc;font-size:0.8rem;max-width:180px;">${buildSelectOptions(knotName)}</select>
+        <label style="display:inline-flex;align-items:center;gap:3px;font-size:0.75rem;color:var(--text-muted);cursor:pointer;margin-left:6px;">
+          <input type="checkbox" ${isMirror?'checked':''} onchange="toggleMirror('${id}', this.checked)"> Mirror
+        </label>
+        <button class="remove-btn" onclick="removeInstance('${id}')" title="Remove" style="margin-left:4px;">&times;</button>
+      </div>
+      <strong style="font-size:1rem;${rowLabelColor}">${rowLabel}</strong>
+      <span style="font-size:0.7rem;color:#666">(${d.crossings} cr.)</span>
+      ${buildIdentifiersHtml(d, isMirror)}
+      ${factsHtml}
+    </td>
+    <td>
+      ${imgTag(rowDiagram, rowLabel + ' diagram')}
+      ${rowBraidLatex ? `<div style="font-size:0.7rem;margin-top:0.3rem;color:#555"><strong>Braid:</strong> \\(${rowBraidLatex}\\)</div>` : ''}
+      ${rowBraidDiagram ? `<img src="${rowBraidDiagram}" alt="${rowLabel} braid" style="max-width:120px;max-height:160px;margin-top:0.3rem;border:1px solid #eee;border-radius:4px" onclick="openLightbox('${rowBraidDiagram}')">` : ''}
+    </td>
+    <td>
+      <canvas id="${id}-A1-canvas" width="400" height="400"
+        onclick="canvasLightbox('${id}-A1-canvas')"></canvas>
+      <div class="poly-text" id="${id}-A1-poly">${d.jones_latex ? collapsiblePolyInner(jonesTerms0, `\\(V${isMirror ? '_{\\text{mirror}}' : ''}(q) = ${isMirror && jonesTerms0 ? termsToLatex(jonesTerms0) : normalizeSqrtLatex(d.jones_latex)}\\)`) : '<span style="color:#bbb">n/a</span>'}</div>
+      ${buildRepSelector(id, knotName, 'A1', '1')}
+      <div id="${id}-A1-zp">${jonesTerms0 ? buildZerosPolesHtml(jonesTerms0, id + '-A1-zp-inner') : ''}</div>
+      <div id="${id}-A1-factor">${buildFactorizationHtml(knotName, 'A1', '1', isMirror ? 'mirror' : 'original', id + '-A1')}</div>
+    </td>
+    <td>
+      <canvas id="${id}-A2-canvas" width="400" height="400"
+        onclick="canvasLightbox('${id}-A2-canvas')"></canvas>
+      <div class="poly-text" id="${id}-A2-poly">${collapsiblePolyInner(sl3Terms0, `\\(P${isMirror ? '_{\\text{mirror}}' : '_{\\mathfrak{sl}(3)}'} = ${isMirror && sl3Terms0 ? termsToLatex(sl3Terms0) : (normalizeSqrtLatex(sl3Latex0) || '\\text{n/a}')}\\)`)}</div>
+      ${buildRepSelector(id, knotName, 'A2', sl3Rep)}
+      <div id="${id}-A2-zp">${buildZerosPolesHtml(sl3Terms0, id + '-A2-zp-inner')}</div>
+      <div id="${id}-A2-factor">${buildFactorizationHtml(knotName, 'A2', sl3Rep, isMirror ? 'mirror' : 'original', id + '-A2')}</div>
+    </td>
+    <td>
+      <canvas id="${id}-A3-canvas" width="400" height="400"
+        onclick="canvasLightbox('${id}-A3-canvas')"></canvas>
+      <div class="poly-text" id="${id}-A3-poly">${collapsiblePolyInner(sl4Terms0, `\\(P${isMirror ? '_{\\text{mirror}}' : '_{\\mathfrak{sl}(4)}'} = ${isMirror && sl4Terms0 ? termsToLatex(sl4Terms0) : (normalizeSqrtLatex(sl4Latex0) || '\\text{n/a}')}\\)`)}</div>
+      ${buildRepSelector(id, knotName, 'A3', sl4Rep)}
+      <div id="${id}-A3-zp">${buildZerosPolesHtml(sl4Terms0, id + '-A3-zp-inner')}</div>
+      <div id="${id}-A3-factor">${buildFactorizationHtml(knotName, 'A3', sl4Rep, isMirror ? 'mirror' : 'original', id + '-A3')}</div>
+    </td>
+    <td>
+      <canvas id="${id}-custom-canvas" width="400" height="400"
+        onclick="canvasLightbox('${id}-custom-canvas')"></canvas>
+      <div class="poly-text" id="${id}-custom-poly"></div>
+      ${buildCustomSelector(id, knotName, getAvailableAlgebras(qi).find(a => !['A1','A2','A3'].includes(a)) || getAvailableAlgebras(qi)[0], null)}
+      <div id="${id}-custom-zp"></div>
+      <div id="${id}-custom-factor"></div>
+    </td>
+  </tr>`;
+
+
+  html += '</tbody></table>';
+  body.innerHTML = html;
+
+  // Render KaTeX
+  if (window.renderMathInElement) {
+    renderMathInElement(body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '\\(', right: '\\)', display: false},
+      ],
+      throwOnError: false,
+    });
+    // Attach cyclotomic polynomial tooltips after KaTeX renders
+    setTimeout(() => attachCyclotomicTooltips(body), 50);
+  }
+
+  // ── Draw initial domain coloring on canvases ──
+  // Use cached images when available, fall back to client-side rendering
+  function drawOrBlank(terms, canvasId, radius, mirror, cachedCol, cachedRep, plotKey) {
+    const plotPath = getCachedPlotPath(knotName, cachedCol, cachedRep, plotKey || (mirror ? 'mirror' : 'original'));
+    if (plotPath) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      canvas.width = 400; canvas.height = 400;
+      const ctx = canvas.getContext('2d');
+      const img = new window.Image();
+      img.onload = function() { ctx.drawImage(img, 0, 0, 400, 400); };
+      img.onerror = function() { if (terms) drawDomainColoring(terms, canvasId, radius, mirror); };
+      img.src = plotPath;
+    } else if (terms) {
+      drawDomainColoring(terms, canvasId, radius, mirror);
+    } else {
+      const c = document.getElementById(canvasId);
+      if (c) { c.width = 400; c.height = 400; const ctx = c.getContext('2d');
+        ctx.fillStyle = '#f5f5f5'; ctx.fillRect(0, 0, 400, 400);
+        ctx.fillStyle = '#aaa'; ctx.font = '14px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText('No data', 200, 200);
+      }
+    }
+  }
+
+  const plotMode = isMirror ? 'mirror' : 'original';
+
+  // Jones (A1 fund = rep 1)
+  const jonesTerms = jonesTerms0;
+  const jonesR = jonesCached ? jonesCached.radius : 2.5;
+  drawOrBlank(jonesTerms, `${id}-A1-canvas`, jonesR, false, 'A1', '1', plotMode);
+
+  // sl(3) (A2 fund)
+  const sl3Terms = sl3Terms0;
+  const r3 = sl3Cached ? sl3Cached.radius : (sl3Terms ? Math.min(3.0, Math.max(1.5, 1.0 + Math.max(...sl3Terms.map(t=>Math.abs(t.e))) * 0.05)) : 2.5);
+  drawOrBlank(sl3Terms, `${id}-A2-canvas`, r3, false, 'A2', sl3Rep, plotMode);
+
+  // sl(4) (A3 fund)
+  const sl4Terms = sl4Terms0;
+  const r4 = sl4Cached ? sl4Cached.radius : (sl4Terms ? Math.min(3.0, Math.max(1.5, 1.0 + Math.max(...sl4Terms.map(t=>Math.abs(t.e))) * 0.05)) : 2.5);
+  drawOrBlank(sl4Terms, `${id}-A3-canvas`, r4, false, 'A3', sl4Rep, plotMode);
+
+  // Custom column — initialize with first available algebra
+  const algebras = getAvailableAlgebras(qi);
+  // Pick a non-A1/A2/A3 algebra if available, otherwise first
+  const customAlg = algebras.find(a => !['A1','A2','A3'].includes(a)) || algebras[0];
+  if (customAlg) {
+    const customReps = getRepsForAlgebra(qi, customAlg);
+    const customRep = customReps[0] || '';
+    if (customRep) {
+      updateCustomColumn(id, knotName, customAlg, customRep);
+    }
+  }
+
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  CYCLOTOMIC POLYNOMIAL TOOLTIPS
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Known cyclotomic polynomials Φ_n(q) for small n.
+ */
+const CYCLOTOMIC_POLYS = {
+  1: 'q - 1',
+  2: 'q + 1',
+  3: 'q^2 + q + 1',
+  4: 'q^2 + 1',
+  5: 'q^4 + q^3 + q^2 + q + 1',
+  6: 'q^2 - q + 1',
+  7: 'q^6 + q^5 + q^4 + q^3 + q^2 + q + 1',
+  8: 'q^4 + 1',
+  9: 'q^6 + q^3 + 1',
+  10: 'q^4 - q^3 + q^2 - q + 1',
+  11: 'q^{10} + q^9 + \\cdots + q + 1',
+  12: 'q^4 - q^2 + 1',
+  14: 'q^6 - q^5 + q^4 - q^3 + q^2 - q + 1',
+  15: 'q^8 - q^7 + q^5 - q^4 + q^3 - q + 1',
+  16: 'q^8 + 1',
+  18: 'q^6 - q^3 + 1',
+  20: 'q^8 - q^6 + q^4 - q^2 + 1',
+  21: 'q^{12} - q^{11} + q^9 - q^8 + q^6 - q^4 + q^3 - q + 1',
+  24: 'q^8 - q^4 + 1',
+  30: 'q^8 + q^7 - q^5 - q^4 - q^3 + q + 1',
+};
+
+/**
+ * After KaTeX renders factorizations, attach tooltips to Φ_n elements.
+ * Scans for rendered Φ_n(q) and wraps with a tooltip showing the expansion.
+ */
+function attachCyclotomicTooltips(container) {
+  if (!container) return;
+  // Find all rendered KaTeX spans containing Φ
+  const katexSpans = container.querySelectorAll('.katex-html');
+  for (const span of katexSpans) {
+    const text = span.textContent;
+    // Match Φ_n or Φ_{nn} patterns
+    const phiPattern = /Φ(\d+)/g;
+    let match;
+    while ((match = phiPattern.exec(text)) !== null) {
+      const n = parseInt(match[1]);
+      if (CYCLOTOMIC_POLYS[n]) {
+        // Find the actual mord/msupsub elements containing Φ
+        const mords = span.querySelectorAll('.mord');
+        for (const mord of mords) {
+          if (mord.textContent.includes('Φ') && mord.textContent.includes(String(n))) {
+            if (!mord.dataset.tooltipSet) {
+              mord.style.cursor = 'help';
+              mord.style.borderBottom = '1px dotted #888';
+              mord.title = `Φ_${n}(q) = ${CYCLOTOMIC_POLYS[n].replace(/\{/g,'').replace(/\}/g,'').replace(/\\cdots/g,'…')}`;
+              mord.dataset.tooltipSet = '1';
+            }
+          }
+        }
+      }
+    }
+  }
+  // Also handle non-KaTeX raw text containing Φ_n
+  const allElements = container.querySelectorAll('.poly-full, .poly-collapse summary');
+  for (const el of allElements) {
+    if (el.dataset.tooltipSet) continue;
+    // After KaTeX renders, look for msupsub groups
+    const msupsubs = el.querySelectorAll('.msupsub');
+    for (const ms of msupsubs) {
+      const prev = ms.previousElementSibling;
+      if (prev && prev.textContent.includes('Φ')) {
+        const sub = ms.querySelector('.mord.mtight');
+        if (sub) {
+          const n = parseInt(sub.textContent);
+          if (CYCLOTOMIC_POLYS[n]) {
+            const wrapper = prev.parentElement;
+            if (wrapper && !wrapper.dataset.tooltipSet) {
+              wrapper.style.cursor = 'help';
+              wrapper.title = `Φ_${n}(q) = ${CYCLOTOMIC_POLYS[n].replace(/\{/g,'').replace(/\}/g,'').replace(/\\cdots/g,'…')}`;
+              wrapper.dataset.tooltipSet = '1';
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  TAB NAVIGATION
+// ═══════════════════════════════════════════════════════════════════
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const tab = document.getElementById('tab-' + tabId);
+  if (tab) tab.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.dataset.tab === tabId) b.classList.add('active');
+  });
+  if (tabId === 'cube') initCubeTab();
+  if (tabId === 'homological' && typeof initHomologicalTab === 'function') initHomologicalTab();
+  if (tabId === 'khovanov-complex' && typeof initKhovanovComplexTab === 'function') initKhovanovComplexTab();
+  if (tabId === 'virtual' && typeof initVirtualTab === 'function') initVirtualTab();
+  if (tabId === 'moy' && typeof initMoyTab === 'function') initMoyTab();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  CUBE OF RESOLUTIONS
+// ═══════════════════════════════════════════════════════════════════
+
+let cubeTabInitialized = false;
+
+function initCubeTab() {
+  if (cubeTabInitialized) return;
+  cubeTabInitialized = true;
+  const sel = document.getElementById('cor-knot-sel');
+  if (!sel) return;
+  const items = getAllItems();
+  // Populate selector — all knots/links available in the data
+  const sorted = Object.keys(items).sort((a, b) => {
+    const ca = parseInt(items[a].crossings) || 0;
+    const cb = parseInt(items[b].crossings) || 0;
+    return ca - cb || a.localeCompare(b);
+  });
+  for (const name of sorted) {
+    const d = items[name];
+    const c = parseInt(d.crossings) || 0;
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = `${name} (${c} crossings)`;
+    sel.appendChild(opt);
+  }
+  sel.value = '3_1';
+  updateCubeOfResolutions();
+}
+
+function getAllItems() {
+  return Object.assign({}, KNOT_DATA, LINK_DATA);
+}
+
+function parsePDPresentation(pdStr) {
+  if (!pdStr) return null;
+  // PD notation: X[i,j,k,l] or Xp[i,j,k,l] for each crossing
+  // Format from KnotAtlas: PD[X[1,5,2,4], X[3,1,4,6], X[5,3,6,2]]
+  const crossings = [];
+  const xPat = /X(?:p)?\[(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\]/g;
+  let m;
+  while ((m = xPat.exec(pdStr)) !== null) {
+    crossings.push([parseInt(m[1]), parseInt(m[2]), parseInt(m[3]), parseInt(m[4])]);
+  }
+  return crossings.length > 0 ? crossings : null;
+}
+
+/**
+ * Count circles in a resolution using PD code with proper adjacency lists.
+ * PD code (a,b,c,d) at each crossing:
+ *   0-resolution (A-smoothing): connect a↔d and b↔c
+ *   1-resolution (B-smoothing): connect a↔b and c↔d
+ * Each label appears exactly twice (at two crossings), giving each label
+ * exactly 2 neighbors, forming disjoint cycles.
+ */
+function countCirclesFromPD(pdCode, bits) {
+  if (!pdCode || pdCode.length === 0) return null;
+  // Build adjacency list
+  const adj = {};
+  for (let i = 0; i < pdCode.length; i++) {
+    const [a, b, c, d] = pdCode[i];
+    const bit = (bits >> i) & 1;
+    if (bit === 0) {
+      // 0-resolution: a↔d, b↔c
+      (adj[a] = adj[a] || []).push(d); (adj[d] = adj[d] || []).push(a);
+      (adj[b] = adj[b] || []).push(c); (adj[c] = adj[c] || []).push(b);
+    } else {
+      // 1-resolution: a↔b, c↔d
+      (adj[a] = adj[a] || []).push(b); (adj[b] = adj[b] || []).push(a);
+      (adj[c] = adj[c] || []).push(d); (adj[d] = adj[d] || []).push(c);
+    }
+  }
+  // Count cycles in the 2-regular graph
+  const visited = new Set();
+  let circles = 0;
+  for (const label of Object.keys(adj)) {
+    const l = parseInt(label);
+    if (visited.has(l)) continue;
+    circles++;
+    let prev = null, current = l;
+    while (!visited.has(current)) {
+      visited.add(current);
+      const nb = adj[current];
+      const next = (nb[0] === prev) ? nb[1] : nb[0];
+      prev = current;
+      current = next;
+    }
+  }
+  return circles;
+}
+
+async function updateCubeOfResolutions() {
+  const sel = document.getElementById('cor-knot-sel');
+  const varSel = document.getElementById('cor-variant-sel');
+  if (!sel) return;
+  const knotName = sel.value;
+  const variant = varSel.value;
+  const items = getAllItems();
+  const d = items[knotName];
+  if (!d) return;
+
+  // ── Facts panel ──
+  const factsDiv = document.getElementById('cor-facts');
+  if (factsDiv) {
+    const isKnot = !!KNOT_DATA[knotName];
+    const facts = [];
+    facts.push(`<strong style="color:var(--accent);margin-right:0.3rem">${knotName}</strong>`);
+    facts.push(`<span title="Number of crossings in the minimal diagram."><strong>Crossings:</strong> ${d.crossings}</span>`);
+    if (d.signature !== undefined && d.signature !== '') facts.push(`<span title="Knot signature: signature of the symmetrized Seifert matrix. Gives a lower bound on unknotting number." style="cursor:help"><strong>Signature:</strong> ${d.signature}</span>`);
+    if (d.determinant !== undefined && d.determinant !== '') facts.push(`<span title="Knot determinant |&Delta;(-1)|: order of H1 of the double branched cover." style="cursor:help"><strong>Det:</strong> ${d.determinant}</span>`);
+    if (d.arf_invariant !== undefined) facts.push(`<span title="Arf invariant: 0 iff det &equiv; &plusmn;1 (mod 8). Also equals V(i) where V is the Jones polynomial." style="cursor:help"><strong>Arf:</strong> ${d.arf_invariant}</span>`);
+    if (d.fibered !== undefined) facts.push(`<span title="A fibered knot has complement that fibers over the circle." style="cursor:help"><strong>Fibered:</strong> ${d.fibered ? 'Yes' : 'No'}</span>`);
+    if (d.torus_knot) facts.push(`<span title="Torus knots T(p,q) lie on the surface of a standard torus." style="cursor:help"><strong>Torus knot:</strong> ${d.torus_knot}</span>`);
+    if (d.torus_link) facts.push(`<span title="Torus links T(p,q) lie on the surface of a standard torus." style="cursor:help"><strong>Torus link:</strong> ${d.torus_link}</span>`);
+    if (d.three_genus !== undefined && d.three_genus !== '') facts.push(`<span title="Minimum genus of a Seifert surface." style="cursor:help"><strong>Genus:</strong> ${d.three_genus}</span>`);
+    if (d.symmetry_type) {
+      const symMap = {'Reversible': 'Reversible', 'FullyAmphichiral': 'Fully amphichiral', 'NegativeAmphichiral': 'Neg. amphichiral', 'Chiral': 'Chiral'};
+      facts.push(`<span title="Symmetry type under orientation reversal and mirror reflection." style="cursor:help"><strong>Symmetry:</strong> ${symMap[d.symmetry_type] || d.symmetry_type}</span>`);
+    }
+    if (d.bridge_index !== undefined && d.bridge_index !== '') facts.push(`<span title="Minimum number of local maxima in bridge position." style="cursor:help"><strong>Bridge index:</strong> ${d.bridge_index}</span>`);
+    if (d.unknotting_number !== undefined && d.unknotting_number !== '') facts.push(`<span title="Minimum crossing changes to unknot." style="cursor:help"><strong>Unknotting #:</strong> ${d.unknotting_number}</span>`);
+    factsDiv.innerHTML = facts.join(' <span style="color:#ccc">|</span> ');
+    factsDiv.style.display = 'flex';
+  }
+
+  // ── Identifiers ──
+  let pdCode = d.pd_code;
+  const gc = variant === 'mirror' ? (d.mirror_gauss_code || d.gauss_code) : d.gauss_code;
+  const pdDisplay = variant === 'mirror' && pdCode
+    ? pdCode.map(([a, b, c, dd]) => [a, dd, c, b])
+    : pdCode;
+
+  // Use crossing count from PD code or from metadata
+  const n = pdCode ? pdCode.length : parseInt(d.crossings) || 0;
+  if (n === 0 && !pdCode) {
+    document.getElementById('cor-output').innerHTML = '<p style="color:#999">No crossing data available for this knot/link.</p>';
+    return;
+  }
+
+  if (n === 0) {
+    document.getElementById('cor-output').innerHTML = '<p style="color:#999">Unknot — no crossings to resolve.</p>';
+    return;
+  }
+  if (n > 11) {
+    document.getElementById('cor-output').innerHTML = `<p style="color:#999">Too many crossings (${n}) for cube visualization. Maximum is 11.</p>`;
+    return;
+  }
+
+  const numVertices = 1 << n;
+
+  // Try to load circle counts from cached metadata.json
+  let metaCircles = null;
+  try {
+    const metaResp = await fetch(`data/cache/resolutions/${knotName}/metadata.json`);
+    if (metaResp.ok) {
+      const meta = await metaResp.json();
+      const key = variant === 'mirror' ? 'mirror' : 'original';
+      if (meta[key]) metaCircles = meta[key];
+      if (meta.crossing_signs) window._cubeCrossingSigns = meta.crossing_signs;
+    }
+  } catch(e) {}
+
+  // Build vertices with circle counts (prefer metadata, fallback to PD computation)
+  const vertices = [];
+  for (let bits = 0; bits < numVertices; bits++) {
+    const label = bits.toString(2).padStart(n, '0');
+    let circles = null;
+    if (metaCircles && metaCircles[label]) {
+      circles = metaCircles[label].circles;
+    } else {
+      // Fallback: compute from PD code
+      const pdForCalc = variant === 'mirror' ? pdCode.map(([a,b,c,dd]) => [a,dd,c,b]) : pdCode;
+      circles = countCirclesFromPD(pdForCalc, bits);
+    }
+    vertices.push({ bits, label, circles });
+  }
+
+  // ── Diagram image ──
+  const diagImg = variant === 'mirror' ? d.mirror_diagram : d.diagram;
+  const annotatedImg = `data/cache/resolutions/${knotName}/${variant}_annotated.webp`;
+
+  // ── Build HTML ──
+  let html = '';
+
+  // Identifiers bar
+  const idParts = [];
+  if (gc) idParts.push(`<span title="Extended Gauss code: traverse the knot following orientation. Positive crossing number = cross OVER, negative = cross UNDER." style="cursor:help"><strong>GC:</strong> ${formatGaussCode(gc)}</span>`);
+  if (pdDisplay) idParts.push(`<span title="Planar Diagram (PD) code: each crossing [a,b,c,d] lists arc labels counterclockwise from incoming under-strand. 0-resolution: a↔d, b↔c. 1-resolution: a↔b, c↔d." style="cursor:help"><strong>PD:</strong> ${formatPDCode(pdDisplay)}</span>`);
+  if (d.dt_code && variant !== 'mirror') idParts.push(`<span title="Dowker-Thistlethwaite notation: compact crossing encoding. Each odd number maps to its paired even number; sign encodes over/under." style="cursor:help"><strong>DT:</strong> ${formatDTCode(d.dt_code)}</span>`);
+  if (idParts.length > 0) {
+    html += `<div style="font-size:0.75rem;color:#666;margin-bottom:0.8rem;line-height:1.6;word-break:break-all">${idParts.join(' <span style="color:#ccc;margin:0 0.3rem">|</span> ')}</div>`;
+  }
+
+  // Original diagram (annotated with orientation + crossing labels)
+  html += `<div style="text-align:center;margin-bottom:1.5rem">
+    <h3 style="margin:0 0 0.5rem">${variant === 'mirror' ? 'Mirror' : 'Original'} Diagram</h3>
+    <img src="${annotatedImg}" alt="${knotName} annotated" style="max-width:250px;border-radius:8px;border:1px solid #ddd;cursor:pointer" onclick="openLightbox(this.src)" onerror="this.style.display='none'">
+    <div style="font-size:0.65rem;color:#999;margin-top:0.3rem">Arrows = orientation, labels = crossing# (+ or -)</div>
+  </div>`;
+
+  // Scale image size based on number of crossings
+  const imgSz = n <= 3 ? 150 : n <= 4 ? 120 : n <= 5 ? 100 : n <= 6 ? 80 : n <= 7 ? 65 : n <= 8 ? 50 : 40;
+
+  const collapseVertices = n >= 7;
+  html += `<details${collapseVertices ? '' : ' open'} style="margin-bottom:1rem;text-align:center">
+    <summary style="cursor:pointer;font-weight:600;font-size:1.1rem;margin-bottom:0.5rem;user-select:none">
+      Resolution Vertices (${n} crossings, ${numVertices} vertices)
+    </summary>
+    <div style="overflow-x:auto;padding-bottom:0.5rem;display:flex;justify-content:center">
+    <div style="display:inline-flex;flex-wrap:nowrap;gap:0.5rem;align-items:flex-start">`;
+
+  // Group by Hamming weight (number of 1-smoothings)
+  for (let w = 0; w <= n; w++) {
+    const group = vertices.filter(v => v.label.split('').filter(c => c === '1').length === w);
+    if (group.length === 0) continue;
+    html += `<div style="border:1px solid #e0e0e0;border-radius:8px;padding:0.4rem;background:#f9f9f9;flex-shrink:0">
+      <div style="font-weight:700;font-size:0.75rem;color:var(--accent);margin-bottom:0.3rem;text-align:center">
+        wt ${w}
+      </div>`;
+    for (const v of group) {
+      const circleText = v.circles !== null ? `${v.circles}` : '?';
+      const resImgPath = `data/cache/resolutions/${knotName}/${variant}_${v.label}.webp`;
+      const placeholderId = `ph-${v.label}`;
+      html += `<div class="cor-vertex" style="width:auto;margin-bottom:0.3rem;text-align:center">
+        <img src="${resImgPath}" alt="Resolution ${v.label}" style="width:${imgSz}px;height:${imgSz}px;border-radius:4px;cursor:pointer;background:#fff;border:1px solid #eee"
+          onclick="openLightbox(this.src)" onerror="this.style.display='none';document.getElementById('${placeholderId}').style.display='flex'">
+        <div id="${placeholderId}" style="display:none;width:${imgSz}px;height:${imgSz}px;border-radius:4px;background:linear-gradient(135deg,#f5f5f5,#e8e8e8);border:1px solid #ddd;align-items:center;justify-content:center;flex-direction:column;color:#888;margin:0 auto">
+          <span style="font-size:1.4rem;font-weight:700">${circleText}</span>
+          <span style="font-size:0.6rem">circle${v.circles !== 1 ? 's' : ''}</span>
+        </div>
+        <div class="label" style="font-size:${n > 4 ? '0.6rem' : '0.7rem'}">${v.label}</div>
+        <div class="sublabel" style="font-size:0.6rem">${circleText} circ.</div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+
+  html += `</div></div></details>`;
+
+  // Store cube state for interactive click handlers
+  window._cubeState = { vertices, n, knotName, variant };
+
+  // ── Cube graph (SVG) with path selection ──
+  html += buildCubeGraphSVG(vertices, n, knotName, variant);
+
+  // ── Path selection controls ──
+  html += `<div id="cor-path-controls" style="text-align:center;margin:0.5rem auto;max-width:fit-content">
+    <button id="cor-path-toggle" onclick="togglePathMode()" style="padding:0.35rem 0.9rem;border:1.5px solid var(--accent);border-radius:6px;background:transparent;color:var(--accent);font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.2s">Path Mode</button>
+    <span id="cor-path-info" style="display:none;margin-left:0.7rem;font-size:0.85rem;color:#555">
+      Click edges left-to-right to build a composable path. <button onclick="clearCobordismPath()" style="font-size:0.8rem;cursor:pointer;border:1px solid #ccc;border-radius:4px;padding:0.15rem 0.5rem;background:#f8f8f8">Clear</button>
+    </span>
+    <div id="cor-path-display" style="display:none;margin-top:0.5rem;font-size:0.85rem;color:#333"></div>
+    <button id="cor-path-view-btn" style="display:none;margin-top:0.5rem;padding:0.4rem 1rem;border:none;border-radius:6px;background:var(--accent);color:#fff;font-weight:600;font-size:0.9rem;cursor:pointer" onclick="openCompositeCobordism()">View Composite Cobordism</button>
+  </div>`;
+
+  // ── Edge information ──
+  html += `<details style="margin-top:1rem;text-align:center"><summary style="cursor:pointer;font-weight:600;font-size:0.9rem">Edge details (crossing changes)</summary>
+    <div style="font-size:0.8rem;max-height:300px;overflow:auto;padding:0.5rem">`;
+  for (let i = 0; i < numVertices; i++) {
+    for (let bit = 0; bit < n; bit++) {
+      const j = i ^ (1 << bit);
+      if (j <= i) continue; // avoid duplicates
+      const vi = vertices[i], vj = vertices[j];
+      const delta = vi.circles !== null && vj.circles !== null ? vj.circles - vi.circles : '?';
+      const sign = delta > 0 ? '+' : '';
+      html += `<div>${vi.label} → ${vj.label} (crossing ${bit + 1}): Δcircles = ${sign}${delta}</div>`;
+    }
+  }
+  html += `</div></details>`;
+
+  const output = document.getElementById('cor-output');
+  output.innerHTML = html;
+
+  // Resolution images are now <img> tags — no canvas loading needed
+
+  // Render KaTeX in the output
+  if (window.renderMathInElement) {
+    renderMathInElement(output, {
+      delimiters: [{left: '\\(', right: '\\)', display: false}],
+      throwOnError: false,
+    });
+  }
+}
+
+function buildCubeGraphSVG(vertices, n, knotName, variant) {
+  // Scale parameters based on crossing number
+  const maxPerCol = Math.max(...Array.from({length: n+1}, (_, w) =>
+    vertices.filter(v => v.label.split('').filter(c => c === '1').length === w).length));
+  const isLarge = n > 5;
+  const r = isLarge ? (n > 7 ? 4 : 6) : 14;
+  const showLabels = n <= 7;
+  const rowSpacing = isLarge ? Math.max(r * 2.5, 10) : 36;
+  const colSpacing = isLarge ? Math.max(60, 800 / (n + 1)) : 120;
+
+  const pad = isLarge ? 20 : 40;
+  const W = pad * 2 + n * colSpacing;
+  const H = pad * 2 + (maxPerCol - 1) * rowSpacing + r * 2;
+
+  // Layout: arrange by Hamming weight in columns
+  const cols = {};
+  for (const v of vertices) {
+    const w = v.label.split('').filter(c => c === '1').length;
+    if (!cols[w]) cols[w] = [];
+    cols[w].push(v);
+  }
+
+  const positions = {};
+  for (let w = 0; w <= n; w++) {
+    const group = cols[w] || [];
+    const colX = pad + w * colSpacing;
+    const rH = group.length > 1 ? (H - 2 * pad) / (group.length - 1) : 0;
+    for (let i = 0; i < group.length; i++) {
+      const y = group.length === 1 ? H / 2 : pad + i * rH;
+      positions[group[i].bits] = { x: colX, y };
+    }
+  }
+
+  const svgH = Math.min(H, 600);
+  let wrapper = `<div style="overflow:auto;max-height:${svgH + 20}px;border:1px solid #e0e0e0;border-radius:8px;margin:1rem auto;background:#fefefe;max-width:fit-content">`;
+  let svg = `<svg class="cor-cube-graph" width="${W}" height="${H}" style="display:block">`;
+
+  // Draw edges (with IDs for path selection)
+  const edgeWidth = isLarge ? 0.5 : 1.5;
+  for (let i = 0; i < vertices.length; i++) {
+    for (let bit = 0; bit < n; bit++) {
+      const j = i ^ (1 << bit);
+      if (j <= i) continue;
+      const p1 = positions[i], p2 = positions[j];
+      if (!p1 || !p2) continue;
+      const srcBits = Math.min(i, j), tgtBits = Math.max(i, j);
+      svg += `<line id="cube-edge-${srcBits}-${tgtBits}" x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#ddd" stroke-width="${edgeWidth}" style="cursor:pointer" onclick="onCubeEdgeClick(${srcBits},${tgtBits},${bit})"/>`;
+      // Wider invisible hit area
+      svg += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="transparent" stroke-width="8" style="cursor:pointer" onclick="onCubeEdgeClick(${srcBits},${tgtBits},${bit})"/>`;
+    }
+  }
+
+  // Draw vertices
+  for (const v of vertices) {
+    const p = positions[v.bits];
+    if (!p) continue;
+    const w = v.label.split('').filter(c => c === '1').length;
+    const hue = (w / n) * 240;
+    svg += `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="hsl(${hue},60%,85%)" stroke="hsl(${hue},60%,50%)" stroke-width="${isLarge ? 1 : 2}" style="cursor:pointer" onclick="openCubeVertexView(${v.bits})"/>`;
+    if (showLabels) {
+      const fs = n <= 5 ? 9 : 7;
+      svg += `<text x="${p.x}" y="${p.y + 3}" text-anchor="middle" font-size="${fs}" font-family="monospace" font-weight="700" fill="#333" style="pointer-events:none">${v.label}</text>`;
+      if (v.circles !== null) {
+        svg += `<text x="${p.x}" y="${p.y + r + 10}" text-anchor="middle" font-size="${fs - 1}" fill="#888">${v.circles}○</text>`;
+      }
+    }
+  }
+
+  // Weight column headers
+  for (let w = 0; w <= n; w++) {
+    const colX = pad + w * colSpacing;
+    svg += `<text x="${colX}" y="12" text-anchor="middle" font-size="9" font-weight="700" fill="var(--accent)">wt ${w}</text>`;
+  }
+
+  svg += '</svg>';
+  return wrapper + svg + '</div>';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  COMPOSITE COBORDISM PATH SELECTION
+// ═══════════════════════════════════════════════════════════════════
+
+window._cobordismPathMode = false;
+window._cobordismPath = []; // Array of {srcBits, tgtBits, changedBit}
+
+function togglePathMode() {
+  window._cobordismPathMode = !window._cobordismPathMode;
+  const btn = document.getElementById('cor-path-toggle');
+  const info = document.getElementById('cor-path-info');
+  if (window._cobordismPathMode) {
+    btn.style.background = 'var(--accent)';
+    btn.style.color = '#fff';
+    info.style.display = 'inline';
+    clearCobordismPath();
+  } else {
+    btn.style.background = 'transparent';
+    btn.style.color = 'var(--accent)';
+    info.style.display = 'none';
+    clearCobordismPath();
+  }
+}
+
+function onCubeEdgeClick(srcBits, tgtBits, changedBit) {
+  if (!window._cobordismPathMode) {
+    // Normal mode: open single cobordism
+    openCobordism(srcBits, tgtBits, changedBit);
+    return;
+  }
+  // Path mode: add edge to path if composable
+  const path = window._cobordismPath;
+  // Ensure src has lower Hamming weight (edge goes from lower to higher weight)
+  let lo = srcBits, hi = tgtBits;
+  const wLo = lo.toString(2).split('').filter(c => c === '1').length;
+  const wHi = hi.toString(2).split('').filter(c => c === '1').length;
+  if (wLo > wHi) { let t = lo; lo = hi; hi = t; }
+
+  if (path.length === 0) {
+    // First edge: accept any
+    path.push({ srcBits: lo, tgtBits: hi, changedBit });
+  } else {
+    const lastEdge = path[path.length - 1];
+    // Composability: the source of the new edge must be the target of the last edge
+    if (lo !== lastEdge.tgtBits) {
+      // Show error flash
+      const display = document.getElementById('cor-path-display');
+      display.style.display = 'block';
+      display.innerHTML = `<span style="color:#c62828">Edge ${formatBits(lo)} → ${formatBits(hi)} is not composable: must start at ${formatBits(lastEdge.tgtBits)}</span>`;
+      setTimeout(() => updatePathDisplay(), 1500);
+      return;
+    }
+    // Check not already in path
+    if (path.some(e => e.srcBits === lo && e.tgtBits === hi)) return;
+    path.push({ srcBits: lo, tgtBits: hi, changedBit });
+  }
+  updatePathDisplay();
+  highlightPathEdges();
+}
+
+function formatBits(bits) {
+  const st = window._cubeState;
+  if (!st) return bits.toString(2);
+  return bits.toString(2).padStart(st.n, '0');
+}
+
+function clearCobordismPath() {
+  // Unhighlight old edges
+  for (const e of window._cobordismPath) {
+    const line = document.getElementById(`cube-edge-${Math.min(e.srcBits, e.tgtBits)}-${Math.max(e.srcBits, e.tgtBits)}`);
+    if (line) { line.setAttribute('stroke', '#ddd'); line.setAttribute('stroke-width', line.dataset.origWidth || '1.5'); }
+  }
+  window._cobordismPath = [];
+  updatePathDisplay();
+}
+
+function updatePathDisplay() {
+  const path = window._cobordismPath;
+  const display = document.getElementById('cor-path-display');
+  const viewBtn = document.getElementById('cor-path-view-btn');
+
+  if (path.length === 0) {
+    display.style.display = 'none';
+    viewBtn.style.display = 'none';
+    return;
+  }
+
+  display.style.display = 'block';
+  const labels = [formatBits(path[0].srcBits)];
+  for (const e of path) {
+    labels.push(`<span style="color:var(--accent)">→<sub>c${e.changedBit + 1}</sub></span> ${formatBits(e.tgtBits)}`);
+  }
+  display.innerHTML = '<strong>Path:</strong> ' + labels.join(' ');
+
+  viewBtn.style.display = path.length >= 1 ? 'inline-block' : 'none';
+}
+
+function highlightPathEdges() {
+  // Reset all edges to default
+  document.querySelectorAll('[id^="cube-edge-"]').forEach(el => {
+    el.setAttribute('stroke', '#ddd');
+  });
+  // Highlight path edges
+  for (let i = 0; i < window._cobordismPath.length; i++) {
+    const e = window._cobordismPath[i];
+    const lo = Math.min(e.srcBits, e.tgtBits), hi = Math.max(e.srcBits, e.tgtBits);
+    const line = document.getElementById(`cube-edge-${lo}-${hi}`);
+    if (line) {
+      const hue = (i / Math.max(window._cobordismPath.length - 1, 1)) * 240;
+      line.setAttribute('stroke', `hsl(${hue}, 70%, 50%)`);
+      line.setAttribute('stroke-width', '3');
+    }
+  }
+}
+
+/**
+ * Open the composite cobordism for the selected path.
+ * Stacks individual cobordism layers vertically in the 3D scene.
+ */
+function openCompositeCobordism() {
+  const path = window._cobordismPath;
+  if (path.length === 0) return;
+
+  const st = window._cubeState;
+  if (!st) return;
+  const { vertices, n, knotName, variant } = st;
+
+  // Load diagram metadata
+  fetch(`data/cache/resolutions/${knotName}/metadata.json`)
+    .then(r => r.json())
+    .then(meta => {
+      const diagKey = variant === 'mirror' ? 'mirror_diagram' : 'diagram';
+      const diagram = meta[diagKey];
+      if (!diagram) { alert('No diagram geometry available'); return; }
+      _renderCompositeCobordism(diagram, path, vertices, n, knotName, variant);
+    })
+    .catch(e => { console.error('Composite cobordism load error:', e); alert('Failed to load diagram data'); });
+}
+
+function _renderCompositeCobordism(diagram, path, vertices, n, knotName, variant) {
+  // Compute all individual cobordism correspondences
+  const layers = [];
+  for (const edge of path) {
+    const corr = cobordismCorrespondence(diagram, edge.srcBits, edge.tgtBits, edge.changedBit);
+    layers.push({ ...corr, srcBits: edge.srcBits, tgtBits: edge.tgtBits, changedBit: edge.changedBit });
+  }
+
+  // Build path label
+  const pathLabel = [formatBits(path[0].srcBits)];
+  for (const e of path) pathLabel.push(formatBits(e.tgtBits));
+  const crossingList = path.map(e => `c${e.changedBit + 1}`).join(', ');
+
+  // Compute bounding box from all circles
+  const allPts = [];
+  for (const layer of layers) {
+    allPts.push(...layer.srcCircles.flat());
+    allPts.push(...layer.tgtCircles.flat());
+  }
+  const xMin = Math.min(...allPts.map(p => p.x)), xMax = Math.max(...allPts.map(p => p.x));
+  const yMin = Math.min(...allPts.map(p => p.y)), yMax = Math.max(...allPts.map(p => p.y));
+  const cx = (xMin + xMax) / 2, cy = (yMin + yMax) / 2;
+  const span = Math.max(xMax - xMin, yMax - yMin, 1);
+  const scale = 10 / span;
+  const layerHeight = 8;
+  const totalHeight = layerHeight * layers.length;
+
+  const norm = (p) => [(p.x - cx) * scale, (p.y - cy) * scale];
+
+  // Smooth paths
+  function smoothPath(pathPts, iterations = 3) {
+    let pts = pathPts.slice();
+    for (let iter = 0; iter < iterations; iter++) {
+      const result = [];
+      for (let i = 0; i < pts.length; i++) {
+        const j = (i + 1) % pts.length;
+        result.push({ x: pts[i].x * 0.75 + pts[j].x * 0.25, y: pts[i].y * 0.75 + pts[j].y * 0.25 });
+        result.push({ x: pts[i].x * 0.25 + pts[j].x * 0.75, y: pts[i].y * 0.25 + pts[j].y * 0.75 });
+      }
+      pts = result;
+    }
+    return pts;
+  }
+
+  // Smooth all circles
+  for (const layer of layers) {
+    for (let i = 0; i < layer.srcCircles.length; i++) layer.srcCircles[i] = smoothPath(layer.srcCircles[i]);
+    for (let i = 0; i < layer.tgtCircles.length; i++) layer.tgtCircles[i] = smoothPath(layer.tgtCircles[i]);
+  }
+
+  // Setup Three.js
+  const overlay = document.getElementById('cobordism-overlay');
+  overlay.innerHTML = `<div class="cob-inner">
+    <div class="cob-toolbar">
+      <div class="cob-info">Composite: ${pathLabel.join(' → ')} | crossings: ${crossingList} | ${layers.length} layer${layers.length > 1 ? 's' : ''}</div>
+      <button onclick="closeCobordismOverlay()" style="font-size:1.5rem;background:none;border:none;cursor:pointer;color:#ccc;line-height:1">&times;</button>
+    </div>
+    <canvas id="cob-canvas"></canvas>
+  </div>`;
+  overlay.classList.add('active');
+
+  requestAnimationFrame(() => { requestAnimationFrame(() => {
+    const canvas = document.getElementById('cob-canvas');
+    const inner = overlay.querySelector('.cob-inner');
+    if (!canvas || !inner) return;
+    const w = inner.clientWidth || window.innerWidth * 0.94;
+    const h = inner.clientHeight || window.innerHeight * 0.94;
+    canvas.width = w;
+    canvas.height = h;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setClearColor(0x1a1a2e);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.1, 200);
+    camera.position.set(0, -(totalHeight + 15), totalHeight * 0.6);
+    camera.up.set(0, 0, 1);
+
+    if (!THREE.OrbitControls) {
+      setTimeout(() => openCompositeCobordism(), 300);
+      return;
+    }
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.target.set(0, 0, totalHeight / 2);
+    controls.update();
+
+    // Lighting
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    const dLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dLight.position.set(5, -5, totalHeight + 5);
+    scene.add(dLight);
+    const dLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+    dLight2.position.set(-3, 5, -5);
+    scene.add(dLight2);
+
+    // Utility: resample closed path
+    function resamplePath(pathPts, numPts) {
+      if (pathPts.length <= 1) return Array(numPts).fill(pathPts[0] || { x: 0, y: 0 });
+      let totalLen = 0;
+      const segLens = [];
+      for (let i = 0; i < pathPts.length; i++) {
+        const j = (i + 1) % pathPts.length;
+        const dx = pathPts[j].x - pathPts[i].x, dy = pathPts[j].y - pathPts[i].y;
+        segLens.push(Math.sqrt(dx * dx + dy * dy));
+        totalLen += segLens[i];
+      }
+      if (totalLen === 0) return Array(numPts).fill(pathPts[0]);
+      const result = [];
+      for (let k = 0; k < numPts; k++) {
+        let target = (k / numPts) * totalLen;
+        let accum = 0;
+        for (let i = 0; i < pathPts.length; i++) {
+          if (accum + segLens[i] >= target - 1e-9) {
+            const t = segLens[i] > 0 ? (target - accum) / segLens[i] : 0;
+            const j = (i + 1) % pathPts.length;
+            result.push({ x: pathPts[i].x + t * (pathPts[j].x - pathPts[i].x), y: pathPts[i].y + t * (pathPts[j].y - pathPts[i].y) });
+            break;
+          }
+          accum += segLens[i];
+        }
+      }
+      while (result.length < numPts) result.push(pathPts[0]);
+      return result;
+    }
+
+    // Build tube geometry from closed path at a given z height
+    function buildTubeAtZ(circle, z, color, opacity) {
+      const resampled = resamplePath(circle, 64);
+      const points = resampled.map(p => {
+        const [nx, ny] = norm(p);
+        return new THREE.Vector3(nx, ny, z);
+      });
+      points.push(points[0].clone()); // close the loop
+      const curve = new THREE.CatmullRomCurve3(points, true);
+      const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.15, 8, true);
+      const mat = new THREE.MeshPhongMaterial({ color, transparent: opacity < 1, opacity, side: THREE.DoubleSide });
+      return new THREE.Mesh(tubeGeo, mat);
+    }
+
+    // Build interpolation surface between bottom circle and top circle
+    function buildSurfaceStrip(srcResampled, tgtResampled, zBottom, zTop, color, opacity) {
+      const N = srcResampled.length;
+      const stepsZ = 20;
+      const geo = new THREE.BufferGeometry();
+      const verts = [];
+      const indices = [];
+
+      for (let zi = 0; zi <= stepsZ; zi++) {
+        const t = zi / stepsZ;
+        const z = zBottom + t * (zTop - zBottom);
+        // Smooth interpolation
+        const blend = t * t * (3 - 2 * t); // smoothstep
+        for (let i = 0; i < N; i++) {
+          const s = srcResampled[i], g = tgtResampled[i];
+          const [sx, sy] = norm(s);
+          const [gx, gy] = norm(g);
+          verts.push(sx + (gx - sx) * blend, sy + (gy - sy) * blend, z);
+        }
+      }
+
+      for (let zi = 0; zi < stepsZ; zi++) {
+        for (let i = 0; i < N; i++) {
+          const i1 = (i + 1) % N;
+          const a = zi * N + i;
+          const b = zi * N + i1;
+          const c = (zi + 1) * N + i;
+          const d = (zi + 1) * N + i1;
+          indices.push(a, b, d);
+          indices.push(a, d, c);
+        }
+      }
+
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+      geo.setIndex(indices);
+      geo.computeVertexNormals();
+      const mat = new THREE.MeshPhongMaterial({ color, transparent: true, opacity, side: THREE.DoubleSide });
+      return new THREE.Mesh(geo, mat);
+    }
+
+    // Build the saddle surface for merge/split using a pinch or expansion
+    function buildSaddleSurface(nearCircles, otherCircles, zBottom, zTop, type, color, opacity) {
+      // For merge: two circles at bottom merge into one at top
+      // For split: one circle at bottom splits into two at top
+      const N = 64;
+
+      if (type === 'merge' && nearCircles.length >= 2 && otherCircles.length >= 1) {
+        // Merge: nearCircles[0], nearCircles[1] at bottom → otherCircles[0] at top
+        const src0 = resamplePath(nearCircles[0], N);
+        const src1 = resamplePath(nearCircles[1], N);
+        const tgt = resamplePath(otherCircles[0], N);
+        // Create surface for each source circle morphing to the target
+        const s0 = buildSurfaceStrip(src0, tgt, zBottom, zTop, color, opacity);
+        const s1 = buildSurfaceStrip(src1, tgt, zBottom, zTop, color, opacity);
+        return [s0, s1];
+      } else if (type === 'split' && nearCircles.length >= 1 && otherCircles.length >= 2) {
+        // Split: nearCircles[0] at bottom → otherCircles[0], otherCircles[1] at top
+        const src = resamplePath(nearCircles[0], N);
+        const tgt0 = resamplePath(otherCircles[0], N);
+        const tgt1 = resamplePath(otherCircles[1], N);
+        const s0 = buildSurfaceStrip(src, tgt0, zBottom, zTop, color, opacity);
+        const s1 = buildSurfaceStrip(src, tgt1, zBottom, zTop, color, opacity);
+        return [s0, s1];
+      } else {
+        // Fallback: just interpolate
+        if (nearCircles.length > 0 && otherCircles.length > 0) {
+          const src = resamplePath(nearCircles[0], N);
+          const tgt = resamplePath(otherCircles[0], N);
+          return [buildSurfaceStrip(src, tgt, zBottom, zTop, color, opacity)];
+        }
+        return [];
+      }
+    }
+
+    // Colors for layers
+    const layerColors = [0x4caf50, 0x2196f3, 0xff9800, 0x9c27b0, 0xf44336, 0x00bcd4, 0x795548, 0x607d8b];
+
+    // Render each layer — source (lower weight) at TOP, target (higher weight) at BOTTOM
+    // matching the existing single cobordism convention.
+    // Layer 0 (first edge, lowest weight source) is at the top of the stack.
+    for (let li = 0; li < layers.length; li++) {
+      const layer = layers[li];
+      // Flip: layer 0 gets the highest z values
+      const zTop = (layers.length - li) * layerHeight;      // source z (higher)
+      const zBottom = (layers.length - 1 - li) * layerHeight; // target z (lower)
+      const zMid = (zBottom + zTop) / 2;
+      const color = layerColors[li % layerColors.length];
+
+      // Source boundary circles at zTop (higher z = top of this layer)
+      for (const circle of layer.srcCircles) {
+        scene.add(buildTubeAtZ(circle, zTop, 0x888888, 0.6));
+      }
+
+      // Target boundary circles at zBottom — only for the last layer (lowest z)
+      if (li === layers.length - 1) {
+        for (const circle of layer.tgtCircles) {
+          scene.add(buildTubeAtZ(circle, zBottom, 0x888888, 0.6));
+        }
+      }
+
+      // Identity surfaces (unchanged circles): src at zTop, tgt at zBottom
+      for (const u of layer.unchanged) {
+        const srcResampled = resamplePath(layer.srcCircles[u.src], 64);
+        const tgtResampled = resamplePath(layer.tgtCircles[u.tgt], 64);
+        // buildSurfaceStrip interpolates first arg at zBottom, second at zTop
+        // so pass tgt at zBottom, src at zTop
+        scene.add(buildSurfaceStrip(tgtResampled, srcResampled, zBottom, zTop, 0x4488cc, 0.35));
+      }
+
+      // Saddle surface (merge or split): src at zTop, tgt at zBottom
+      // buildSaddleSurface places nearCircles at zBottom→zTop, so we pass
+      // tgtNear as nearCircles (at zBottom) and srcNear as otherCircles (at zTop),
+      // and invert the type: merge becomes split visually and vice versa,
+      // because the geometry direction is reversed.
+      const srcNearCircles = layer.srcNear.map(i => layer.srcCircles[i]);
+      const tgtNearCircles = layer.tgtNear.map(i => layer.tgtCircles[i]);
+      const invertedType = layer.type === 'merge' ? 'split' : 'merge';
+      const saddleMeshes = buildSaddleSurface(tgtNearCircles, srcNearCircles, zBottom, zTop, invertedType, color, 0.55);
+      for (const mesh of saddleMeshes) scene.add(mesh);
+
+      // Layer separator plane (thin disc) between layers
+      if (li < layers.length - 1) {
+        const planeGeo = new THREE.RingGeometry(0, 12, 32);
+        const planeMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.05, side: THREE.DoubleSide });
+        const plane = new THREE.Mesh(planeGeo, planeMat);
+        plane.position.set(0, 0, zBottom);
+        scene.add(plane);
+      }
+
+      // Layer label
+      const labelCanvas = document.createElement('canvas');
+      labelCanvas.width = 256;
+      labelCanvas.height = 64;
+      const ctx = labelCanvas.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 20px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(`c${layer.changedBit + 1}: ${layer.type}`, 128, 38);
+      const labelTexture = new THREE.CanvasTexture(labelCanvas);
+      const labelMat = new THREE.SpriteMaterial({ map: labelTexture, transparent: true });
+      const labelSprite = new THREE.Sprite(labelMat);
+      labelSprite.scale.set(4, 1, 1);
+      labelSprite.position.set(12, 0, zMid);
+      scene.add(labelSprite);
+    }
+
+    // Source / target labels at top and bottom of stack
+    function addCompLabel(text, pos, color) {
+      const c2d = document.createElement('canvas');
+      c2d.width = 256; c2d.height = 64;
+      const ctx2 = c2d.getContext('2d');
+      ctx2.fillStyle = '#' + color.toString(16).padStart(6, '0');
+      ctx2.font = 'bold 24px monospace';
+      ctx2.textAlign = 'center';
+      ctx2.fillText(text, 128, 40);
+      const tex = new THREE.CanvasTexture(c2d);
+      const sm = new THREE.SpriteMaterial({ map: tex, transparent: true });
+      const sp = new THREE.Sprite(sm);
+      sp.position.copy(pos);
+      sp.scale.set(5, 1.2, 1);
+      scene.add(sp);
+    }
+    const srcBitsLabel = formatBits(path[0].srcBits);
+    const tgtBitsLabel = formatBits(path[path.length - 1].tgtBits);
+    addCompLabel('src: ' + srcBitsLabel, new THREE.Vector3(0, 8, totalHeight + 0.5), 0x80cbc4);
+    addCompLabel('tgt: ' + tgtBitsLabel, new THREE.Vector3(0, 8, -0.5), 0xffab91);
+
+    // Animate
+    function animate() {
+      if (!overlay.classList.contains('active')) { renderer.dispose(); return; }
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+  }); });
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════
+//  CUBE VERTEX NEIGHBORHOOD VIEW
+// ═══════════════════════════════════════════════════════════════════
+
+function openCubeVertexView(clickedBits) {
+  const st = window._cubeState;
+  if (!st) return;
+  const { vertices, n, knotName, variant } = st;
+
+  const center = vertices.find(v => v.bits === clickedBits);
+  if (!center) return;
+
+  // Collect the clicked vertex + its neighbors (the "relevant" set)
+  const neighborBits = new Set();
+  neighborBits.add(clickedBits);
+  const changedBitMap = {};
+  for (let bit = 0; bit < n; bit++) {
+    const nbBits = clickedBits ^ (1 << bit);
+    neighborBits.add(nbBits);
+    changedBitMap[nbBits] = bit;
+  }
+
+  const relevant = vertices.filter(v => neighborBits.has(v.bits));
+
+  const imgPath = b => `data/cache/resolutions/${knotName}/${variant}_${format(b, n)}.webp`;
+  function format(bits, len) { return bits.toString(2).padStart(len, '0'); }
+
+  // Use the same Hamming-weight column layout as the cube graph
+  const imgSize = n <= 5 ? 160 : n <= 7 ? 130 : 100;
+  const imgGap = n <= 5 ? 30 : 20;
+  const pad = 60;
+
+  // Group relevant vertices by Hamming weight
+  const cols = {};
+  for (const v of relevant) {
+    const w = v.label.split('').filter(c => c === '1').length;
+    if (!cols[w]) cols[w] = [];
+    cols[w].push(v);
+  }
+  const weights = Object.keys(cols).map(Number).sort((a, b) => a - b);
+  const numCols = weights.length;
+
+  // Compute layout dimensions
+  const colSpacing = imgSize + imgGap + 40;
+  const maxPerCol = Math.max(...weights.map(w => cols[w].length));
+  const rowSpacing = imgSize + imgGap + 20;
+
+  const W = pad * 2 + (numCols - 1) * colSpacing + imgSize;
+  const H = pad * 2 + (maxPerCol - 1) * rowSpacing + imgSize + 40;
+
+  const positions = {};
+  for (let ci = 0; ci < weights.length; ci++) {
+    const w = weights[ci];
+    const group = cols[w];
+    const colX = pad + ci * colSpacing + imgSize / 2;
+    for (let ri = 0; ri < group.length; ri++) {
+      const y = group.length === 1
+        ? H / 2
+        : pad + imgSize / 2 + ri * rowSpacing;
+      positions[group[ri].bits] = { x: colX, y };
+    }
+  }
+
+  // SVG with viewBox for scaling to fit screen
+  let svg = `<svg id="cvo-svg" viewBox="0 0 ${W} ${H}" style="display:block;width:100%;height:100%">`;
+
+  // Draw edges between connected relevant vertices (clickable for cobordism)
+  for (const v of relevant) {
+    for (let bit = 0; bit < n; bit++) {
+      const j = v.bits ^ (1 << bit);
+      if (j <= v.bits) continue;
+      if (!neighborBits.has(j)) continue;
+      const p1 = positions[v.bits], p2 = positions[j];
+      if (!p1 || !p2) continue;
+      const delta = (v.circles !== null && vertices[j].circles !== null)
+        ? vertices[j].circles - v.circles : null;
+      const edgeColor = (v.bits === clickedBits || j === clickedBits) ? '#aaa' : '#ddd';
+      // Invisible wide hit target for clicking
+      const srcBits = Math.min(v.bits, j), tgtBits = Math.max(v.bits, j);
+      svg += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="transparent" stroke-width="14" style="cursor:pointer" onclick="event.stopPropagation();openCobordism(${srcBits},${tgtBits},${bit})"/>`;
+      svg += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="${edgeColor}" stroke-width="2" style="pointer-events:none"/>`;
+      if (delta !== null) {
+        const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+        const sign = delta > 0 ? '+' : '';
+        svg += `<text x="${mx}" y="${my - imgSize/2 - 4}" text-anchor="middle" font-size="10" fill="#999" style="pointer-events:none">c${bit + 1} (${sign}${delta})</text>`;
+        svg += `<text x="${mx}" y="${my - imgSize/2 + 10}" text-anchor="middle" font-size="8" fill="#c9a" style="pointer-events:none;font-style:italic">click for 3D</text>`;
+      }
+    }
+  }
+
+  // Draw vertex images
+  for (const v of relevant) {
+    const p = positions[v.bits];
+    if (!p) continue;
+    const isCenter = v.bits === clickedBits;
+    const sz = isCenter ? imgSize * 1.15 : imgSize;
+    const strokeColor = isCenter ? 'var(--accent)' : '#bbb';
+    const strokeW = isCenter ? 3 : 1.5;
+
+    svg += `<rect x="${p.x - sz/2}" y="${p.y - sz/2}" width="${sz}" height="${sz}" fill="#f0f0f0" stroke="${strokeColor}" stroke-width="${strokeW}" rx="8"/>`;
+    svg += `<text x="${p.x}" y="${p.y}" text-anchor="middle" dominant-baseline="central" font-size="20" font-weight="700" fill="#ccc">${v.circles}</text>`;
+    svg += `<image href="${imgPath(v.bits)}" x="${p.x - sz/2}" y="${p.y - sz/2}" width="${sz}" height="${sz}" style="cursor:pointer" onclick="event.stopPropagation();${isCenter ? `openLightbox('${imgPath(v.bits)}')` : `openCubeVertexView(${v.bits})`}"/>`;
+    svg += `<rect x="${p.x - sz/2}" y="${p.y - sz/2}" width="${sz}" height="${sz}" fill="none" stroke="${strokeColor}" stroke-width="${strokeW}" rx="8"/>`;
+    svg += `<text x="${p.x}" y="${p.y + sz/2 + 16}" text-anchor="middle" font-size="${isCenter ? 14 : 11}" font-weight="${isCenter ? 700 : 600}" font-family="monospace" fill="#333">${v.label}</text>`;
+    svg += `<text x="${p.x}" y="${p.y + sz/2 + 30}" text-anchor="middle" font-size="${isCenter ? 11 : 9}" fill="#888">${v.circles} circle${v.circles !== 1 ? 's' : ''}</text>`;
+  }
+
+  // Weight column headers
+  for (let ci = 0; ci < weights.length; ci++) {
+    const w = weights[ci];
+    const colX = pad + ci * colSpacing + imgSize / 2;
+    svg += `<text x="${colX}" y="20" text-anchor="middle" font-size="11" font-weight="700" fill="var(--accent)">wt ${w}</text>`;
+  }
+
+  svg += '</svg>';
+
+  const overlay = document.getElementById('cube-vertex-overlay');
+  overlay.innerHTML = `<div class="cvo-inner" style="width:92vw;height:92vh;display:flex;flex-direction:column">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;flex-shrink:0">
+      <div style="display:flex;gap:0.4rem;align-items:center">
+        <button onclick="cvoZoom(-1)" style="width:28px;height:28px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:1rem;line-height:1" title="Zoom out">-</button>
+        <button onclick="cvoZoom(0)" style="height:28px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:0.7rem;padding:0 8px" title="Reset zoom">Fit</button>
+        <button onclick="cvoZoom(1)" style="width:28px;height:28px;border:1px solid #ccc;border-radius:4px;background:#f5f5f5;cursor:pointer;font-size:1rem;line-height:1" title="Zoom in">+</button>
+        <span id="cvo-zoom-label" style="font-size:0.7rem;color:#999;margin-left:0.3rem">100%</span>
+      </div>
+      <button onclick="closeCubeVertexOverlay()" style="font-size:1.5rem;background:none;border:none;cursor:pointer;color:#999;line-height:1">&times;</button>
+    </div>
+    <div id="cvo-svg-wrap" style="flex:1;overflow:auto;min-height:0">${svg}</div>
+  </div>`;
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Store base viewBox for zoom
+  window._cvoZoomState = { baseW: W, baseH: H, scale: 1 };
+  _cvoApplyZoom();
+}
+
+function _cvoApplyZoom() {
+  const s = window._cvoZoomState;
+  if (!s) return;
+  const svg = document.getElementById('cvo-svg');
+  if (!svg) return;
+  const wrap = document.getElementById('cvo-svg-wrap');
+  const pct = Math.round(s.scale * 100);
+  document.getElementById('cvo-zoom-label').textContent = pct + '%';
+
+  if (s.scale <= 1) {
+    // Fit mode: SVG scales to container via viewBox
+    svg.style.width = '100%';
+    svg.style.height = '100%';
+    svg.setAttribute('viewBox', `0 0 ${s.baseW} ${s.baseH}`);
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+  } else {
+    // Zoomed: fixed pixel size, scrollable
+    svg.style.width = (s.baseW * s.scale) + 'px';
+    svg.style.height = (s.baseH * s.scale) + 'px';
+    svg.removeAttribute('viewBox');
+  }
+}
+
+function cvoZoom(dir) {
+  const s = window._cvoZoomState;
+  if (!s) return;
+  if (dir === 0) { s.scale = 1; }
+  else if (dir > 0) { s.scale = Math.min(s.scale * 1.3, 5); }
+  else { s.scale = Math.max(s.scale / 1.3, 0.3); }
+  _cvoApplyZoom();
+}
+
+// Mouse wheel zoom on overlay
+document.addEventListener('wheel', function(e) {
+  const overlay = document.getElementById('cube-vertex-overlay');
+  if (!overlay || !overlay.classList.contains('active')) return;
+  const wrap = document.getElementById('cvo-svg-wrap');
+  if (!wrap || !wrap.contains(e.target)) return;
+  e.preventDefault();
+  cvoZoom(e.deltaY < 0 ? 1 : -1);
+}, { passive: false });
+
+function closeCubeVertexOverlay() {
+  document.getElementById('cube-vertex-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ESC key closes cube vertex overlay too
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('cube-vertex-overlay');
+    if (overlay && overlay.classList.contains('active')) {
+      closeCubeVertexOverlay();
+    }
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+//  COBORDISM 3D VIEWER
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Trace circle paths in the orthogonal diagram for a given resolution.
+ * Returns array of circles, each circle is an array of {x,y} points.
+ */
+function traceCirclesOrtho(diagram, bits) {
+  const { vertices: verts, edges, crossings } = diagram;
+  const nCross = crossings.length;
+
+  // Split edges at crossing points (parametrically)
+  const edgeSplits = {};
+  for (let ci = 0; ci < nCross; ci++) {
+    const info = crossings[ci];
+    const pt = info.point;
+    if (!pt) continue;
+    for (const ei of [info.ue_i, info.oe_i]) {
+      const [vs, ve] = edges[ei];
+      const ps = verts[vs], pe = verts[ve];
+      const dx = pe[0] - ps[0], dy = pe[1] - ps[1];
+      const l2 = dx * dx + dy * dy;
+      if (l2 === 0) continue;
+      const t = ((pt[0] - ps[0]) * dx + (pt[1] - ps[1]) * dy) / l2;
+      if (!edgeSplits[ei]) edgeSplits[ei] = [];
+      edgeSplits[ei].push({ t, ci });
+    }
+  }
+  for (const ei in edgeSplits) edgeSplits[ei].sort((a, b) => a.t - b.t);
+
+  // Build segments with geometry
+  let segCount = 0;
+  const vertexJunctions = {};  // vi -> [(sid, 'start'|'end')]
+  const crossingJunctions = {};  // ci -> {us/ue/os/oe -> (sid, 'start'|'end')}
+  const segGeo = [];  // segId -> {startPt, endPt}
+
+  for (let ei = 0; ei < edges.length; ei++) {
+    const [vs, ve] = edges[ei];
+    if (!edgeSplits[ei]) {
+      const sid = segCount++;
+      segGeo[sid] = { startPt: verts[vs], endPt: verts[ve] };
+      (vertexJunctions[vs] = vertexJunctions[vs] || []).push([sid, 'start']);
+      (vertexJunctions[ve] = vertexJunctions[ve] || []).push([sid, 'end']);
+      continue;
+    }
+    const splits = edgeSplits[ei];
+    let prevEndpoint = { type: 'vertex', id: vs };
+    for (const { t, ci } of splits) {
+      const sid = segCount++;
+      const ps = verts[edges[ei][0]], pe = verts[edges[ei][1]];
+      const prevPt = prevEndpoint.type === 'vertex' ? verts[prevEndpoint.id] : crossings[prevEndpoint.id].point;
+      const curPt = crossings[ci].point;
+      segGeo[sid] = { startPt: prevPt, endPt: curPt };
+
+      if (prevEndpoint.type === 'vertex') {
+        (vertexJunctions[prevEndpoint.id] = vertexJunctions[prevEndpoint.id] || []).push([sid, 'start']);
+      } else {
+        const prevCi = prevEndpoint.id;
+        const prevInfo = crossings[prevCi];
+        const role = (ei === prevInfo.ue_i) ? 'ue' : 'oe';
+        if (!crossingJunctions[prevCi]) crossingJunctions[prevCi] = {};
+        crossingJunctions[prevCi][role] = [sid, 'start'];
+      }
+      const curInfo = crossings[ci];
+      const role = (ei === curInfo.ue_i) ? 'us' : 'os';
+      if (!crossingJunctions[ci]) crossingJunctions[ci] = {};
+      crossingJunctions[ci][role] = [sid, 'end'];
+      prevEndpoint = { type: 'crossing', id: ci };
+    }
+    // Final segment to end vertex
+    const sid = segCount++;
+    const prevPt = prevEndpoint.type === 'vertex' ? verts[prevEndpoint.id] : crossings[prevEndpoint.id].point;
+    segGeo[sid] = { startPt: prevPt, endPt: verts[ve] };
+
+    if (prevEndpoint.type === 'vertex') {
+      (vertexJunctions[prevEndpoint.id] = vertexJunctions[prevEndpoint.id] || []).push([sid, 'start']);
+    } else {
+      const prevCi = prevEndpoint.id;
+      const prevInfo = crossings[prevCi];
+      const role = (ei === prevInfo.ue_i) ? 'ue' : 'oe';
+      if (!crossingJunctions[prevCi]) crossingJunctions[prevCi] = {};
+      crossingJunctions[prevCi][role] = [sid, 'start'];
+    }
+    (vertexJunctions[ve] = vertexJunctions[ve] || []).push([sid, 'end']);
+  }
+
+  // Build pairing
+  const pairing = {};
+  const k = (sid, end) => sid + ':' + end;
+  for (const vi in vertexJunctions) {
+    const eps = vertexJunctions[vi];
+    if (eps.length === 2) {
+      pairing[k(eps[0][0], eps[0][1])] = eps[1];
+      pairing[k(eps[1][0], eps[1][1])] = eps[0];
+    }
+  }
+  for (let ci = 0; ci < nCross; ci++) {
+    const roles = crossingJunctions[ci];
+    if (!roles || Object.keys(roles).length !== 4) continue;
+    const bit = (bits >> ci) & 1;
+    const sign = crossings[ci].geo_sign;
+    let useSS = (sign > 0);
+    if (bit === 1) useSS = !useSS;
+    if (useSS) {
+      pairing[k(roles.us[0], roles.us[1])] = roles.os;
+      pairing[k(roles.os[0], roles.os[1])] = roles.us;
+      pairing[k(roles.ue[0], roles.ue[1])] = roles.oe;
+      pairing[k(roles.oe[0], roles.oe[1])] = roles.ue;
+    } else {
+      pairing[k(roles.us[0], roles.us[1])] = roles.oe;
+      pairing[k(roles.oe[0], roles.oe[1])] = roles.us;
+      pairing[k(roles.ue[0], roles.ue[1])] = roles.os;
+      pairing[k(roles.os[0], roles.os[1])] = roles.ue;
+    }
+  }
+
+  // Build reverse lookup: which crossing does each segment endpoint touch?
+  const segEndCrossing = {};  // "sid:end" -> ci
+  for (let ci = 0; ci < nCross; ci++) {
+    const roles = crossingJunctions[ci];
+    if (!roles) continue;
+    for (const role of ['us', 'ue', 'os', 'oe']) {
+      if (roles[role]) segEndCrossing[k(roles[role][0], roles[role][1])] = ci;
+    }
+  }
+
+  // Trace cycles and collect geometric paths + crossing visits
+  const visited = new Set();
+  const circles = [];
+  for (let sid = 0; sid < segCount; sid++) {
+    const startKey = k(sid, 'start');
+    if (visited.has(startKey)) continue;
+    const path = [];
+    const crossingsVisited = new Set();
+    let cur = [sid, 'start'];
+    while (!visited.has(k(cur[0], cur[1]))) {
+      visited.add(k(cur[0], cur[1]));
+      const seg = segGeo[cur[0]];
+      if (cur[1] === 'start') {
+        path.push({ x: seg.startPt[0], y: seg.startPt[1] });
+      } else {
+        path.push({ x: seg.endPt[0], y: seg.endPt[1] });
+      }
+      const otherEnd = cur[1] === 'start' ? 'end' : 'start';
+      visited.add(k(cur[0], otherEnd));
+      // Check if this endpoint is at a crossing
+      const otherKey = k(cur[0], otherEnd);
+      if (segEndCrossing[otherKey] !== undefined) {
+        crossingsVisited.add(segEndCrossing[otherKey]);
+      }
+      if (pairing[otherKey]) {
+        cur = pairing[otherKey];
+      } else {
+        break;
+      }
+    }
+    circles.push({ path, crossingsVisited });
+  }
+  return circles;
+}
+
+/**
+ * Identify which circles are involved in a merge/split between two adjacent resolutions.
+ * Uses crossing visit data to determine which circles pass through the changed crossing.
+ */
+function cobordismCorrespondence(diagram, srcBits, tgtBits, changedBit) {
+  const srcData = traceCirclesOrtho(diagram, srcBits);
+  const tgtData = traceCirclesOrtho(diagram, tgtBits);
+  const srcCircles = srcData.map(d => d.path);
+  const tgtCircles = tgtData.map(d => d.path);
+
+  const cp = diagram.crossings[changedBit].point;
+
+  // Determine which circles pass through the changed crossing
+  const srcNear = [], srcFar = [];
+  srcData.forEach((d, i) => {
+    if (d.crossingsVisited.has(changedBit)) srcNear.push(i); else srcFar.push(i);
+  });
+  const tgtNear = [], tgtFar = [];
+  tgtData.forEach((d, i) => {
+    if (d.crossingsVisited.has(changedBit)) tgtNear.push(i); else tgtFar.push(i);
+  });
+
+  // Match unchanged circles by centroid proximity
+  const centroid = pts => ({
+    x: pts.reduce((s, p) => s + p.x, 0) / pts.length,
+    y: pts.reduce((s, p) => s + p.y, 0) / pts.length
+  });
+  const unchanged = [];
+  const usedTgt = new Set();
+  for (const si of srcFar) {
+    const sc = centroid(srcCircles[si]);
+    let bestTi = -1, bestD = Infinity;
+    for (const ti of tgtFar) {
+      if (usedTgt.has(ti)) continue;
+      const tc = centroid(tgtCircles[ti]);
+      const d = (sc.x - tc.x) ** 2 + (sc.y - tc.y) ** 2;
+      if (d < bestD) { bestD = d; bestTi = ti; }
+    }
+    if (bestTi >= 0) {
+      unchanged.push({ src: si, tgt: bestTi });
+      usedTgt.add(bestTi);
+    }
+  }
+
+  const type = srcNear.length > tgtNear.length ? 'merge' : 'split';
+  return { type, srcCircles, tgtCircles, unchanged, srcNear, tgtNear, crossingPt: cp };
+}
+
+/**
+ * Build Three.js cobordism scene.
+ */
+function openCobordism(srcBits, tgtBits, changedBit) {
+  const st = window._cubeState;
+  if (!st) return;
+  const { vertices, n, knotName, variant } = st;
+
+  // Load metadata with diagram geometry
+  fetch(`data/cache/resolutions/${knotName}/metadata.json`)
+    .then(r => r.json())
+    .then(meta => {
+      const diagKey = variant === 'mirror' ? 'mirror_diagram' : 'diagram';
+      const diagram = meta[diagKey];
+      if (!diagram) { alert('No diagram geometry available'); return; }
+      _renderCobordism(diagram, srcBits, tgtBits, changedBit, vertices, n, knotName, variant);
+    })
+    .catch(e => { console.error('Cobordism load error:', e); alert('Failed to load diagram data'); });
+}
+
+function _renderCobordism(diagram, srcBits, tgtBits, changedBit, vertices, n, knotName, variant) {
+  const corr = cobordismCorrespondence(diagram, srcBits, tgtBits, changedBit);
+  const { srcCircles, tgtCircles, unchanged, srcNear, tgtNear, type, crossingPt } = corr;
+
+  const srcV = vertices.find(v => v.bits === srcBits);
+  const tgtV = vertices.find(v => v.bits === tgtBits);
+  const srcLabel = srcBits.toString(2).padStart(n, '0');
+  const tgtLabel = tgtBits.toString(2).padStart(n, '0');
+
+  // Compute bounding box of diagram
+  const allPts = srcCircles.flat().concat(tgtCircles.flat());
+  const xMin = Math.min(...allPts.map(p => p.x)), xMax = Math.max(...allPts.map(p => p.x));
+  const yMin = Math.min(...allPts.map(p => p.y)), yMax = Math.max(...allPts.map(p => p.y));
+  const cx = (xMin + xMax) / 2, cy = (yMin + yMax) / 2;
+  const span = Math.max(xMax - xMin, yMax - yMin, 1);
+  const scale = 10 / span;
+  const zSpan = 8;
+
+  // Normalize coordinate
+  const norm = (p) => [(p.x - cx) * scale, (p.y - cy) * scale];
+
+  // Smooth closed paths using Chaikin subdivision (rounds square corners)
+  function smoothPath(path, iterations = 3) {
+    let pts = path.slice();
+    for (let iter = 0; iter < iterations; iter++) {
+      const result = [];
+      for (let i = 0; i < pts.length; i++) {
+        const j = (i + 1) % pts.length;
+        result.push({ x: pts[i].x * 0.75 + pts[j].x * 0.25, y: pts[i].y * 0.75 + pts[j].y * 0.25 });
+        result.push({ x: pts[i].x * 0.25 + pts[j].x * 0.75, y: pts[i].y * 0.25 + pts[j].y * 0.75 });
+      }
+      pts = result;
+    }
+    return pts;
+  }
+
+  // Smooth all circle paths
+  for (let i = 0; i < srcCircles.length; i++) srcCircles[i] = smoothPath(srcCircles[i]);
+  for (let i = 0; i < tgtCircles.length; i++) tgtCircles[i] = smoothPath(tgtCircles[i]);
+
+  // Push overlapping circles apart for clarity
+  function pushCirclesApart(circles, amount = 1.5) {
+    if (circles.length < 2) return;
+    const centroids = circles.map(c => ({
+      x: c.reduce((s, p) => s + p.x, 0) / c.length,
+      y: c.reduce((s, p) => s + p.y, 0) / c.length
+    }));
+    for (let i = 0; i < circles.length; i++) {
+      // Push circle away from all other centroids
+      let dx = 0, dy = 0;
+      for (let j = 0; j < circles.length; j++) {
+        if (i === j) continue;
+        dx += centroids[i].x - centroids[j].x;
+        dy += centroids[i].y - centroids[j].y;
+      }
+      const len = Math.sqrt(dx * dx + dy * dy) || 1;
+      dx = dx / len * amount;
+      dy = dy / len * amount;
+      for (const p of circles[i]) { p.x += dx; p.y += dy; }
+    }
+  }
+  pushCirclesApart(srcCircles);
+  pushCirclesApart(tgtCircles);
+
+  // Push identity circles away from saddle-involved circles and the crossing point
+  // to prevent surface intersection between identity tubes and saddle surfaces
+  const cpPush = { x: crossingPt[0], y: crossingPt[1] };
+  function centroidOf(c) {
+    return { x: c.reduce((s, p) => s + p.x, 0) / c.length, y: c.reduce((s, p) => s + p.y, 0) / c.length };
+  }
+  function radiusOf(c) {
+    const cen = centroidOf(c);
+    return Math.max(...c.map(p => Math.sqrt((p.x - cen.x) ** 2 + (p.y - cen.y) ** 2)));
+  }
+  function separateIdentityFromSaddle(identityIdx, saddleIdx, circles) {
+    if (identityIdx.length === 0 || saddleIdx.length === 0) return;
+    const saddleCentroids = saddleIdx.map(si => centroidOf(circles[si]));
+    const saddleRadii = saddleIdx.map(si => radiusOf(circles[si]));
+    for (const ci of identityIdx) {
+      const c = circles[ci];
+      const cc = centroidOf(c);
+      const cr = radiusOf(c);
+      // Push away from crossing point
+      let totalDx = 0, totalDy = 0;
+      {
+        let dx = cc.x - cpPush.x, dy = cc.y - cpPush.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        // Push more when closer to crossing
+        const pushAmt = Math.max(2.0, 6.0 - dist * 0.3);
+        totalDx += (dx / dist) * pushAmt;
+        totalDy += (dy / dist) * pushAmt;
+      }
+      // Push away from each saddle circle
+      for (let si = 0; si < saddleCentroids.length; si++) {
+        const sc = saddleCentroids[si];
+        let dx = cc.x - sc.x, dy = cc.y - sc.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        const overlap = (cr + saddleRadii[si]) - dist;
+        if (overlap > 0) {
+          const pushAmt = overlap * 0.6 + 2.0;
+          totalDx += (dx / dist) * pushAmt;
+          totalDy += (dy / dist) * pushAmt;
+        }
+      }
+      for (const p of c) { p.x += totalDx; p.y += totalDy; }
+    }
+  }
+  const unchangedSrcIdx = unchanged.map(u => u.src);
+  const unchangedTgtIdx = unchanged.map(u => u.tgt);
+  separateIdentityFromSaddle(unchangedSrcIdx, srcNear, srcCircles);
+  separateIdentityFromSaddle(unchangedTgtIdx, tgtNear, tgtCircles);
+
+  // Setup Three.js
+  const overlay = document.getElementById('cobordism-overlay');
+  overlay.innerHTML = `<div class="cob-inner">
+    <div class="cob-toolbar">
+      <div class="cob-info">${srcLabel} (${srcV?.circles || '?'} circ.) → ${tgtLabel} (${tgtV?.circles || '?'} circ.) | crossing ${changedBit + 1} | ${type}</div>
+      <button onclick="closeCobordismOverlay()" style="font-size:1.5rem;background:none;border:none;cursor:pointer;color:#ccc;line-height:1">&times;</button>
+    </div>
+    <canvas id="cob-canvas"></canvas>
+  </div>`;
+  overlay.classList.add('active');
+
+  // Defer renderer setup to next frame so browser computes layout after display:flex
+  requestAnimationFrame(() => { requestAnimationFrame(() => {
+  const canvas = document.getElementById('cob-canvas');
+  const inner = overlay.querySelector('.cob-inner');
+  if (!canvas || !inner) return;
+  const w = inner.clientWidth || window.innerWidth * 0.94;
+  const h = inner.clientHeight || window.innerHeight * 0.94;
+  canvas.width = w;
+  canvas.height = h;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setClearColor(0x1a1a2e);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, canvas.width / canvas.height, 0.1, 100);
+  camera.position.set(0, -20, 10);
+  camera.up.set(0, 0, 1);
+
+  if (!THREE.OrbitControls) {
+    // CDN hasn't loaded yet — wait and retry
+    const waitForControls = () => {
+      if (THREE.OrbitControls) {
+        openCobordism(parseInt(srcLabel, 2), parseInt(tgtLabel, 2), changedBit);
+      } else {
+        setTimeout(waitForControls, 200);
+      }
+    };
+    waitForControls();
+    return;
+  }
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+  controls.target.set(0, 0, zSpan / 2);
+  controls.update();
+
+  // Lighting
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  const dLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  dLight.position.set(5, -5, 10);
+  scene.add(dLight);
+  const dLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+  dLight2.position.set(-3, 5, -5);
+  scene.add(dLight2);
+
+  // --- Utility functions ---
+  function resamplePath(path, n) {
+    if (path.length === 0) return [];
+    if (path.length === 1) return Array(n).fill(path[0]);
+    let totalLen = 0;
+    const segLens = [];
+    for (let i = 0; i < path.length; i++) {
+      const j = (i + 1) % path.length;
+      const dx = path[j].x - path[i].x, dy = path[j].y - path[i].y;
+      segLens.push(Math.sqrt(dx * dx + dy * dy));
+      totalLen += segLens[i];
+    }
+    if (totalLen === 0) return Array(n).fill(path[0]);
+    const result = [];
+    for (let k = 0; k < n; k++) {
+      let target = (k / n) * totalLen;
+      let accum = 0;
+      for (let i = 0; i < path.length; i++) {
+        if (accum + segLens[i] >= target - 1e-9) {
+          const t = segLens[i] > 0 ? (target - accum) / segLens[i] : 0;
+          const j = (i + 1) % path.length;
+          result.push({ x: path[i].x + t * (path[j].x - path[i].x), y: path[i].y + t * (path[j].y - path[i].y) });
+          break;
+        }
+        accum += segLens[i];
+      }
+    }
+    while (result.length < n) result.push(path[0]);
+    return result;
+  }
+
+  // Resample an open arc (not closed) to n points including endpoints
+  function resampleArc(arc, n) {
+    if (arc.length <= 1) return Array(n).fill(arc[0] || { x: 0, y: 0 });
+    let totalLen = 0;
+    const segLens = [];
+    for (let i = 0; i < arc.length - 1; i++) {
+      const dx = arc[i + 1].x - arc[i].x, dy = arc[i + 1].y - arc[i].y;
+      segLens.push(Math.sqrt(dx * dx + dy * dy));
+      totalLen += segLens[i];
+    }
+    if (totalLen === 0) return Array(n).fill(arc[0]);
+    const result = [];
+    for (let k = 0; k < n; k++) {
+      const target = (k / (n - 1)) * totalLen;
+      let accum = 0;
+      let placed = false;
+      for (let i = 0; i < segLens.length; i++) {
+        if (accum + segLens[i] >= target - 1e-9) {
+          const t = segLens[i] > 0 ? (target - accum) / segLens[i] : 0;
+          result.push({ x: arc[i].x + t * (arc[i + 1].x - arc[i].x), y: arc[i].y + t * (arc[i + 1].y - arc[i].y) });
+          placed = true;
+          break;
+        }
+        accum += segLens[i];
+      }
+      if (!placed) result.push(arc[arc.length - 1]);
+    }
+    return result;
+  }
+
+  function nearestIdx(path, target) {
+    let best = 0, bestD = Infinity;
+    for (let i = 0; i < path.length; i++) {
+      const d = (path[i].x - target.x) ** 2 + (path[i].y - target.y) ** 2;
+      if (d < bestD) { bestD = d; best = i; }
+    }
+    return best;
+  }
+
+  // Find the two farthest-apart nearest points on a circle to the crossing
+  function twoNearestIdx(path, target) {
+    // Find all points sorted by distance to target
+    const dists = path.map((p, i) => ({ i, d: (p.x - target.x) ** 2 + (p.y - target.y) ** 2 }));
+    dists.sort((a, b) => a.d - b.d);
+    // First nearest
+    const idx1 = dists[0].i;
+    // Second nearest: must be at least 1/4 of path length away from first
+    const minGap = Math.floor(path.length / 4);
+    let idx2 = dists[1].i;
+    for (const d of dists.slice(1)) {
+      const gap = Math.min(Math.abs(d.i - idx1), path.length - Math.abs(d.i - idx1));
+      if (gap >= minGap) { idx2 = d.i; break; }
+    }
+    // Return in order
+    return idx1 < idx2 ? [idx1, idx2] : [idx2, idx1];
+  }
+
+  // Split a closed path at one index into an open arc (starts at idx, goes all the way around)
+  function splitCircleAt1(path, idx) {
+    const arr = path.slice(idx).concat(path.slice(0, idx));
+    arr.push(arr[0]); // close back to start point
+    return arr;
+  }
+
+  // Split a closed path at two indices into two open arcs
+  function splitCircleAt2(path, idx1, idx2) {
+    // Ensure idx1 < idx2
+    if (idx1 > idx2) [idx1, idx2] = [idx2, idx1];
+    const arc1 = path.slice(idx1, idx2 + 1); // from idx1 to idx2
+    const arc2 = path.slice(idx2).concat(path.slice(0, idx1 + 1)); // from idx2 around to idx1
+    return [arc1, arc2];
+  }
+
+  function arcLen(arc) {
+    let len = 0;
+    for (let i = 0; i < arc.length - 1; i++) {
+      len += Math.sqrt((arc[i + 1].x - arc[i].x) ** 2 + (arc[i + 1].y - arc[i].y) ** 2);
+    }
+    return len;
+  }
+
+  // Compute normalized identity circle centroids for proximity checks during saddle building
+  const identityCentroidsN = [];
+  for (const u of unchanged) {
+    const sc = centroidOf(srcCircles[u.src]);
+    const tc = centroidOf(tgtCircles[u.tgt]);
+    identityCentroidsN.push(norm({ x: (sc.x + tc.x) / 2, y: (sc.y + tc.y) / 2 }));
+  }
+
+  // --- Build surface strip from source arc to target arc ---
+  // The saddle pinch happens at the midpoint (t=0.5), pulling toward the crossing point.
+  // The surface holds its boundary shape near t=0 and t=1, transitioning mostly in the middle.
+  // Pinch is reduced near identity tubes to prevent surface intersection.
+  function buildSurfaceStrip(srcArc, tgtArc, z0, z1, color, nZ = 60) {
+    const nSample = 80;
+    const srcR = resampleArc(srcArc, nSample);
+    const tgtR = resampleArc(tgtArc, nSample);
+    const nPts = nSample;
+    const cpN = norm({ x: crossingPt[0], y: crossingPt[1] });
+
+    const geo = new THREE.BufferGeometry();
+    const positions = [];
+    const indices = [];
+
+    for (let zi = 0; zi <= nZ; zi++) {
+      const t = zi / nZ;
+      const z = z0 + (z1 - z0) * t;
+      // Quintic smoothstep for extra-smooth transition (6t^5 - 15t^4 + 10t^3)
+      const st = t * t * t * (t * (t * 6 - 15) + 10);
+      // Saddle pinch: peaks at t=0.5, pulling toward crossing point
+      const pinch = Math.pow(4 * t * (1 - t), 1.5); // sharper peak at midpoint
+      const basePinchStrength = 0.35;
+      for (let pi = 0; pi < nPts; pi++) {
+        const [snx, sny] = norm(srcR[pi]);
+        const [tnx, tny] = norm(tgtR[pi]);
+        // Interpolate between source and target
+        let px = snx * (1 - st) + tnx * st;
+        let py = sny * (1 - st) + tny * st;
+        // Reduce pinch near identity tubes to prevent intersection
+        let pinchStrength = basePinchStrength;
+        for (const ic of identityCentroidsN) {
+          const dToId = Math.sqrt((px - ic[0]) ** 2 + (py - ic[1]) ** 2);
+          if (dToId < 2.5) {
+            pinchStrength *= Math.max(0.05, dToId / 2.5);
+          }
+        }
+        // Pull toward crossing point at midpoint to create saddle
+        px += pinch * (cpN[0] - px) * pinchStrength;
+        py += pinch * (cpN[1] - py) * pinchStrength;
+        positions.push(px, py, z);
+      }
+    }
+    for (let zi = 0; zi < nZ; zi++) {
+      for (let pi = 0; pi < nPts - 1; pi++) {
+        const a = zi * nPts + pi, b = zi * nPts + pi + 1;
+        const c = (zi + 1) * nPts + pi, d = (zi + 1) * nPts + pi + 1;
+        indices.push(a, b, d, a, d, c);
+      }
+    }
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    const mat = new THREE.MeshPhongMaterial({
+      color, side: THREE.DoubleSide, transparent: true, opacity: 0.7, shininess: 60
+    });
+    scene.add(new THREE.Mesh(geo, mat));
+  }
+
+  // Helper: create tube surface from a closed polyline extruded along z
+  function createTube(pathPts, z0, z1, color, nZ = 30) {
+    const nPts = pathPts.length;
+    if (nPts < 2) return;
+    const geo = new THREE.BufferGeometry();
+    const positions = [];
+    const indices = [];
+
+    for (let zi = 0; zi <= nZ; zi++) {
+      const z = z0 + (z1 - z0) * zi / nZ;
+      for (let pi = 0; pi < nPts; pi++) {
+        const [px, py] = norm(pathPts[pi]);
+        positions.push(px, py, z);
+      }
+    }
+    for (let zi = 0; zi < nZ; zi++) {
+      for (let pi = 0; pi < nPts; pi++) {
+        const np = (pi + 1) % nPts;
+        const a = zi * nPts + pi, b = zi * nPts + np;
+        const c = (zi + 1) * nPts + pi, d = (zi + 1) * nPts + np;
+        indices.push(a, b, d, a, d, c);
+      }
+    }
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    const mat = new THREE.MeshPhongMaterial({
+      color, side: THREE.DoubleSide, transparent: true, opacity: 0.85, shininess: 40
+    });
+    scene.add(new THREE.Mesh(geo, mat));
+  }
+
+  // Draw boundary circle as a thick tube ring
+  function drawBoundaryCircle(path, z, color, radius = 0.12) {
+    const nPts = path.length;
+    if (nPts < 2) return;
+    const tubeSegs = 8; // cross-section segments for the tube
+    const geo = new THREE.BufferGeometry();
+    const positions = [];
+    const indices = [];
+
+    for (let pi = 0; pi <= nPts; pi++) {
+      const idx = pi % nPts;
+      const nextIdx = (pi + 1) % nPts;
+      const [px, py] = norm(path[idx]);
+      const [nx, ny] = norm(path[nextIdx]);
+      // tangent direction along the path
+      const tx = nx - px, ty = ny - py;
+      const tLen = Math.sqrt(tx * tx + ty * ty) || 1;
+      // normal perpendicular to tangent in xy plane
+      const perpX = -ty / tLen, perpY = tx / tLen;
+      for (let si = 0; si < tubeSegs; si++) {
+        const angle = (si / tubeSegs) * Math.PI * 2;
+        const offXY = Math.cos(angle) * radius;
+        const offZ = Math.sin(angle) * radius;
+        positions.push(px + perpX * offXY, py + perpY * offXY, z + offZ);
+      }
+    }
+    for (let pi = 0; pi < nPts; pi++) {
+      for (let si = 0; si < tubeSegs; si++) {
+        const ns = (si + 1) % tubeSegs;
+        const a = pi * tubeSegs + si, b = pi * tubeSegs + ns;
+        const c = (pi + 1) * tubeSegs + si, d = (pi + 1) * tubeSegs + ns;
+        indices.push(a, b, d, a, d, c);
+      }
+    }
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    const mat = new THREE.MeshPhongMaterial({ color, shininess: 80 });
+    scene.add(new THREE.Mesh(geo, mat));
+  }
+
+  // --- Build saddle cobordism using arc-splitting approach ---
+  function createSaddleSurface(srcPaths, tgtPaths, z0, z1, color) {
+    const cpObj = { x: crossingPt[0], y: crossingPt[1] };
+
+    if (srcPaths.length === 2 && tgtPaths.length === 1) {
+      // MERGE: 2 circles → 1 circle
+      // Cut each source circle at nearest point to crossing
+      const s1cut = nearestIdx(srcPaths[0], cpObj);
+      const s2cut = nearestIdx(srcPaths[1], cpObj);
+      // Cut target circle at two nearest points (it passes through crossing twice)
+      const [t1cut, t2cut] = twoNearestIdx(tgtPaths[0], cpObj);
+      const [tArc1, tArc2] = splitCircleAt2(tgtPaths[0], t1cut, t2cut);
+
+      // Source arcs: each is a full circle opened at cut point
+      const sArc1 = splitCircleAt1(srcPaths[0], s1cut);
+      const sArc2 = splitCircleAt1(srcPaths[1], s2cut);
+
+      // Match source arcs to target arcs by centroid proximity
+      const centroid = arc => ({
+        x: arc.reduce((s, p) => s + p.x, 0) / arc.length,
+        y: arc.reduce((s, p) => s + p.y, 0) / arc.length
+      });
+      const s1c = centroid(sArc1), s2c = centroid(sArc2);
+      const t1c = centroid(tArc1), t2c = centroid(tArc2);
+      const d11 = (s1c.x - t1c.x) ** 2 + (s1c.y - t1c.y) ** 2;
+      const d12 = (s1c.x - t2c.x) ** 2 + (s1c.y - t2c.y) ** 2;
+
+      if (d11 <= d12) {
+        buildSurfaceStrip(sArc1, tArc1, z0, z1, color);
+        buildSurfaceStrip(sArc2, tArc2, z0, z1, color);
+      } else {
+        buildSurfaceStrip(sArc1, tArc2, z0, z1, color);
+        buildSurfaceStrip(sArc2, tArc1, z0, z1, color);
+      }
+    } else if (srcPaths.length === 1 && tgtPaths.length === 2) {
+      // SPLIT: 1 circle → 2 circles (reverse of merge)
+      const [s1cut, s2cut] = twoNearestIdx(srcPaths[0], cpObj);
+      const [sArc1, sArc2] = splitCircleAt2(srcPaths[0], s1cut, s2cut);
+      const t1cut = nearestIdx(tgtPaths[0], cpObj);
+      const t2cut = nearestIdx(tgtPaths[1], cpObj);
+      const tArc1 = splitCircleAt1(tgtPaths[0], t1cut);
+      const tArc2 = splitCircleAt1(tgtPaths[1], t2cut);
+
+      const centroid = arc => ({
+        x: arc.reduce((s, p) => s + p.x, 0) / arc.length,
+        y: arc.reduce((s, p) => s + p.y, 0) / arc.length
+      });
+      const s1c = centroid(sArc1), s2c = centroid(sArc2);
+      const t1c = centroid(tArc1), t2c = centroid(tArc2);
+      const d11 = (s1c.x - t1c.x) ** 2 + (s1c.y - t1c.y) ** 2;
+      const d12 = (s1c.x - t2c.x) ** 2 + (s1c.y - t2c.y) ** 2;
+
+      if (d11 <= d12) {
+        buildSurfaceStrip(sArc1, tArc1, z0, z1, color);
+        buildSurfaceStrip(sArc2, tArc2, z0, z1, color);
+      } else {
+        buildSurfaceStrip(sArc1, tArc2, z0, z1, color);
+        buildSurfaceStrip(sArc2, tArc1, z0, z1, color);
+      }
+    } else {
+      // Fallback: just interpolate
+      const nSample = 50;
+      const src = resamplePath(srcPaths[0] || [], nSample);
+      const tgt = resamplePath(tgtPaths[0] || [], nSample);
+      buildSurfaceStrip(src, tgt, z0, z1, color);
+    }
+  }
+
+  // Color palette
+  const palette = [0x4fc3f7, 0x81c784, 0xffd54f, 0xef5350, 0xba68c8, 0xff8a65];
+
+  // Draw unchanged circles as tubes
+  for (let i = 0; i < unchanged.length; i++) {
+    const { src, tgt } = unchanged[i];
+    const col = palette[i % palette.length];
+    createTube(srcCircles[src], 0, zSpan, col);
+    drawBoundaryCircle(srcCircles[src], zSpan, col);
+    drawBoundaryCircle(tgtCircles[tgt], 0, col);
+  }
+
+  // Draw merge/split surface
+  const saddleColor = type === 'merge' ? 0x81c784 : 0xef9a9a; // light green merge, light red split
+  const srcInvolved = srcNear.map(i => srcCircles[i]);
+  const tgtInvolved = tgtNear.map(i => tgtCircles[i]);
+  if (srcInvolved.length > 0 && tgtInvolved.length > 0) {
+    createSaddleSurface(srcInvolved, tgtInvolved, zSpan, 0, saddleColor);
+    for (const path of srcInvolved) drawBoundaryCircle(path, zSpan, saddleColor);
+    for (const path of tgtInvolved) drawBoundaryCircle(path, 0, saddleColor);
+  }
+
+  // Draw z-axis labels
+  function addLabel(text, pos, color = 0xffffff) {
+    const canvas2d = document.createElement('canvas');
+    canvas2d.width = 256; canvas2d.height = 64;
+    const ctx = canvas2d.getContext('2d');
+    ctx.fillStyle = '#' + color.toString(16).padStart(6, '0');
+    ctx.font = 'bold 28px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(text, 128, 40);
+    const tex = new THREE.CanvasTexture(canvas2d);
+    const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.position.copy(pos);
+    sprite.scale.set(4, 1, 1);
+    scene.add(sprite);
+  }
+
+  addLabel(srcLabel + ' (' + (srcV?.circles || '?') + ' circ.)', new THREE.Vector3(0, 7, zSpan + 0.5), 0x80cbc4);
+  addLabel(tgtLabel + ' (' + (tgtV?.circles || '?') + ' circ.)', new THREE.Vector3(0, 7, -0.5), 0xffab91);
+
+  // Animate
+  window._cobAnimId = null;
+  function animate() {
+    window._cobAnimId = requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // Handle resize
+  window._cobResize = () => {
+    if (!overlay.classList.contains('active')) return;
+    const rw = inner.clientWidth || window.innerWidth * 0.94;
+    const rh = inner.clientHeight || window.innerHeight * 0.94;
+    canvas.width = rw;
+    canvas.height = rh;
+    renderer.setSize(rw, rh);
+    camera.aspect = rw / rh;
+    camera.updateProjectionMatrix();
+  };
+  window.addEventListener('resize', window._cobResize);
+  }); }); // end double-rAF
+}
+
+function closeCobordismOverlay() {
+  const overlay = document.getElementById('cobordism-overlay');
+  overlay.classList.remove('active');
+  if (window._cobAnimId) cancelAnimationFrame(window._cobAnimId);
+  if (window._cobResize) window.removeEventListener('resize', window._cobResize);
+  overlay.innerHTML = '';
+}
+
+// ESC also closes cobordism
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const cob = document.getElementById('cobordism-overlay');
+    if (cob && cob.classList.contains('active')) { closeCobordismOverlay(); e.stopPropagation(); }
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  const checkKatex = setInterval(() => {
+    if (window.renderMathInElement) {
+      renderMathInElement(document.querySelector('.skein-relations'), {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\(', right: '\\)', display: false},
+        ],
+        throwOnError: false,
+      });
+      clearInterval(checkKatex);
+    }
+  }, 100);
+});
+</script>
+
+<script src="experimental/lib/polynomial.js"></script>
+<script src="experimental/lib/matrix.js"></script>
+<script src="experimental/lib/gauss-code.js"></script>
+<script src="experimental/lib/cube.js"></script>
+<script src="experimental/lib/chain-complex.js"></script>
+<script src="experimental/lib/frobenius.js"></script>
+<script src="experimental/lib/moy-graph.js"></script>
+<script src="experimental/lib/virtual-invariants.js"></script>
+<script src="experimental/lib/diagram-builder.js"></script>
+<script src="experimental/tab-homological.js"></script>
+<script src="experimental/tab-khovanov-complex.js"></script>
+<script src="experimental/tab-virtual.js"></script>
+<script src="experimental/tab-moy.js"></script>
+
+</body>
+</html>

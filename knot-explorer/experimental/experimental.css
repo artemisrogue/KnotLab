@@ -1,0 +1,544 @@
+/* experimental.css — Styles for the three experimental tabs */
+
+:root {
+  --homological-accent: #6a3d9a;
+  --virtual-accent: #1b9e77;
+  --moy-accent: #d95f02;
+}
+
+/* ================================================================
+   Shared experimental tab styles
+   ================================================================ */
+
+.exp-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.exp-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.2rem;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border, #ddd);
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.exp-controls label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text, #222);
+}
+
+.exp-controls select,
+.exp-controls input[type="number"] {
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--bg, #fafafa);
+  color: var(--text, #222);
+}
+
+.exp-controls button {
+  padding: 0.45rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+}
+
+.exp-controls button:hover { opacity: 0.85; }
+
+.exp-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border, #ddd);
+  border-radius: 10px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.exp-card h3 {
+  margin: 0 0 0.8rem 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.exp-card details {
+  margin-bottom: 0.5rem;
+}
+
+.exp-card details summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.3rem 0;
+  user-select: none;
+}
+
+.exp-card details summary:hover {
+  color: var(--accent, #2171b5);
+}
+
+/* Verification badges */
+.exp-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.exp-badge.pass {
+  background: #d4edda;
+  color: #155724;
+}
+
+.exp-badge.fail {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.exp-badge.info {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+/* Bigraded table */
+.bigraded-table {
+  border-collapse: collapse;
+  margin: 0.8rem auto;
+  font-size: 0.85rem;
+}
+
+.bigraded-table th,
+.bigraded-table td {
+  border: 1px solid var(--border, #ddd);
+  padding: 0.3rem 0.6rem;
+  text-align: center;
+  min-width: 2.5rem;
+}
+
+.bigraded-table th {
+  background: var(--bg, #fafafa);
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--text-muted, #666);
+}
+
+.bigraded-table td.nonzero {
+  font-weight: 700;
+  background: #fff8e1;
+}
+
+.bigraded-table td.torsion {
+  font-weight: 700;
+  background: #fce4ec;
+  color: #c62828;
+}
+
+/* Matrix display */
+.exp-matrix {
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  overflow-x: auto;
+  padding: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  white-space: pre;
+  line-height: 1.4;
+}
+
+/* Progress indicator */
+.exp-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.8rem;
+  color: var(--text-muted, #666);
+  font-size: 0.9rem;
+}
+
+.exp-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid var(--border, #ddd);
+  border-top-color: var(--accent, #2171b5);
+  border-radius: 50%;
+  animation: exp-spin 0.8s linear infinite;
+}
+
+@keyframes exp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Polynomial output */
+.exp-poly {
+  padding: 0.6rem 1rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  text-align: center;
+  overflow-x: auto;
+}
+
+/* ================================================================
+   Homological tab
+   ================================================================ */
+
+#tab-homological .exp-controls button {
+  background: var(--homological-accent);
+  color: #fff;
+}
+
+#tab-homological .exp-card h3 {
+  color: var(--homological-accent);
+}
+
+.kh-euler-check {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* ================================================================
+   Virtual Knots tab
+   ================================================================ */
+
+#tab-virtual .exp-controls button {
+  background: var(--virtual-accent);
+  color: #fff;
+}
+
+#tab-virtual .exp-card h3 {
+  color: var(--virtual-accent);
+}
+
+.vk-input-area {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.vk-input-area textarea {
+  flex: 1;
+  min-width: 250px;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 2.5rem;
+}
+
+.vk-diagram-container {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.vk-diagram-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.vk-library-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.vk-library-btn {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--virtual-accent);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--virtual-accent);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vk-library-btn:hover,
+.vk-library-btn.active {
+  background: var(--virtual-accent);
+  color: #fff;
+}
+
+/* Virtual crossing marker */
+.vk-virtual-marker {
+  fill: none;
+  stroke: var(--virtual-accent);
+  stroke-width: 2;
+}
+
+/* ================================================================
+   MOY / sl_n tab
+   ================================================================ */
+
+#tab-moy .exp-controls button {
+  background: var(--moy-accent);
+  color: #fff;
+}
+
+#tab-moy .exp-card h3 {
+  color: var(--moy-accent);
+}
+
+/* MOY graph SVG styles */
+.moy-edge-1 {
+  stroke: #333;
+  stroke-width: 1.5;
+  fill: none;
+}
+
+.moy-edge-2 {
+  stroke: #333;
+  stroke-width: 3.5;
+  fill: none;
+}
+
+.moy-edge-k {
+  stroke: #333;
+  stroke-width: 5;
+  fill: none;
+}
+
+.moy-edge-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  fill: var(--moy-accent);
+}
+
+.moy-vertex {
+  fill: #333;
+  r: 3;
+}
+
+.moy-arrow {
+  fill: #333;
+}
+
+.moy-cube-container {
+  text-align: center;
+  overflow: auto;
+  margin: 1rem auto;
+  max-width: fit-content;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 8px;
+  background: #fefefe;
+  padding: 1rem;
+}
+
+/* Evaluation steps */
+.moy-eval-step {
+  padding: 0.4rem 0.6rem;
+  margin: 0.3rem 0;
+  background: #fff8e1;
+  border-left: 3px solid var(--moy-accent);
+  border-radius: 0 4px 4px 0;
+  font-size: 0.85rem;
+}
+
+/* ================================================================
+   Responsive
+   ================================================================ */
+
+@media (max-width: 768px) {
+  .exp-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .vk-input-area {
+    flex-direction: column;
+  }
+
+  .bigraded-table {
+    font-size: 0.75rem;
+  }
+
+  .bigraded-table th,
+  .bigraded-table td {
+    padding: 0.2rem 0.3rem;
+    min-width: 1.8rem;
+  }
+}
+
+/* ================================================================
+   Diagram Builder
+   ================================================================ */
+
+.db-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.db-tool-btn {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 5px;
+  background: var(--bg, #fafafa);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.db-tool-btn:hover {
+  border-color: var(--virtual-accent, #1b9e77);
+}
+
+.db-tool-btn.active {
+  background: var(--virtual-accent, #1b9e77);
+  color: #fff;
+  border-color: var(--virtual-accent, #1b9e77);
+}
+
+.db-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.db-action-btn {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--border, #ddd);
+  border-radius: 5px;
+  background: var(--card-bg, #fff);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.db-action-btn:hover { background: #f0f0f0; }
+
+.db-action-primary {
+  background: var(--virtual-accent, #1b9e77) !important;
+  color: #fff !important;
+  border-color: var(--virtual-accent, #1b9e77) !important;
+  font-weight: 600;
+}
+.db-action-primary:hover { opacity: 0.85; background: var(--virtual-accent) !important; }
+
+.db-action-clear { color: #c0392b; border-color: #e0b4ae; }
+.db-action-clear:hover { background: #fdf0ef; }
+
+.db-sel-controls {
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 0.5rem;
+  background: #f7faf9;
+  border: 1px solid #d0e8e0;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.db-sel-controls button {
+  margin-left: 0.3rem;
+}
+
+.db-svg-container {
+  margin: 0.5rem 0;
+}
+
+.db-status {
+  font-size: 0.85rem;
+  color: var(--text-muted, #666);
+  margin-top: 0.4rem;
+}
+
+.db-pd-output {
+  font-size: 0.85rem;
+  font-family: monospace;
+  color: var(--text, #222);
+  margin-top: 0.3rem;
+}
+
+/* ================================================================
+   Virtual Knot Pedagogy
+   ================================================================ */
+
+.vk-section-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--virtual-accent, #1b9e77);
+  cursor: pointer;
+  padding: 0.3rem 0;
+}
+
+.vk-section > summary::-webkit-details-marker { color: var(--virtual-accent); }
+
+.vk-inv-expo {
+  background: #f8faf9;
+  border-left: 3px solid var(--virtual-accent, #1b9e77);
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.8rem;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+.vk-inv-expo p { margin: 0.4rem 0; }
+
+.vk-pedagogy p {
+  margin: 0.6rem 0;
+  line-height: 1.65;
+}
+
+.vk-pedagogy h4 {
+  margin: 1rem 0 0.3rem;
+  font-size: 0.95rem;
+  color: var(--virtual-accent, #1b9e77);
+}
+
+.vk-pedagogy ul {
+  margin: 0.3rem 0 0.3rem 1.5rem;
+  line-height: 1.6;
+}
+
+.vk-warning-box {
+  background: #fef3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  margin: 0.8rem 0;
+  font-size: 0.9rem;
+}
+
+.vk-highlight-box {
+  background: #e8f5e9;
+  border: 1px solid #66bb6a;
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  margin: 0.8rem 0;
+  font-size: 0.9rem;
+}
+
+.vk-rm-illustrations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0.8rem 0;
+}
+
+.vk-rm-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

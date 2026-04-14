@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "knotlab",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["C:/Users/seand/Claude_projects/KnotLab/launch.py", "--no-browser", "--no-shiny"],
+      "port": 8770
+    }
+  ]
+}

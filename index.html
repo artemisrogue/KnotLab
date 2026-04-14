@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KnotLab — Interactive Knot Theory</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="lib/plotly.min.js"></script>
+<link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>KnotLab</h1>
+    <p>Interactive knot theory &mdash; from Reidemeister moves to Khovanov homology</p>
+  </div>
+</header>
+
+<nav class="tab-bar">
+  <button class="tab-btn active" data-tab="home" onclick="switchTab('home')">Home</button>
+  <button class="tab-btn" data-tab="gauss-linking" onclick="switchTab('gauss-linking')">Linking</button>
+  <button class="tab-btn" data-tab="polynomial-invariants" onclick="switchTab('polynomial-invariants')">Polynomial Invariants</button>
+  <button class="tab-btn" data-tab="homological-invariants" onclick="switchTab('homological-invariants')">Homological Invariants</button>
+  <button class="tab-btn" data-tab="knot-explorer" onclick="switchTab('knot-explorer')">Knot Explorer</button>
+  <button class="tab-btn" data-tab="miscellaneous" onclick="switchTab('miscellaneous')">Miscellaneous</button>
+  <button class="tab-btn" data-tab="appendix" onclick="switchTab('appendix')">Appendix</button>
+</nav>
+
+<!-- ════════════════ HOME TAB ════════════════ -->
+<div id="tab-home" class="tab-content active">
+  <div class="module-container" id="home-root"></div>
+</div>
+
+<!-- ════════════════ GAUSS LINKING TAB ════════════════ -->
+<div id="tab-gauss-linking" class="tab-content">
+  <div class="module-container" id="gauss-linking-root"></div>
+</div>
+
+<!-- ════════════════ POLYNOMIAL INVARIANTS TAB ════════════════ -->
+<div id="tab-polynomial-invariants" class="tab-content">
+  <div class="module-container" id="polynomial-invariants-root"></div>
+</div>
+
+<!-- ════════════════ HOMOLOGICAL INVARIANTS TAB ════════════════ -->
+<div id="tab-homological-invariants" class="tab-content">
+  <div class="module-container" id="homological-invariants-root"></div>
+</div>
+
+<!-- ════════════════ KNOT EXPLORER TAB ════════════════ -->
+<div id="tab-knot-explorer" class="tab-content">
+  <div class="embed-frame">
+    <iframe id="frame-knot-explorer" data-src="knot-explorer/index.html" src="about:blank"></iframe>
+  </div>
+</div>
+
+<!-- ════════════════ MISCELLANEOUS TAB ════════════════ -->
+<div id="tab-miscellaneous" class="tab-content">
+  <div class="module-container" id="miscellaneous-root"></div>
+</div>
+
+<!-- ════════════════ APPENDIX TAB ════════════════ -->
+<div id="tab-appendix" class="tab-content">
+  <div class="module-container" id="appendix-root"></div>
+</div>
+
+<script src="modules/introduction.js?v=8"></script>
+<script src="modules/framed-knots.js?v=7"></script>
+<script src="modules/gauss-linking.js?v=7"></script>
+<script src="modules/polynomial-invariants.js?v=6"></script>
+<script src="modules/homological-invariants.js?v=6"></script>
+<script src="modules/miscellaneous.js?v=6"></script>
+<script src="modules/appendix.js?v=6"></script>
+<script src="app.js?v=7"></script>
+</body>
+</html>

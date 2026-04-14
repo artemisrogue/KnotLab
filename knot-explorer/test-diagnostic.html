@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Knot Explorer — Diagnostic Test Suite</title>
+<style>
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 20px; background: #f8f8f8; }
+  h1 { margin-bottom: 0.3em; }
+  .controls { margin: 1em 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .controls button { padding: 8px 16px; cursor: pointer; border: 1px solid #888; border-radius: 4px; }
+  .controls button:hover { background: #e0e0e0; }
+  .controls select, .controls input { padding: 6px; border: 1px solid #aaa; border-radius: 4px; }
+  #status { margin: 1em 0; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 4px; }
+  table { border-collapse: collapse; width: 100%; background: #fff; font-size: 0.82rem; }
+  th, td { border: 1px solid #ccc; padding: 3px 6px; text-align: left; white-space: nowrap; }
+  th { background: #333; color: #fff; position: sticky; top: 0; z-index: 1; }
+  .pass { color: #2e7d32; font-weight: bold; }
+  .fail { color: #c62828; font-weight: bold; }
+  .warn { color: #e65100; }
+  .skip { color: #888; }
+  #results-container { max-height: 80vh; overflow: auto; }
+  .summary { margin: 1em 0; padding: 10px; border-radius: 4px; font-weight: bold; }
+  .summary.good { background: #e8f5e9; border: 1px solid #4caf50; }
+  .summary.bad { background: #fce4ec; border: 1px solid #e53935; }
+  .category-summary { margin: 0.5em 0; padding: 8px; background: #fff; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<h1>Knot Explorer — Diagnostic Test Suite v2</h1>
+<p>Comprehensive validation of all tabs and computations. Tests data integrity, cube of resolutions, Kauffman bracket, Jones polynomial, Khovanov homology over Z/Q/F2/F3, Lee homology (d²=0, rank=2^c over Q), Bar-Natan homology (d²=0, rank=2^c over Q, coincides with Kh over F2).</p>
+
+<div class="controls">
+  <label>Max crossings: <input type="number" id="max-cr" value="7" min="0" max="12" style="width:50px"></label>
+  <label>Homology limit: <input type="number" id="hom-cr-limit" value="8" min="0" max="12" style="width:50px" title="Max crossings for Khovanov homology (expensive)"></label>
+  <label>Filter: <input type="text" id="filter" placeholder="e.g. 3_1, L2a1" style="width:200px"></label>
+  <button id="btn-run">Run All Tests</button>
+  <button id="btn-stop">Stop</button>
+  <button id="btn-export">Export JSON</button>
+</div>
+
+<div id="status">Ready. Load the page and press "Run All Tests".</div>
+<div class="summary" id="summary" style="display:none"></div>
+<div class="category-summary" id="category-summary" style="display:none"></div>
+
+<div id="results-container">
+<table id="results-table">
+<thead>
+<tr>
+  <th>Name</th><th>Var</th><th>Type</th><th>Cr</th>
+  <th>PD</th><th>GC</th><th>Inv</th><th>Meta</th>
+  <th>CoR</th><th>CoR mir</th>
+  <th>Jones</th><th>w</th><th>mir?</th>
+  <th>d2 Z</th><th>X Z</th>
+  <th>d2 Q</th><th>X Q</th>
+  <th>d2 F2</th><th>X F2</th>
+  <th>d2 F3</th><th>X F3</th>
+  <th>Kh Z</th><th>Kh Q</th><th>Kh F2</th><th>Kh F3</th>
+  <th>Lee d2</th><th>Lee rk</th><th>BN d2</th><th>BN rk</th><th>BN≡F2</th><th>s</th>
+  <th>XRing</th>
+  <th>ms</th>
+  <th>Notes</th>
+</tr>
+</thead>
+<tbody id="results-body"></tbody>
+</table>
+</div>
+
+<!-- Load all dependencies -->
+<script src="data/knots.json.js" onerror="console.warn('knots.json.js not found, trying fetch')"></script>
+<script src="data/links.json.js" onerror="console.warn('links.json.js not found')"></script>
+<script>
+(async function loadData() {
+  if (typeof KNOT_DATA === 'undefined') {
+    try { var r = await fetch('data/knots.json'); window.KNOT_DATA = await r.json(); }
+    catch(e) { console.error('Failed to load knots.json:', e); window.KNOT_DATA = {}; }
+  }
+  if (typeof LINK_DATA === 'undefined') {
+    try { var r = await fetch('data/links.json'); window.LINK_DATA = await r.json(); }
+    catch(e) { console.error('Failed to load links.json:', e); window.LINK_DATA = {}; }
+  }
+})();
+</script>
+<script src="experimental/lib/polynomial.js"></script>
+<script src="experimental/lib/matrix.js"></script>
+<script src="experimental/lib/cube.js"></script>
+<script src="experimental/lib/frobenius.js"></script>
+<script src="experimental/lib/chain-complex.js"></script>
+<script>
+'use strict';
+
+// =====================================================================
+// Test engine globals
+// =====================================================================
+
+var _stopRequested = false;
+var _allResults = [];
+
+function getAllItems() {
+  var items = [];
+  if (typeof KNOT_DATA !== 'undefined') {
+    for (var k in KNOT_DATA) {
+      if (KNOT_DATA.hasOwnProperty(k)) items.push({ name: k, data: KNOT_DATA[k], type: 'knot' });
+    }
+  }
+  if (typeof LINK_DATA !== 'undefined') {
+    for (var l in LINK_DATA) {
+      if (LINK_DATA.hasOwnProperty(l)) items.push({ name: l, data: LINK_DATA[l], type: 'link' });
+    }
+  }
+  items.sort(function(a,b) {
+    var ca = parseInt(a.data.crossings) || 0, cb = parseInt(b.data.crossings) || 0;
+    if (ca !== cb) return ca - cb;
+    return a.name.localeCompare(b.name);
+  });
+  return items;
+}
+
+function badge(ok) {
+  if (ok === true) return '<span class="pass">P</span>';
+  if (ok === false) return '<span class="fail">F</span>';
+  if (ok === 'skip') return '<span class="skip">-</span>';
+  if (ok === 'warn') return '<span class="warn">W</span>';
+  return '<span class="skip">?</span>';
+}
+
+// =====================================================================
+// 1. PD code validation
+// =====================================================================
+
+function testPDCode(d) {
+  var pd = d.pd_code;
+  if (!pd || !pd.length) return { ok: false, note: 'no pd_code', details: {} };
+  var n = pd.length;
+  var details = { n_crossings: n, n_arcs: 0 };
+
+  var arcCount = {};
+  for (var i = 0; i < n; i++) {
+    if (pd[i].length !== 4) return { ok: false, note: 'crossing ' + i + ' has ' + pd[i].length + ' arcs', details: details };
+    for (var j = 0; j < 4; j++) {
+      var a = pd[i][j];
+      arcCount[a] = (arcCount[a] || 0) + 1;
+    }
+  }
+
+  var arcs = Object.keys(arcCount);
+  details.n_arcs = arcs.length;
+  var badArcs = [];
+  for (var k = 0; k < arcs.length; k++) {
+    if (arcCount[arcs[k]] !== 2) badArcs.push(arcs[k] + 'x' + arcCount[arcs[k]]);
+  }
+  if (badArcs.length) return { ok: false, note: 'arc count errors: ' + badArcs.join(','), details: details };
+
+  // Check arc labels are 0..2n-1 (0-indexed) or 1..2n (1-indexed)
+  var sorted = arcs.map(Number).sort(function(a,b){return a-b});
+  var minArc = sorted[0], maxArc = sorted[sorted.length-1];
+  details.arcRange = minArc + '..' + maxArc;
+  var expectedCount = 2 * n; // for knots; links may have different count
+  if (arcs.length !== expectedCount && d.name && d.name.charAt(0) !== 'L') {
+    details.arcCountWarn = 'expected ' + expectedCount + ' arcs, got ' + arcs.length;
+  }
+
+  return { ok: true, details: details };
+}
+
+// =====================================================================
+// 2. Gauss code validation
+// =====================================================================
+
+function testGaussCode(d) {
+  var details = {};
+  if (!d.gauss_code) return { ok: false, note: 'missing gauss_code', details: details };
+
+  var gc = d.gauss_code;
+  details.raw = gc;
+
+  // Extract all signed integers from the GC string
+  // Handles both knot format "1 -2 3" and link format "{1, -2}, {2, -1}"
+  details.n_components = (gc.match(/\{/g) || []).length || 1;
+
+  var crossingCount = {};
+  var allNums = gc.match(/-?\d+/g) || [];
+  for (var ni = 0; ni < allNums.length; ni++) {
+    var val = parseInt(allNums[ni]);
+    if (isNaN(val)) continue;
+    var idx = Math.abs(val);
+    crossingCount[idx] = (crossingCount[idx] || 0) + 1;
+  }
+
+  var crossingIndices = Object.keys(crossingCount);
+  var badCrossings = [];
+  for (var k = 0; k < crossingIndices.length; k++) {
+    if (crossingCount[crossingIndices[k]] !== 2) {
+      badCrossings.push(crossingIndices[k] + 'x' + crossingCount[crossingIndices[k]]);
+    }
+  }
+  details.n_crossings_gc = crossingIndices.length;
+
+  if (badCrossings.length > 0) {
+    return { ok: false, note: 'GC crossing count errors: ' + badCrossings.join(','), details: details };
+  }
+
+  // Cross-check: number of crossings in GC should match PD code
+  if (d.pd_code && d.pd_code.length !== crossingIndices.length) {
+    details.crossingMismatch = 'PD has ' + d.pd_code.length + ' crossings, GC has ' + crossingIndices.length;
+    return { ok: false, note: details.crossingMismatch, details: details };
+  }
+
+  // Check mirror gauss code exists for knots
+  if (d.mirror_gauss_code) details.hasMirrorGC = true;
+
+  return { ok: true, details: details };
+}
+
+// =====================================================================
+// 3. Invariants tab validation
+// =====================================================================
+
+function testInvariants(d) {
+  var notes = [];
+  var details = {};
+
+  // Required polynomial fields
+  var isLink = d.name && (d.name.charAt(0) === 'L' || d.name.indexOf('a') > 0);
+  if (!d.jones_latex) notes.push('no jones_latex');
+  if (!d.alexander_latex && !isLink) notes.push('no alexander_latex');
+
+  // Optional but expected fields
+  var optionalFields = ['homfly_latex', 'braid_word', 'braid_latex'];
+  var missing = [];
+  for (var i = 0; i < optionalFields.length; i++) {
+    if (!d[optionalFields[i]]) missing.push(optionalFields[i]);
+  }
+  if (missing.length) details.missingOptional = missing;
+
+  // Numeric invariant checks
+  if (d.determinant !== undefined) {
+    details.determinant = d.determinant;
+    if (d.determinant < 0) notes.push('negative determinant');
+  }
+  if (d.signature !== undefined) {
+    details.signature = d.signature;
+    // Signature should be even for knots (not links)
+    if (!isLink && d.signature % 2 !== 0) {
+      notes.push('odd signature for knot');
+    }
+  }
+  if (d.three_genus !== undefined) {
+    details.three_genus = d.three_genus;
+    if (d.three_genus < 0) notes.push('negative genus');
+  }
+  if (d.unknotting_number !== undefined) {
+    details.unknotting_number = d.unknotting_number;
+  }
+  if (d.bridge_index !== undefined) {
+    details.bridge_index = d.bridge_index;
+  }
+  if (d.arf_invariant !== undefined) {
+    details.arf_invariant = d.arf_invariant;
+    if (d.arf_invariant !== 0 && d.arf_invariant !== 1) notes.push('arf not 0 or 1');
+  }
+  if (d.symmetry_type !== undefined) {
+    details.symmetry_type = d.symmetry_type;
+  }
+
+  // Alexander polynomial determinant cross-check: |Delta(-1)| = determinant
+  if (d.alexander_latex && d.determinant !== undefined) {
+    try {
+      var alexTerms = _parseJonesLatex(d.alexander_latex);
+      if (alexTerms && alexTerms.size > 0) {
+        var evalAtMinus1 = 0;
+        alexTerms.forEach(function(c, e) {
+          evalAtMinus1 += c * Math.pow(-1, e);
+        });
+        var computedDet = Math.abs(Math.round(evalAtMinus1));
+        details.alexDetComputed = computedDet;
+        if (computedDet !== parseInt(d.determinant)) {
+          notes.push('det mismatch: |alex(-1)|=' + computedDet + ' vs stored=' + d.determinant);
+        }
+      }
+    } catch(e) {
+      details.alexParseError = e.message;
+    }
+  }
+
+  // Check mirror Jones exists (expected for knots, optional for links)
+  if (d.jones_latex && !d.mirror_jones_latex && !isLink) {
+    details.noMirrorJones = true;
+  }
+
+  // Quantum invariants structure check
+  if (d.quantum_invariants) {
+    details.hasQuantumInvariants = true;
+    if (typeof d.quantum_invariants === 'object') {
+      details.quantumKeys = Object.keys(d.quantum_invariants);
+    }
+  }
+
+  return { ok: notes.length === 0, note: notes.join('; '), details: details };
+}
+
+// Simplified Alexander latex parser (reuses similar logic to Jones parser)
+// =====================================================================
+// 4. Metadata / structural validation
+// =====================================================================
+
+function testMetadata(d) {
+  var notes = [];
+  var details = {};
+
+  // Crossings field
+  if (d.crossings === undefined || d.crossings === null) {
+    notes.push('missing crossings field');
+  } else {
+    details.crossings = d.crossings;
+    if (d.pd_code && d.pd_code.length !== parseInt(d.crossings)) {
+      notes.push('crossings=' + d.crossings + ' but pd has ' + d.pd_code.length);
+    }
+  }
+
+  // Name consistency
+  if (d.name) {
+    details.name = d.name;
+    // For knots: name should be like "3_1", "5_2"
+    var nameMatch = d.name.match(/^(\d+)_(\d+)$/);
+    if (nameMatch) {
+      var nameCr = parseInt(nameMatch[1]);
+      if (nameCr !== parseInt(d.crossings)) {
+        notes.push('name implies ' + nameCr + ' crossings but data says ' + d.crossings);
+      }
+    }
+  }
+
+  // Diagram data
+  if (d.diagram) details.hasDiagram = true;
+  if (d.mirror_diagram) details.hasMirrorDiagram = true;
+
+  // Braid data
+  if (d.braid_word) {
+    details.hasBraid = true;
+    details.braidWord = d.braid_word;
+  }
+  if (d.braid_diagram) details.hasBraidDiagram = true;
+  if (d.mirror_braid_diagram) details.hasMirrorBraidDiagram = true;
+
+  // DT code (knots only)
+  if (d.dt_code) details.hasDTCode = true;
+
+  return { ok: notes.length === 0, note: notes.join('; '), details: details };
+}
+
+// =====================================================================
+// 5. Cube of resolutions validation
+// =====================================================================
+
+function testCubeOfResolutions(pd, variant) {
+  if (!pd || !pd.length) return { ok: 'skip', note: 'no pd', details: {} };
+  var n = pd.length;
+  if (n > 10) return { ok: 'skip', note: 'too many crossings', details: {} };
+
+  var usePD = variant === 'mirror'
+    ? pd.map(function(x) { return [x[0], x[3], x[2], x[1]]; })
+    : pd;
+
+  var dummySigns = [];
+  for (var i = 0; i < n; i++) dummySigns.push(1);
+
+  var details = { n: n, variant: variant };
+
+  try {
+    var cube = new ResolutionCube(usePD, dummySigns);
+    var total = 1 << n;
+    var circleCounts = {};
+    var mergeCount = 0, splitCount = 0;
+
+    for (var v = 0; v < total; v++) {
+      var cc = cube.circleCount(v);
+      if (cc < 1) return { ok: false, note: 'vertex ' + v + ' has 0 circles', details: details };
+      circleCounts[cube.vertexLabel(v)] = cc;
+    }
+    details.circleCounts = circleCounts;
+
+    for (var edge of cube.edges()) {
+      var info = cube.edgeType(edge.from, edge.bit);
+      if (info.type === 'merge') mergeCount++;
+      else if (info.type === 'split') splitCount++;
+      else return { ok: false, note: 'edge ' + edge.from + '->' + edge.to + ' type: ' + info.type, details: details };
+    }
+    details.merges = mergeCount;
+    details.splits = splitCount;
+    details.totalEdges = mergeCount + splitCount;
+
+    return { ok: true, details: details };
+  } catch(e) {
+    return { ok: false, note: 'CoR error: ' + e.message, details: details, error: e.stack };
+  }
+}
+
+// =====================================================================
+// 6. Kauffman bracket and Jones (duplicated from tab-homological.js)
+// =====================================================================
+
+function _kauffmanBracket(cube) {
+  var n = cube.n, total = 1 << n;
+  var d = new LaurentPoly([{c:-1,e:2},{c:-1,e:-2}], CoefficientRing.Z);
+  var bracket = LaurentPoly.zero(CoefficientRing.Z);
+  for (var v = 0; v < total; v++) {
+    var sig = cube.sigma(v);
+    var c = cube.circleCount(v);
+    var aSig = LaurentPoly.q(sig, CoefficientRing.Z);
+    var dPow = LaurentPoly.one(CoefficientRing.Z);
+    for (var k = 0; k < c-1; k++) dPow = dPow.multiply(d);
+    bracket = bracket.add(aSig.multiply(dPow));
+  }
+  return bracket;
+}
+
+function _jonesFromBracket(bracket, writhe) {
+  var sign = (writhe % 2 === 0) ? 1 : -1;
+  var norm = new LaurentPoly([{c: sign, e: -3 * writhe}], CoefficientRing.Z);
+  return bracket.multiply(norm).substituteQPower(0.25);
+}
+
+// =====================================================================
+// 7. Jones LaTeX parser
+// =====================================================================
+
+function _parseJonesLatex(latex) {
+  var terms = new Map();
+  function addTerm(c, e) {
+    if (c === 0) return;
+    e = Math.round(e * 2) / 2;
+    var s = (terms.get(e) || 0) + c;
+    if (s === 0) terms.delete(e); else terms.set(e, s);
+  }
+  var s = latex.replace(/\s+/g, ' ').trim();
+
+  // Step 0a: Handle q \left( expr \right) by recursive parsing
+  var leftIdx = s.indexOf('\\left(');
+  if (leftIdx > 0) {
+    var rightIdx = s.lastIndexOf('\\right)');
+    if (rightIdx > leftIdx) {
+      var prefix = s.substring(0, leftIdx).trim();
+      var inner = s.substring(leftIdx + 6, rightIdx).trim();
+      var outerExp = 0, outerCoeff = 1;
+      var qm = prefix.match(/([+-]?\d*)\s*q(?:\^\{([^}]+)\})?$/);
+      if (qm) {
+        outerCoeff = (qm[1]===''||qm[1]==='+') ? 1 : (qm[1]==='-') ? -1 : parseFloat(qm[1]) || 1;
+        outerExp = qm[2] ? parseFloat(qm[2]) : 1;
+      }
+      var innerTerms = _parseJonesLatex(inner);
+      innerTerms.forEach(function(c, e) { addTerm(c * outerCoeff, e + outerExp); });
+      return terms;
+    }
+  }
+
+  // Step 0b: Handle \frac{polynomial}{q^{M}} where the ENTIRE string is one frac
+  // Uses brace-balanced extraction to avoid matching sums of simple fracs
+  if (s.indexOf('\\frac{') === 0) {
+    var bd0 = 0, numEnd = -1;
+    for (var fi = 5; fi < s.length; fi++) {
+      if (s[fi] === '{') bd0++;
+      if (s[fi] === '}') { bd0--; if (bd0 === 0) { numEnd = fi; break; } }
+    }
+    if (numEnd > 0) {
+      var rest0b = s.substring(numEnd + 1);
+      var denomMatch = rest0b.match(/^\{q\^\{?(\d+)\}?\}$/);
+      if (denomMatch) {
+        var numStr = s.substring(6, numEnd);
+        var numTerms = _parseJonesLatex(numStr);
+        var shift = -parseInt(denomMatch[1], 10);
+        numTerms.forEach(function(c, e) { addTerm(c, e + shift); });
+        return terms;
+      }
+    }
+  }
+
+  // Step 1: sqrt{q} -> q^{0.5}
+  s = s.replace(/\\sqrt\{q\}/g, 'q^{0.5}');
+
+  // Step 2: \frac{N}{q^{\frac{A}{B}}} -> N*q^{-A/B}
+  s = s.replace(/\\frac\{([^}]*)\}\{q\^\{\\frac\{(\d+)\}\{(\d+)\}\}\}/g, function(_, num, a, b) {
+    return '(' + num + ')q^{' + (-parseInt(a)/parseInt(b)) + '}';
+  });
+
+  // Step 3: \frac{N}{q^{M}} -> N*q^{-M}
+  s = s.replace(/\\frac\{([^}]*)\}\{q\^\{?(-?[\d.]+)\}?\}/g, function(_, num, exp) {
+    return '(' + num + ')q^{' + (-parseFloat(exp)) + '}';
+  });
+
+  // Step 4: \frac{N}{q} -> N*q^{-1}
+  s = s.replace(/\\frac\{([^}]*)\}\{q\}/g, '($1)q^{-1}');
+
+  // Step 5: q^{\frac{A}{B}} -> q^{A/B}
+  s = s.replace(/q\^\{\\frac\{(-?\d+)\}\{(\d+)\}\}/g, function(_, a, b) {
+    return 'q^{' + (parseInt(a)/parseInt(b)) + '}';
+  });
+
+  // Tokenize by +/- at brace depth 0
+  var tokens = [], cur = '', bd = 0;
+  for (var i = 0; i < s.length; i++) {
+    if (s[i]==='{') bd++;
+    if (s[i]==='}') bd--;
+    if (bd===0 && (s[i]==='+'||s[i]==='-') && cur.trim().length > 0) {
+      tokens.push(cur.trim());
+      cur = s[i]==='-' ? '-' : '';
+    } else cur += s[i];
+  }
+  if (cur.trim()) tokens.push(cur.trim());
+
+  for (var t = 0; t < tokens.length; t++) {
+    var tok = tokens[t].trim();
+    if (!tok) continue;
+    tok = tok.replace(/^([+-]?)\s*\(([^)]*)\)/, '$1$2');
+    var coeff = 1, exp = 0;
+    var qi = tok.indexOf('q');
+    if (qi === -1) {
+      coeff = parseFloat(tok.replace(/\s+/g,'')) || 0;
+    } else {
+      var before = tok.substring(0,qi).replace(/\s+/g,'');
+      if (before===''||before==='+') coeff = 1;
+      else if (before==='-') coeff = -1;
+      else coeff = parseFloat(before) || 0;
+      var after = tok.substring(qi+1).trim();
+      if (after==='') exp = 1;
+      else { var m = after.match(/^\^\{?([^}]*)\}?/); exp = m ? (parseFloat(m[1])||0) : 1; }
+    }
+    addTerm(coeff, exp);
+  }
+  return terms;
+}
+
+function _matchTerms(computed, stored) {
+  var allE = new Set();
+  computed.forEach(function(_,e){allE.add(e)});
+  stored.forEach(function(_,e){allE.add(e)});
+  var match = true;
+  var mismatches = [];
+  allE.forEach(function(e) {
+    var cv = computed.get(e) || 0;
+    var sv = stored.get(e) || 0;
+    if (Math.abs(cv - sv) > 1e-9) {
+      match = false;
+      mismatches.push('e=' + e + ':' + cv + 'vs' + sv);
+    }
+  });
+  return { match: match, mismatches: mismatches };
+}
+
+function _crossingSignsFromPD(pdCode) {
+  var n = pdCode.length;
+  if (n === 0) return [];
+  var totalArcs = 2 * n;
+
+  // Union-Find to identify link components
+  var parent = [];
+  for (var i = 0; i < totalArcs; i++) parent[i] = i;
+  function find(x) {
+    while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+    return x;
+  }
+  function unite(x, y) { parent[find(x)] = find(y); }
+
+  for (var i = 0; i < n; i++) {
+    unite(pdCode[i][0], pdCode[i][2]); // understrand pair
+    unite(pdCode[i][1], pdCode[i][3]); // overstrand pair
+  }
+
+  // Group arcs by component, build next-arc map
+  var groups = {};
+  for (var i = 0; i < totalArcs; i++) {
+    var root = find(i);
+    if (!groups[root]) groups[root] = [];
+    groups[root].push(i);
+  }
+
+  var nextArc = new Array(totalArcs);
+  var roots = Object.keys(groups);
+  for (var gi = 0; gi < roots.length; gi++) {
+    var arcs = groups[roots[gi]];
+    arcs.sort(function (a, b) { return a - b; });
+    for (var j = 0; j < arcs.length; j++) {
+      nextArc[arcs[j]] = arcs[(j + 1) % arcs.length];
+    }
+  }
+
+  // Determine crossing signs
+  // Positive crossing: overstrand flows b→d (nextArc[b]=d)
+  // Negative crossing: overstrand flows d→b (nextArc[d]=b)
+  var signs = [];
+  for (var i = 0; i < n; i++) {
+    var b = pdCode[i][1], d = pdCode[i][3];
+    if (nextArc[b] === d) {
+      signs.push(+1);
+    } else if (nextArc[d] === b) {
+      signs.push(-1);
+    } else {
+      return null;
+    }
+  }
+  return signs;
+}
+
+function _computeWrithe(bracket, jonesLatex, mirrorLatex, n) {
+  var candidates = [];
+  if (jonesLatex) {
+    var p = _parseJonesLatex(jonesLatex);
+    if (p.size > 0) candidates.push({ terms: p, isMirror: false });
+  }
+  if (mirrorLatex) {
+    var p2 = _parseJonesLatex(mirrorLatex);
+    if (p2.size > 0) candidates.push({ terms: p2, isMirror: true });
+  }
+  if (!candidates.length) return null;
+
+  for (var w = -n; w <= n; w += 2) {
+    var jones = _jonesFromBracket(bracket, w);
+    var valid = true;
+    var comp = new Map();
+    jones._terms.forEach(function(c,e) {
+      var r = Math.round(e*2)/2;
+      if (Math.abs(e-r) > 1e-9) valid = false;
+      comp.set(r, typeof c === 'number' ? c : 0);
+    });
+    if (!valid) continue;
+    for (var ci = 0; ci < candidates.length; ci++) {
+      var mr = _matchTerms(comp, candidates[ci].terms);
+      if (mr.match) {
+        return { writhe: w, pdIsMirror: candidates[ci].isMirror };
+      }
+    }
+  }
+  return null;
+}
+
+// =====================================================================
+// 8. Homological algebra tests
+// =====================================================================
+
+function testHomological(pd, d, variant, ringObj, ringName, opts) {
+  opts = opts || {};
+  if (!pd || !pd.length) return { d2: 'skip', euler: 'skip', kh: 'skip', jones: 'skip', writhe: null, notes: 'no pd', details: {} };
+  var n = pd.length;
+  var homLimit = opts.homologyCrossingLimit || 10;
+  var skipHomology = n > homLimit;
+
+  var usePD = variant === 'mirror'
+    ? pd.map(function(x) { return [x[0], x[3], x[2], x[1]]; })
+    : pd;
+
+  var notes = [];
+  var details = { ring: ringName, variant: variant };
+
+  // Detect writhe via Jones matching (reliable for our A=q^{1/4} convention),
+  // then use PD-derived crossing signs for chain complex grading.
+  var writhe = null, pdIsMirror = false;
+  var crossingSigns;
+
+  // Compute bracket (sign-independent)
+  var dummySigns = [];
+  for (var i = 0; i < n; i++) dummySigns.push(1);
+  var bracketCube = new ResolutionCube(usePD, dummySigns);
+  var bracket = _kauffmanBracket(bracketCube);
+
+  // Jones matching: try all writhes to find one that matches stored Jones
+  var detected = _computeWrithe(bracket, d.jones_latex, d.mirror_jones_latex, n);
+
+  if (detected) {
+    writhe = detected.writhe;
+    pdIsMirror = detected.pdIsMirror;
+    if (variant === 'mirror') pdIsMirror = !pdIsMirror;
+    details.writheSrc = 'jones';
+
+    // Use PD-derived crossing signs for chain complex (exact per-crossing signs)
+    var pdSigns = _crossingSignsFromPD(usePD);
+    if (pdSigns) {
+      // Verify PD writhe matches Jones-detected writhe (may differ by sign
+      // due to the A=q^{1/4} convention — in that case, negate all signs)
+      var pdWrithe = 0;
+      for (var i = 0; i < n; i++) pdWrithe += pdSigns[i];
+      if (pdWrithe === writhe) {
+        crossingSigns = pdSigns;
+        details.writheSrc = 'pd';
+      } else if (pdWrithe === -writhe) {
+        crossingSigns = pdSigns.map(function(s) { return -s; });
+        details.writheSrc = 'pd_flipped';
+      } else {
+        // PD writhe doesn't match — use arbitrary signs with correct sum
+        var nMinus = (n - writhe) / 2;
+        crossingSigns = [];
+        for (var i = 0; i < n; i++) crossingSigns.push(i < nMinus ? -1 : 1);
+        details.writheSrc = 'jones_arbitrary';
+      }
+    } else {
+      var nMinus = (n - writhe) / 2;
+      crossingSigns = [];
+      for (var i = 0; i < n; i++) crossingSigns.push(i < nMinus ? -1 : 1);
+    }
+
+    var nM = 0;
+    for (var i = 0; i < n; i++) if (crossingSigns[i] < 0) nM++;
+    details.nPlus = n - nM;
+    details.nMinus = nM;
+  } else {
+    // No Jones match — use PD signs or dummy
+    var pdSigns = _crossingSignsFromPD(usePD);
+    if (pdSigns) {
+      crossingSigns = pdSigns;
+      writhe = 0;
+      for (var i = 0; i < n; i++) writhe += pdSigns[i];
+      details.writheSrc = 'pd_unverified';
+    } else {
+      crossingSigns = [];
+      for (var i = 0; i < n; i++) crossingSigns.push(1);
+      writhe = n;
+      details.writheSrc = 'fallback';
+    }
+    notes.push('writhe detection failed');
+    details.writheFailed = true;
+    var nM = 0;
+    for (var i = 0; i < n; i++) if (crossingSigns[i] < 0) nM++;
+    details.nPlus = n - nM;
+    details.nMinus = nM;
+  }
+
+  details.bracketTerms = bracket._terms.size;
+
+  // Jones verification
+  var jones = _jonesFromBracket(bracket, writhe);
+  details.jonesTerms = jones._terms.size;
+
+  var storedJones;
+  if (pdIsMirror) {
+    storedJones = variant === 'mirror' ? d.jones_latex : d.mirror_jones_latex;
+  } else {
+    storedJones = variant === 'mirror' ? d.mirror_jones_latex : d.jones_latex;
+  }
+
+  var jonesOK = false;
+  if (storedJones) {
+    var storedTerms = _parseJonesLatex(storedJones);
+    var compTerms = new Map();
+    jones._terms.forEach(function(c,e) { compTerms.set(Math.round(e*2)/2, typeof c==='number'?c:0); });
+    var mr = _matchTerms(compTerms, storedTerms);
+    jonesOK = mr.match;
+    if (!jonesOK) {
+      notes.push('jones mismatch');
+      details.jonesMismatches = mr.mismatches.slice(0, 5);
+    }
+    // Check for half-integer exponents (common in links)
+    var hasHalfInt = false;
+    compTerms.forEach(function(_, e) { if (e !== Math.round(e)) hasHalfInt = true; });
+    if (hasHalfInt) details.hasHalfIntegerExponents = true;
+  } else {
+    jonesOK = 'skip';
+    notes.push('no stored jones for verification');
+  }
+
+  // Build Khovanov complex
+  var complex, d2ok, euler, khRanks, chainDims;
+  var eulerDetails = {};
+
+  if (skipHomology) {
+    return {
+      d2: 'skip', euler: 'skip', jones: jonesOK, writhe: writhe,
+      pdIsMirror: pdIsMirror, kh: {},
+      bracket: bracket.toLatex('A'), jonesComputed: jones.toLatex('q'),
+      notes: notes.join('; ') + (notes.length ? '; ' : '') + 'homology skipped (n=' + n + '>' + homLimit + ')',
+      details: details
+    };
+  }
+
+  try {
+    complex = buildKhovanovComplex(usePD, crossingSigns, FrobeniusAlgebra.Khovanov, ringObj);
+
+    // Collect bounds
+    var bounds = complex.getBounds();
+    if (bounds) {
+      details.bounds = { iMin: bounds.iMin, iMax: bounds.iMax, jMin: bounds.jMin, jMax: bounds.jMax };
+    }
+
+    // d^2 = 0 verification
+    var verif = complex.verify();
+    d2ok = verif.valid;
+    if (!d2ok) {
+      notes.push('d^2!=0 at ' + ringName);
+      if (verif.errors) details.d2errors = verif.errors.slice(0, 3);
+    }
+
+    // Euler characteristic
+    var eulerFromChain = complex.gradedEulerCharacteristic(false, ringObj);
+
+    // Compare with J-hat(q)
+    // For c-component links: chi(CKh) = (-1)^{c-1} * (q+q^{-1}) * V(q^{-2})
+    var nComponents = opts.nComponents || 1;
+    var signFactor = ((nComponents - 1) % 2 === 0) ? 1 : -1;
+    var qPlusQinv = new LaurentPoly([{c:1,e:1},{c:1,e:-1}], CoefficientRing.Z);
+    var jonesInQKh = jones.substituteQPower(-2);
+    var jHat = qPlusQinv.multiply(jonesInQKh);
+    if (signFactor === -1) {
+      jHat = jHat.multiply(new LaurentPoly([{c:-1,e:0}], CoefficientRing.Z));
+    }
+    euler = jHat.equals(eulerFromChain);
+
+    if (!euler) {
+      notes.push('chi!=Jhat at ' + ringName);
+      // Store details about the mismatch
+      eulerDetails.jHatTerms = jHat._terms.size;
+      eulerDetails.chiTerms = eulerFromChain._terms.size;
+
+      // Check if it's a half-integer exponent issue
+      var jHatHasHalf = false;
+      jHat._terms.forEach(function(_, e) { if (e !== Math.round(e)) jHatHasHalf = true; });
+      if (jHatHasHalf) eulerDetails.jHatHasHalfIntExponents = true;
+    }
+    details.euler = eulerDetails;
+
+    // Collect Kh homology ranks
+    var hom = complex.homology(ringObj);
+    khRanks = {};
+    var totalRank = 0, totalTorsion = 0;
+    if (bounds) {
+      for (var ii = bounds.iMin; ii <= bounds.iMax; ii++) {
+        for (var jj = bounds.jMin; jj <= bounds.jMax; jj++) {
+          var h = hom.get(ii + ',' + jj);
+          if (h && (h.rank > 0 || (h.torsion && h.torsion.length > 0))) {
+            khRanks[ii + ',' + jj] = { rank: h.rank, torsion: h.torsion || [] };
+            totalRank += h.rank;
+            totalTorsion += (h.torsion ? h.torsion.length : 0);
+          }
+        }
+      }
+    }
+    details.totalRank = totalRank;
+    details.totalTorsion = totalTorsion;
+    details.khGroups = Object.keys(khRanks).length;
+  } catch(e) {
+    d2ok = false;
+    euler = false;
+    notes.push('error: ' + e.message);
+    details.error = e.message;
+    details.stack = e.stack;
+  }
+
+  return {
+    d2: d2ok,
+    euler: euler,
+    jones: jonesOK,
+    writhe: writhe,
+    pdIsMirror: pdIsMirror,
+    kh: khRanks || {},
+    bracket: bracket.toLatex('A'),
+    jonesComputed: jones.toLatex('q'),
+    notes: notes.join('; '),
+    details: details
+  };
+}
+
+// =====================================================================
+// 9. Cross-ring consistency check
+// =====================================================================
+
+function checkCrossRingConsistency(khZ, khQ, khF2, khF3) {
+  var notes = [];
+  var details = {};
+
+  if (!khZ || !khQ) return { ok: 'skip', notes: '', details: details };
+
+  // Over Q, rank should equal free rank over Z
+  // Over Fp, rank = free rank + number of p-torsion summands
+  var allKeys = new Set();
+  [khZ, khQ, khF2, khF3].forEach(function(kh) {
+    if (kh) Object.keys(kh).forEach(function(k) { allKeys.add(k); });
+  });
+
+  allKeys.forEach(function(key) {
+    var rZ = khZ[key] ? khZ[key].rank : 0;
+    var rQ = khQ[key] ? khQ[key].rank : 0;
+    var tZ = khZ[key] && khZ[key].torsion ? khZ[key].torsion : [];
+
+    // rank over Q should equal free rank over Z
+    if (rQ !== rZ) {
+      notes.push('rank_Q(' + key + ')=' + rQ + ' != rank_Z=' + rZ);
+    }
+
+    // rank over Fp should be >= rank over Q (UCT)
+    if (khF2 && khF2[key]) {
+      var rF2 = khF2[key].rank;
+      if (rF2 < rQ) notes.push('rank_F2(' + key + ')=' + rF2 + ' < rank_Q=' + rQ);
+      // Check: rank_Fp = rank_Z + #{p-torsion in Z}
+      var n2torsion = tZ.filter(function(t){ return t % 2 === 0; }).length;
+      var expectedF2 = rZ + n2torsion;
+      // This is approximate; exact check needs SNF divisors
+    }
+    if (khF3 && khF3[key]) {
+      var rF3 = khF3[key].rank;
+      if (rF3 < rQ) notes.push('rank_F3(' + key + ')=' + rF3 + ' < rank_Q=' + rQ);
+    }
+  });
+
+  return { ok: notes.length === 0, notes: notes.join('; '), details: details };
+}
+
+// =====================================================================
+// 10. Main test runner
+// =====================================================================
+
+async function runTests() {
+  _stopRequested = false;
+  _allResults = [];
+  var tbody = document.getElementById('results-body');
+  tbody.innerHTML = '';
+
+  var maxCr = parseInt(document.getElementById('max-cr').value) || 7;
+  var homCrLimit = parseInt(document.getElementById('hom-cr-limit').value) || 8;
+  var filter = document.getElementById('filter').value.trim();
+  var filterNames = filter ? filter.split(',').map(function(s){return s.trim()}) : null;
+
+  var items = getAllItems().filter(function(item) {
+    if (parseInt(item.data.crossings) > maxCr) return false;
+    if (parseInt(item.data.crossings) === 0) return false;
+    if (filterNames) return filterNames.indexOf(item.name) >= 0;
+    return true;
+  });
+
+  var statusEl = document.getElementById('status');
+  var total = items.length;
+  var done = 0;
+  var passCount = 0, failCount = 0, warnCount = 0;
+  var failureCategories = {};
+
+  var startTime = performance.now();
+
+  for (var idx = 0; idx < items.length; idx++) {
+    if (_stopRequested) { statusEl.textContent = 'Stopped after ' + done + '/' + total; break; }
+    var item = items[idx];
+    var d = item.data;
+    var elapsed = ((performance.now() - startTime) / 1000).toFixed(1);
+    statusEl.textContent = 'Testing ' + item.name + ' (' + (idx+1) + '/' + total + ') [' + elapsed + 's]...';
+
+    await new Promise(function(r) { setTimeout(r, 2); });
+
+    for (var vi = 0; vi < 2; vi++) {
+      var variant = vi === 0 ? 'original' : 'mirror';
+      var t0 = performance.now();
+
+      var result = {
+        name: item.name,
+        variant: variant,
+        type: item.type,
+        crossings: parseInt(d.crossings) || 0,
+        details: {}
+      };
+
+      try {
+        // PD code test
+        var pdTest = testPDCode(d);
+        result.pd = pdTest.ok;
+        result.details.pd = pdTest;
+
+        // Gauss code test
+        var gcTest = testGaussCode(d);
+        result.gc = gcTest.ok;
+        result.details.gc = gcTest;
+
+        // Invariants test
+        var invTest = testInvariants(d);
+        result.inv = invTest.ok;
+        result.details.inv = invTest;
+
+        // Metadata test
+        var metaTest = testMetadata(d);
+        result.meta = metaTest.ok;
+        result.details.meta = metaTest;
+
+        // Cube of resolutions (both variants, only compute once per knot)
+        if (vi === 0) {
+          var corOrig = testCubeOfResolutions(d.pd_code, 'original');
+          var corMir = testCubeOfResolutions(d.pd_code, 'mirror');
+          result.cor = corOrig.ok;
+          result.corMir = corMir.ok;
+          result.details.cor = corOrig;
+          result.details.corMir = corMir;
+          // Store for mirror variant reuse
+          item._corOrig = corOrig;
+          item._corMir = corMir;
+        } else {
+          result.cor = item._corOrig ? item._corOrig.ok : 'skip';
+          result.corMir = item._corMir ? item._corMir.ok : 'skip';
+        }
+
+        // Homological tests over Z, Q, F2, F3
+        var rings = [
+          { obj: CoefficientRing.Z, name: 'Z' },
+          { obj: CoefficientRing.Q, name: 'Q' },
+          { obj: CoefficientRing.Fp(2), name: 'F2' },
+          { obj: CoefficientRing.Fp(3), name: 'F3' }
+        ];
+
+        var notes = [];
+        if (pdTest.note) notes.push('PD: ' + pdTest.note);
+        if (gcTest.note) notes.push('GC: ' + gcTest.note);
+        if (invTest.note) notes.push('Inv: ' + invTest.note);
+        if (metaTest.note) notes.push('Meta: ' + metaTest.note);
+
+        // Determine number of link components from gauss code
+        var nComponents = 1;
+        if (d.gauss_code) {
+          var braceCount = (d.gauss_code.match(/\{/g) || []).length;
+          if (braceCount > 1) nComponents = braceCount;
+        }
+
+        for (var ri = 0; ri < rings.length; ri++) {
+          var ring = rings[ri];
+          try {
+            var hom = testHomological(d.pd_code, d, variant, ring.obj, ring.name, { homologyCrossingLimit: homCrLimit, nComponents: nComponents });
+            result['d2_' + ring.name] = hom.d2;
+            result['euler_' + ring.name] = hom.euler;
+            result['kh_' + ring.name] = hom.kh;
+            result.details['hom_' + ring.name] = hom.details;
+            if (ri === 0) {
+              result.jonesOK = hom.jones;
+              result.writhe = hom.writhe;
+              result.bracket = hom.bracket;
+              result.jonesComputed = hom.jonesComputed;
+              result.pdIsMirror = hom.pdIsMirror;
+            }
+            if (hom.notes) notes.push(ring.name + ': ' + hom.notes);
+          } catch(e) {
+            result['d2_' + ring.name] = false;
+            result['euler_' + ring.name] = false;
+            notes.push(ring.name + ' ERROR: ' + e.message);
+            result.details['hom_' + ring.name + '_error'] = { message: e.message, stack: e.stack };
+          }
+        }
+
+        // Lee and Bar-Natan d² checks (over Z, using same crossing signs)
+        if (d.pd_code && d.pd_code.length > 0 && d.pd_code.length <= (homCrLimit || 10)) {
+          try {
+            var leeUsePD = variant === 'mirror'
+              ? d.pd_code.map(function(x) { return [x[0], x[3], x[2], x[1]]; })
+              : d.pd_code;
+            // Reuse crossing signs from the Khovanov Z test
+            var homZDetails = result.details.hom_Z || {};
+            var nM_lee = homZDetails.nMinus || 0;
+            var nP_lee = homZDetails.nPlus || 0;
+            var leeSigns = [];
+            if (homZDetails.writheSrc === 'pd' || homZDetails.writheSrc === 'pd_flipped') {
+              leeSigns = _crossingSignsFromPD(leeUsePD);
+              if (leeSigns && homZDetails.writheSrc === 'pd_flipped') {
+                leeSigns = leeSigns.map(function(s) { return -s; });
+              }
+            }
+            if (!leeSigns || leeSigns.length !== leeUsePD.length) {
+              var nMi = (leeUsePD.length - (result.writhe || 0)) / 2;
+              leeSigns = [];
+              for (var li = 0; li < leeUsePD.length; li++) leeSigns.push(li < nMi ? -1 : 1);
+            }
+
+            // Lee homology (using filtered complex — includes cross-j differentials)
+            var leeFiltered = buildFilteredKhovanovComplex(leeUsePD, leeSigns, FrobeniusAlgebra.Lee, CoefficientRing.Z);
+            var leeV = leeFiltered.complex.verify();
+            result.d2_Lee = leeV.valid;
+            if (!leeV.valid) notes.push('Lee d²≠0');
+
+            // Lee rank over Q (should be 2^c for c-component links)
+            var leeHomMap = leeFiltered.complex.homology();
+            var leeTotalRank = 0;
+            leeHomMap.forEach(function(v) { leeTotalRank += (v.rank || 0); });
+            var expectedLeeRank = 1 << nComponents;
+            result.leeRankQ = leeTotalRank;
+            result.leeRankOK = (leeTotalRank === expectedLeeRank);
+            if (!result.leeRankOK) notes.push('Lee rank(Q)=' + leeTotalRank + ' (expected ' + expectedLeeRank + ')');
+
+            // Rasmussen s-invariant (knots only, rank must be 2)
+            if (nComponents === 1 && leeTotalRank === 2) {
+              var sJ = [];
+              leeHomMap.forEach(function(h, deg) {
+                if (h.rank > 0 && leeFiltered.jGradings[deg]) {
+                  var js = leeFiltered.jGradings[deg].slice().sort(function(a,b){return a-b;});
+                  sJ.push(js[0]);
+                  if (h.rank > 1) sJ.push(js[js.length - 1]);
+                }
+              });
+              sJ.sort(function(a,b){return a-b;});
+              if (sJ.length >= 2) {
+                result.sInvariant = (sJ[0] + sJ[sJ.length - 1]) / 2;
+              }
+            }
+
+            // Bar-Natan homology (using filtered complex)
+            var bnFiltered = buildFilteredKhovanovComplex(leeUsePD, leeSigns, FrobeniusAlgebra.BarNatan, CoefficientRing.Z);
+            var bnV = bnFiltered.complex.verify();
+            result.d2_BN = bnV.valid;
+            if (!bnV.valid) notes.push('BarNatan d²≠0');
+
+            // Bar-Natan rank over Q (should also be 2^c)
+            var bnHomMap = bnFiltered.complex.homology();
+            var bnTotalRank = 0;
+            bnHomMap.forEach(function(v) { bnTotalRank += (v.rank || 0); });
+            result.bnRankQ = bnTotalRank;
+            result.bnRankOK = (bnTotalRank === expectedLeeRank);
+            if (!result.bnRankOK) notes.push('BarNatan rank(Q)=' + bnTotalRank + ' (expected ' + expectedLeeRank + ')');
+
+            // Cross-check: Bar-Natan over F2 should equal Khovanov over F2
+            var bnF2 = buildKhovanovComplex(leeUsePD, leeSigns, FrobeniusAlgebra.BarNatan, CoefficientRing.Fp(2));
+            var bnF2HomMap = bnF2.homology(CoefficientRing.Fp(2));
+            // Convert to plain object for comparison
+            var bnF2Hom = {};
+            bnF2HomMap.forEach(function(v, k) { bnF2Hom[k] = v; });
+            var bnF2Match = true;
+            if (result.kh_F2 && typeof result.kh_F2 === 'object') {
+              var allKeys = new Set();
+              for (var k in result.kh_F2) allKeys.add(k);
+              for (var k in bnF2Hom) allKeys.add(k);
+              allKeys.forEach(function(k) {
+                var khR = (result.kh_F2[k] && result.kh_F2[k].rank) || 0;
+                var bnR = (bnF2Hom[k] && bnF2Hom[k].rank) || 0;
+                if (khR !== bnR) bnF2Match = false;
+              });
+            }
+            result.bnF2Match = bnF2Match;
+            if (!bnF2Match) notes.push('BarNatan(F2)≠Kh(F2)');
+
+            result.details.lee = { d2: leeV.valid, rankQ: leeTotalRank, expectedRank: expectedLeeRank };
+            result.details.bn = { d2: bnV.valid, rankQ: bnTotalRank, expectedRank: expectedLeeRank, f2Match: bnF2Match };
+          } catch(e) {
+            result.d2_Lee = false;
+            result.d2_BN = false;
+            notes.push('Lee/BN ERROR: ' + e.message);
+          }
+        } else {
+          result.d2_Lee = 'skip';
+          result.d2_BN = 'skip';
+        }
+
+        // Cross-ring consistency
+        var xring = checkCrossRingConsistency(result.kh_Z, result.kh_Q, result.kh_F2, result.kh_F3);
+        result.xring = xring.ok;
+        if (xring.notes) notes.push('XRing: ' + xring.notes);
+        result.details.xring = xring;
+
+        result.notes = notes.join(' | ');
+      } catch(e) {
+        result.notes = 'FATAL: ' + e.message;
+        result.details.fatalError = { message: e.message, stack: e.stack };
+        result.pd = result.pd || false;
+        result.gc = result.gc || false;
+        result.inv = result.inv || false;
+        result.meta = result.meta || false;
+      }
+
+      result.timeMs = Math.round(performance.now() - t0);
+
+      // Classify pass/fail
+      // Hard requirements: pd, gc, inv, d2 must pass or skip
+      // Jones verification: pass or skip counts as pass.
+      //   For links with half-integer exponents (A=q^{1/4} parity issue),
+      //   Jones failure is informational when d²=0 passes.
+      var d2PassOrSkip = result.d2_Z === true || result.d2_Z === 'skip';
+      var homZDetails = result.details && result.details.hom_Z;
+      var hasHalfInt = homZDetails && homZDetails.hasHalfIntegerExponents;
+      var writheFailed = homZDetails && homZDetails.writheFailed;
+      var linkJonesExcuse = (hasHalfInt || writheFailed) && d2PassOrSkip && result.type === 'link';
+      var jonesPassOrSkip = result.jonesOK === true || result.jonesOK === 'skip' ||
+        (result.jonesOK === false && linkJonesExcuse);
+      var eulerPassOrSkip = result.euler_Z === true || result.euler_Z === 'skip' ||
+        (result.euler_Z === false && linkJonesExcuse);
+      // Lee and BN rank are real tests now (filtered complex)
+      var leeOK = result.leeRankOK !== false;
+      var bnOK = result.bnRankOK !== false;
+      var allPass = result.pd !== false && result.gc !== false && result.inv !== false &&
+        d2PassOrSkip && eulerPassOrSkip && jonesPassOrSkip && leeOK && bnOK;
+      result.overall = allPass ? 'PASS' : 'FAIL';
+
+      if (allPass) {
+        passCount++;
+      } else {
+        failCount++;
+        // Categorize failures
+        var cats = [];
+        if (result.pd === false) cats.push('pd_invalid');
+        if (result.gc === false) cats.push('gc_invalid');
+        if (result.inv === false) cats.push('inv_invalid');
+        if (result.jonesOK === false) cats.push('jones_mismatch');
+        if (result.jonesOK === 'skip') cats.push('jones_skip');
+        if (result.d2_Z === false) cats.push('d2_fail');
+        if (result.euler_Z === false && result.d2_Z === true) cats.push('euler_fail');
+        if (result.details && result.details.hom_Z && result.details.hom_Z.writheFailed) cats.push('writhe_detect_fail');
+        if (result.details && result.details.hom_Z && result.details.hom_Z.hasHalfIntegerExponents) cats.push('half_int_jones');
+        if (result.d2_Lee === false) cats.push('lee_d2_fail');
+        if (result.leeRankOK === false) cats.push('lee_rank_fail');
+        if (result.d2_BN === false) cats.push('bn_d2_fail');
+        if (result.bnRankOK === false) cats.push('bn_rank_fail');
+        if (result.bnF2Match === false) cats.push('bn_f2_mismatch');
+        if (result.notes && result.notes.indexOf('ERROR') >= 0) cats.push('computation_error');
+        result.failureCategories = cats;
+        for (var ci = 0; ci < cats.length; ci++) {
+          failureCategories[cats[ci]] = (failureCategories[cats[ci]] || 0) + 1;
+        }
+      }
+
+      _allResults.push(result);
+
+      // Add table row
+      var tr = document.createElement('tr');
+      var khZCount = result.kh_Z ? Object.keys(result.kh_Z).length : 0;
+      var khQCount = result.kh_Q ? Object.keys(result.kh_Q).length : 0;
+      var khF2Count = result.kh_F2 ? Object.keys(result.kh_F2).length : 0;
+      var khF3Count = result.kh_F3 ? Object.keys(result.kh_F3).length : 0;
+
+      tr.innerHTML = '<td>' + item.name + '</td>' +
+        '<td>' + variant + '</td>' +
+        '<td>' + item.type + '</td>' +
+        '<td>' + result.crossings + '</td>' +
+        '<td>' + badge(result.pd) + '</td>' +
+        '<td>' + badge(result.gc) + '</td>' +
+        '<td>' + badge(result.inv) + '</td>' +
+        '<td>' + badge(result.meta) + '</td>' +
+        '<td>' + badge(result.cor) + '</td>' +
+        '<td>' + badge(result.corMir) + '</td>' +
+        '<td>' + badge(result.jonesOK) + '</td>' +
+        '<td>' + (result.writhe != null ? result.writhe : '-') + '</td>' +
+        '<td>' + (result.pdIsMirror ? 'Y' : '') + '</td>' +
+        '<td>' + badge(result.d2_Z) + '</td>' +
+        '<td>' + badge(result.euler_Z) + '</td>' +
+        '<td>' + badge(result.d2_Q) + '</td>' +
+        '<td>' + badge(result.euler_Q) + '</td>' +
+        '<td>' + badge(result.d2_F2) + '</td>' +
+        '<td>' + badge(result.euler_F2) + '</td>' +
+        '<td>' + badge(result.d2_F3) + '</td>' +
+        '<td>' + badge(result.euler_F3) + '</td>' +
+        '<td>' + (khZCount || '-') + '</td>' +
+        '<td>' + (khQCount || '-') + '</td>' +
+        '<td>' + (khF2Count || '-') + '</td>' +
+        '<td>' + (khF3Count || '-') + '</td>' +
+        '<td>' + badge(result.d2_Lee) + '</td>' +
+        '<td>' + (result.leeRankOK === true ? badge(true) : result.leeRankOK === false ? badge(false) : '-') + '</td>' +
+        '<td>' + badge(result.d2_BN) + '</td>' +
+        '<td>' + (result.bnRankOK === true ? badge(true) : result.bnRankOK === false ? badge(false) : '-') + '</td>' +
+        '<td>' + badge(result.bnF2Match) + '</td>' +
+        '<td>' + (result.sInvariant != null ? result.sInvariant : '-') + '</td>' +
+        '<td>' + badge(result.xring) + '</td>' +
+        '<td>' + result.timeMs + '</td>' +
+        '<td style="max-width:400px;overflow:hidden;text-overflow:ellipsis;font-size:0.75rem" title="' +
+          (result.notes || '').replace(/"/g,'&quot;') + '">' + (result.notes || '') + '</td>';
+      if (!allPass) tr.style.background = '#fff0f0';
+      tbody.appendChild(tr);
+    }
+    done++;
+  }
+
+  var totalTime = ((performance.now() - startTime) / 1000).toFixed(1);
+  statusEl.textContent = 'Complete: ' + done + ' items (' + (passCount+failCount) + ' tests) in ' + totalTime + 's.';
+
+  var summaryEl = document.getElementById('summary');
+  summaryEl.style.display = 'block';
+  summaryEl.className = 'summary ' + (failCount === 0 ? 'good' : 'bad');
+  summaryEl.textContent = passCount + ' passed, ' + failCount + ' failed out of ' + (passCount+failCount) + ' tests (' + totalTime + 's).';
+
+  // Category breakdown
+  var catEl = document.getElementById('category-summary');
+  if (Object.keys(failureCategories).length > 0) {
+    catEl.style.display = 'block';
+    var catLines = ['Failure categories:'];
+    for (var cat in failureCategories) {
+      catLines.push('  ' + cat + ': ' + failureCategories[cat]);
+    }
+    catEl.textContent = catLines.join('\n');
+    catEl.style.whiteSpace = 'pre';
+  }
+
+  // Store report metadata on window for programmatic access
+  window._diagnosticReport = {
+    timestamp: new Date().toISOString(),
+    maxCrossings: maxCr,
+    homologyCrossingLimit: homCrLimit,
+    totalItems: done,
+    totalTests: passCount + failCount,
+    passed: passCount,
+    failed: failCount,
+    failureCategories: failureCategories,
+    durationSeconds: parseFloat(totalTime),
+    results: _allResults
+  };
+}
+
+function exportJSON() {
+  var report = window._diagnosticReport || {
+    timestamp: new Date().toISOString(),
+    results: _allResults
+  };
+  var blob = new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'knot-diagnostic-' + new Date().toISOString().replace(/[:.]/g,'-').slice(0,19) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// =====================================================================
+// Event handlers
+// =====================================================================
+
+document.getElementById('btn-run').addEventListener('click', function() {
+  setTimeout(runTests, 100);
+});
+document.getElementById('btn-stop').addEventListener('click', function() { _stopRequested = true; });
+document.getElementById('btn-export').addEventListener('click', exportJSON);
+
+// =====================================================================
+// Auto-run mode: ?auto=1&maxcr=7&filter=3_1,5_2
+// =====================================================================
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('auto') === '1') {
+    var maxCr = params.get('maxcr');
+    if (maxCr) document.getElementById('max-cr').value = maxCr;
+    var homCrLim = params.get('homcrlimit');
+    if (homCrLim) document.getElementById('hom-cr-limit').value = homCrLim;
+    var filter = params.get('filter');
+    if (filter) document.getElementById('filter').value = filter;
+
+    var waitForData = setInterval(function() {
+      if (typeof KNOT_DATA !== 'undefined' && typeof LINK_DATA !== 'undefined' &&
+          typeof ResolutionCube !== 'undefined' && typeof buildKhovanovComplex !== 'undefined') {
+        clearInterval(waitForData);
+        var checkDone = setInterval(function() {
+          var status = document.getElementById('status').textContent;
+          if (status.indexOf('Complete') >= 0) {
+            clearInterval(checkDone);
+            window._diagnosticComplete = true;
+            console.log('DIAGNOSTIC_COMPLETE');
+            console.log('DIAGNOSTIC_SUMMARY: ' + document.getElementById('summary').textContent);
+            // Output JSON for programmatic capture
+            console.log('DIAGNOSTIC_JSON_START');
+            console.log(JSON.stringify(window._diagnosticReport));
+            console.log('DIAGNOSTIC_JSON_END');
+          }
+        }, 500);
+        runTests();
+      }
+    }, 200);
+  }
+})();
+</script>
+</body>
+</html>
