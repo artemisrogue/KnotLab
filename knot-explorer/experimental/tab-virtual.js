@@ -347,8 +347,10 @@
         '<p>The <strong>writhe</strong> $w(K) = \\sum_c \\epsilon(c)$ is the sum of the signs of all classical ' +
         'crossings. It is <em>not</em> a knot invariant (it changes under Reidemeister I moves), but it ' +
         'plays a crucial role in normalizing the Kauffman bracket to obtain the Jones polynomial.</p>' +
-        '<p>For oriented diagrams, the crossing sign $\\epsilon(c) = \\pm 1$ is determined by the ' +
-        'orientation of the two strands at the crossing, using the right-hand rule.</p>';
+        '<p>For oriented diagrams, the crossing sign $\\epsilon(c) = \\pm 1$ is determined as follows: ' +
+        'stand on the under-strand facing its direction of travel — if the over-strand passes from right ' +
+        'to left, the crossing is $+1$; left to right, $-1$. Equivalently, ' +
+        '$\\epsilon = \\operatorname{sign}\\,\\det[\\mathbf{u}_{\\text{under}}, \\mathbf{u}_{\\text{over}}]$.</p>';
       body.appendChild(expo);
       var w = gaussWrithe(gc);
       var wDiv = el('div', { className: 'exp-poly' });

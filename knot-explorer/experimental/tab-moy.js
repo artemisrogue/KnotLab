@@ -507,6 +507,13 @@
     // Build controls HTML
     var html = '<div class="exp-container">';
 
+    // Intro
+    html += '<div class="exp-card">';
+    html += '<h3>MOY Calculus for \\(\\mathfrak{sl}_n\\) Polynomials</h3>';
+    html += '<p>The <strong>Murakami&ndash;Ohtsuki&ndash;Yamada (MOY) state sum</strong> computes the quantum \\(\\mathfrak{sl}_n\\) polynomial by resolving each crossing into a weighted sum of two planar trivalent graphs (the 0-smoothing and 1-smoothing), then evaluating each resulting graph via the MOY relations. Choose a knot/link, the rank \\(n\\), and a variant (original or mirror); the cube below shows all \\(2^c\\) resolutions with their MOY graph evaluations.</p>';
+    html += '<p style="font-size:0.85rem;color:#666;margin-top:0.5rem">Sign &amp; PD conventions: crossing <code>X[a,b,c,d]</code> lists arcs counterclockwise from the incoming under-arc (\\(a\\) = incoming under, \\(c\\) = outgoing under, \\(b,d\\) over-arcs with over-strand oriented \\(b\\to d\\) iff positive). Standing on the under-strand facing its direction of travel, \\(\\varepsilon=+1\\) if the over-strand passes right-to-left, \\(-1\\) if left-to-right.</p>';
+    html += '</div>';
+
     // Controls bar
     html += '<div class="exp-controls">';
 

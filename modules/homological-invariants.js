@@ -54,13 +54,16 @@
           to a knot, it assigns a bigraded chain complex whose homology groups\
           \\(\\mathrm{Kh}^{i,j}(K)\\) are themselves knot invariants.</p>\
           <p>The construction starts from an oriented knot diagram. At each crossing <code>X[a,b,c,d]</code>\
-          (arcs listed counterclockwise from the incoming under-arc) the crossing is replaced either by the\
-          <strong>0-smoothing</strong> <em>a↔d, b↔c</em> or the <strong>1-smoothing</strong> <em>a↔b, c↔d</em>,\
+          (arcs listed counterclockwise from the incoming under-arc: <em>a</em> = incoming under, <em>c</em> = outgoing under,\
+          with over-arcs <em>b</em>, <em>d</em> and over-strand oriented <em>b → d</em> iff the crossing is positive)\
+          the crossing is replaced either by the\
+          <strong>0-smoothing (A)</strong> <em>a↔d, b↔c</em> or the <strong>1-smoothing (B)</strong> <em>a↔b, c↔d</em>,\
           producing \\(2^n\\) resolutions indexed by \\(\\{0,1\\}^n\\). Each vertex of this cube\
           carries a graded vector space built from the Frobenius algebra \\(A = \\mathbb{Z}[X]/(X^2)\\),\
           and the edges give differential maps. Homological degree is shifted by the number of negative\
-          crossings, where a crossing is \\(+1\\) iff the over-strand passes right-to-left as seen\
-          from the under-strand's direction of travel.</p>\
+          crossings: standing on the under-strand facing its direction of travel, the crossing is \\(+1\\) if the\
+          over-strand passes right-to-left and \\(-1\\) if left-to-right\
+          (equivalently \\(\\varepsilon = \\operatorname{sign}\\,\\det[\\mathbf{u}_{\\text{under}}, \\mathbf{u}_{\\text{over}}]\\)).</p>\
         </div>\
         <div class="expo-panel">\
           <h3>Recovering the Jones Polynomial</h3>\

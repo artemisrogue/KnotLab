@@ -392,11 +392,13 @@
       ', which has <strong>' + n + ' crossings</strong>.</p>';
 
     html += '<p>Each crossing \\([a,b,c,d]\\) lists arc labels counterclockwise ' +
-      'from the incoming understrand. The crossing sign is determined by the ' +
-      'overstrand direction within the link component orientation:</p>';
+      'from the incoming under-arc: \\(a\\) = incoming under, \\(c\\) = outgoing under, ' +
+      '\\(b\\) and \\(d\\) are the over-arcs. Standing on the under-strand facing its direction ' +
+      'of travel, the crossing is \\(+1\\) if the over-strand passes right-to-left, \\(-1\\) if left-to-right ' +
+      '(equivalently \\(\\varepsilon = \\operatorname{sign}\\,\\det[\\mathbf{u}_{\\text{under}},\\mathbf{u}_{\\text{over}}]\\)):</p>';
     html += '<ul style="margin:0.5em 0 0.5em 1.5em;font-size:0.9em">';
-    html += '<li><strong>Positive (+1)</strong>: overstrand flows \\(b \\to d\\) (right-to-left rule)</li>';
-    html += '<li><strong>Negative (−1)</strong>: overstrand flows \\(d \\to b\\) (left-to-right)</li>';
+    html += '<li><strong>Positive (+1)</strong>: over-strand oriented \\(b \\to d\\)</li>';
+    html += '<li><strong>Negative (−1)</strong>: over-strand oriented \\(d \\to b\\)</li>';
     html += '</ul>';
 
     html += '<table style="margin:0.5em 0;font-size:0.85em;border-collapse:collapse">';
