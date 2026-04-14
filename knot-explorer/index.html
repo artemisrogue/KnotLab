@@ -3882,77 +3882,90 @@ function _renderCobordism(diagram, srcBits, tgtBits, changedBit, vertices, n, kn
   for (let i = 0; i < srcCircles.length; i++) srcCircles[i] = smoothPath(srcCircles[i]);
   for (let i = 0; i < tgtCircles.length; i++) tgtCircles[i] = smoothPath(tgtCircles[i]);
 
-  // Push overlapping circles apart for clarity
-  function pushCirclesApart(circles, amount = 1.5) {
-    if (circles.length < 2) return;
-    const centroids = circles.map(c => ({
-      x: c.reduce((s, p) => s + p.x, 0) / c.length,
-      y: c.reduce((s, p) => s + p.y, 0) / c.length
-    }));
-    for (let i = 0; i < circles.length; i++) {
-      // Push circle away from all other centroids
-      let dx = 0, dy = 0;
-      for (let j = 0; j < circles.length; j++) {
-        if (i === j) continue;
-        dx += centroids[i].x - centroids[j].x;
-        dy += centroids[i].y - centroids[j].y;
-      }
-      const len = Math.sqrt(dx * dx + dy * dy) || 1;
-      dx = dx / len * amount;
-      dy = dy / len * amount;
-      for (const p of circles[i]) { p.x += dx; p.y += dy; }
-    }
-  }
-  pushCirclesApart(srcCircles);
-  pushCirclesApart(tgtCircles);
-
-  // Push identity circles away from saddle-involved circles and the crossing point
-  // to prevent surface intersection between identity tubes and saddle surfaces
-  const cpPush = { x: crossingPt[0], y: crossingPt[1] };
+  // Solution 3: don't translate circles in 2D. Instead, resolve visual
+  // clarity via a nesting-tree-based inset (shrinks nested circles toward
+  // their interior so their tubes don't coincide with their parent's).
+  // The saddle is anchored to the true crossingPt, so nothing slips off.
   function centroidOf(c) {
     return { x: c.reduce((s, p) => s + p.x, 0) / c.length, y: c.reduce((s, p) => s + p.y, 0) / c.length };
   }
-  function radiusOf(c) {
-    const cen = centroidOf(c);
-    return Math.max(...c.map(p => Math.sqrt((p.x - cen.x) ** 2 + (p.y - cen.y) ** 2)));
-  }
-  function separateIdentityFromSaddle(identityIdx, saddleIdx, circles) {
-    if (identityIdx.length === 0 || saddleIdx.length === 0) return;
-    const saddleCentroids = saddleIdx.map(si => centroidOf(circles[si]));
-    const saddleRadii = saddleIdx.map(si => radiusOf(circles[si]));
-    for (const ci of identityIdx) {
-      const c = circles[ci];
-      const cc = centroidOf(c);
-      const cr = radiusOf(c);
-      // Push away from crossing point
-      let totalDx = 0, totalDy = 0;
-      {
-        let dx = cc.x - cpPush.x, dy = cc.y - cpPush.y;
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        // Push more when closer to crossing
-        const pushAmt = Math.max(2.0, 6.0 - dist * 0.3);
-        totalDx += (dx / dist) * pushAmt;
-        totalDy += (dy / dist) * pushAmt;
-      }
-      // Push away from each saddle circle
-      for (let si = 0; si < saddleCentroids.length; si++) {
-        const sc = saddleCentroids[si];
-        let dx = cc.x - sc.x, dy = cc.y - sc.y;
-        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-        const overlap = (cr + saddleRadii[si]) - dist;
-        if (overlap > 0) {
-          const pushAmt = overlap * 0.6 + 2.0;
-          totalDx += (dx / dist) * pushAmt;
-          totalDy += (dy / dist) * pushAmt;
-        }
-      }
-      for (const p of c) { p.x += totalDx; p.y += totalDy; }
+  function signedAreaOf(poly) {
+    let a = 0;
+    for (let i = 0; i < poly.length; i++) {
+      const j = (i + 1) % poly.length;
+      a += poly[i].x * poly[j].y - poly[j].x * poly[i].y;
     }
+    return a / 2;
   }
-  const unchangedSrcIdx = unchanged.map(u => u.src);
-  const unchangedTgtIdx = unchanged.map(u => u.tgt);
-  separateIdentityFromSaddle(unchangedSrcIdx, srcNear, srcCircles);
-  separateIdentityFromSaddle(unchangedTgtIdx, tgtNear, tgtCircles);
+  function pointInPolygon(pt, poly) {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const xi = poly[i].x, yi = poly[i].y;
+      const xj = poly[j].x, yj = poly[j].y;
+      if (((yi > pt.y) !== (yj > pt.y)) &&
+          (pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi)) inside = !inside;
+    }
+    return inside;
+  }
+  // parent[i] = index of the smallest-area polygon that strictly contains poly i, or -1
+  function buildNestingTree(circles) {
+    const n = circles.length;
+    const areas = circles.map(c => Math.abs(signedAreaOf(c)));
+    const parent = new Array(n).fill(-1);
+    for (let i = 0; i < n; i++) {
+      const pt = circles[i][0];
+      let bestJ = -1, bestArea = Infinity;
+      for (let j = 0; j < n; j++) {
+        if (i === j) continue;
+        if (areas[j] <= areas[i]) continue;
+        if (!pointInPolygon(pt, circles[j])) continue;
+        if (areas[j] < bestArea) { bestArea = areas[j]; bestJ = j; }
+      }
+      parent[i] = bestJ;
+    }
+    const depth = new Array(n).fill(0);
+    function computeDepth(i) {
+      if (depth[i] !== 0 || parent[i] === -1) return depth[i];
+      depth[i] = computeDepth(parent[i]) + 1;
+      return depth[i];
+    }
+    for (let i = 0; i < n; i++) computeDepth(i);
+    return { parent, depth };
+  }
+  // Inset a closed polyline by `amount` along its inward normal.
+  // Winding-aware: inward = +90° rotation of the tangent for CCW polygons,
+  // -90° for CW polygons. Robust to non-convex shapes.
+  function insetPath(path, amount) {
+    if (amount === 0 || path.length < 3) return path;
+    const ccw = signedAreaOf(path) > 0;
+    const rot = ccw ? 1 : -1; // inward normal direction
+    const out = [];
+    const n = path.length;
+    for (let i = 0; i < n; i++) {
+      const prev = path[(i - 1 + n) % n];
+      const next = path[(i + 1) % n];
+      const tx = next.x - prev.x, ty = next.y - prev.y;
+      const tlen = Math.sqrt(tx * tx + ty * ty) || 1;
+      // inward normal = rot * (perp of tangent)
+      const nx = -ty / tlen * rot;
+      const ny = tx / tlen * rot;
+      out.push({ x: path[i].x + nx * amount, y: path[i].y + ny * amount });
+    }
+    return out;
+  }
+  // Apply depth-based inset per layer. Inset amount is in original
+  // diagram coordinates; tuned against typical knot diagrams.
+  function applyNestingInset(circles) {
+    const { depth } = buildNestingTree(circles);
+    const unit = Math.max(0.8, span * 0.04);
+    for (let i = 0; i < circles.length; i++) {
+      const amt = depth[i] * unit;
+      if (amt > 0) circles[i] = insetPath(circles[i], amt);
+    }
+    return circles;
+  }
+  applyNestingInset(srcCircles);
+  applyNestingInset(tgtCircles);
 
   // Setup Three.js
   const overlay = document.getElementById('cobordism-overlay');
@@ -4125,18 +4138,9 @@ function _renderCobordism(diagram, srcBits, tgtBits, changedBit, vertices, n, kn
     return len;
   }
 
-  // Compute normalized identity circle centroids for proximity checks during saddle building
-  const identityCentroidsN = [];
-  for (const u of unchanged) {
-    const sc = centroidOf(srcCircles[u.src]);
-    const tc = centroidOf(tgtCircles[u.tgt]);
-    identityCentroidsN.push(norm({ x: (sc.x + tc.x) / 2, y: (sc.y + tc.y) / 2 }));
-  }
-
   // --- Build surface strip from source arc to target arc ---
   // The saddle pinch happens at the midpoint (t=0.5), pulling toward the crossing point.
   // The surface holds its boundary shape near t=0 and t=1, transitioning mostly in the middle.
-  // Pinch is reduced near identity tubes to prevent surface intersection.
   function buildSurfaceStrip(srcArc, tgtArc, z0, z1, color, nZ = 60) {
     const nSample = 80;
     const srcR = resampleArc(srcArc, nSample);
@@ -4162,17 +4166,9 @@ function _renderCobordism(diagram, srcBits, tgtBits, changedBit, vertices, n, kn
         // Interpolate between source and target
         let px = snx * (1 - st) + tnx * st;
         let py = sny * (1 - st) + tny * st;
-        // Reduce pinch near identity tubes to prevent intersection
-        let pinchStrength = basePinchStrength;
-        for (const ic of identityCentroidsN) {
-          const dToId = Math.sqrt((px - ic[0]) ** 2 + (py - ic[1]) ** 2);
-          if (dToId < 2.5) {
-            pinchStrength *= Math.max(0.05, dToId / 2.5);
-          }
-        }
         // Pull toward crossing point at midpoint to create saddle
-        px += pinch * (cpN[0] - px) * pinchStrength;
-        py += pinch * (cpN[1] - py) * pinchStrength;
+        px += pinch * (cpN[0] - px) * basePinchStrength;
+        py += pinch * (cpN[1] - py) * basePinchStrength;
         positions.push(px, py, z);
       }
     }
