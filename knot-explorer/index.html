@@ -4329,13 +4329,37 @@ function _renderCobordism(diagram, srcBits, tgtBits, changedBit, vertices, n, kn
     }
   }
 
-  // Color palette
-  const palette = [0x4fc3f7, 0x81c784, 0xffd54f, 0xef5350, 0xba68c8, 0xff8a65];
+  // Identity tubes: light-blue family. Small hue/lightness variations
+  // per tube so multiple identities can still be told apart, while
+  // "blue = identity" remains the at-a-glance rule.
+  function identityColor(i, total) {
+    // Base: HSL(205°, 75%, 70%) ≈ 0x7dc3ec (light cornflower)
+    const hue = 200 + ((i * 19) % 40) - 20;        // 180°..220° cyan↔blue
+    const sat = 70 + ((i * 13) % 20);              // 70..90%
+    const lum = 68 + ((i * 7)  % 14) - 7;          // 61..75%
+    // HSL → RGB
+    const h = hue / 360, s = sat / 100, l = lum / 100;
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs(((h * 6) % 2) - 1));
+    const m = l - c / 2;
+    let r, g, b;
+    const hp = h * 6;
+    if (hp < 1)      [r, g, b] = [c, x, 0];
+    else if (hp < 2) [r, g, b] = [x, c, 0];
+    else if (hp < 3) [r, g, b] = [0, c, x];
+    else if (hp < 4) [r, g, b] = [0, x, c];
+    else if (hp < 5) [r, g, b] = [x, 0, c];
+    else             [r, g, b] = [c, 0, x];
+    const R = Math.round((r + m) * 255);
+    const G = Math.round((g + m) * 255);
+    const B = Math.round((b + m) * 255);
+    return (R << 16) | (G << 8) | B;
+  }
 
   // Draw unchanged circles as tubes
   for (let i = 0; i < unchanged.length; i++) {
     const { src, tgt } = unchanged[i];
-    const col = palette[i % palette.length];
+    const col = identityColor(i, unchanged.length);
     createTube(srcCircles[src], 0, zSpan, col);
     drawBoundaryCircle(srcCircles[src], zSpan, col);
     drawBoundaryCircle(tgtCircles[tgt], 0, col);
