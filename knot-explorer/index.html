@@ -2313,6 +2313,7 @@ function renderInstance(id, knotName) {
   let html = `<table class="knot-table"><thead><tr>
     <th class="col-info"></th>
     <th class="col-diagram">Diagram</th>
+    <th class="col-poly" title="The Alexander polynomial Δ(q): the first polynomial knot invariant (Alexander 1928). A Laurent polynomial in q, symmetric under q ↔ 1/q up to units, detecting much of the knot's geometric structure (genus, fibering). Does not distinguish a knot from its mirror. Domain coloring: hue = arg(Δ(q)), brightness ~ |Δ(q)|.">Alexander \\(\\Delta(q)\\)</th>
     <th class="col-poly" title="The Jones polynomial V(q) / quantum sl(2) invariant: discovered by V. Jones (1984). The fundamental representation (rep 1) gives the Jones polynomial; higher reps give colored Jones polynomials. Domain coloring: hue = arg(V(q)), brightness ~ |V(q)|.">Jones / \\(\\mathfrak{sl}(2)\\)</th>
     <th class="col-poly" title="Quantum sl(3) invariant: the Reshetikhin&ndash;Turaev invariant for the Lie algebra A2 = sl(3). The fundamental representation (1,0) generalizes the HOMFLY-PT polynomial. Higher representations probe finer knot structure.">\\(\\mathfrak{sl}(3)\\)</th>
     <th class="col-poly" title="Quantum sl(4) invariant: the Reshetikhin&ndash;Turaev invariant for A3 = sl(4). Part of the family of quantum group invariants that categorify to Khovanov&ndash;Rozansky homology.">\\(\\mathfrak{sl}(4)\\)</th>
@@ -2365,6 +2366,13 @@ function renderInstance(id, knotName) {
       ${imgTag(rowDiagram, rowLabel + ' diagram')}
       ${rowBraidLatex ? `<div style="font-size:0.7rem;margin-top:0.3rem;color:#555"><strong>Braid:</strong> \\(${rowBraidLatex}\\)</div>` : ''}
       ${rowBraidDiagram ? `<img src="${rowBraidDiagram}" alt="${rowLabel} braid" style="max-width:120px;max-height:160px;margin-top:0.3rem;border:1px solid #eee;border-radius:4px" onclick="openLightbox('${rowBraidDiagram}')">` : ''}
+    </td>
+    <td>
+      <canvas id="${id}-alex-canvas" width="400" height="400"
+        onclick="canvasLightbox('${id}-alex-canvas')"></canvas>
+      <div class="poly-text" id="${id}-alex-poly">${d.alexander_latex ? collapsiblePolyInner(alexTerms, `\\(\\Delta${isMirror ? '_{\\text{mirror}}' : ''}(q) = ${alexTerms ? termsToLatex(alexTerms) : normalizeSqrtLatex(d.alexander_latex)}\\)`) : '<span style="color:#bbb">n/a</span>'}</div>
+      <div id="${id}-alex-zp">${alexTerms ? buildZerosPolesHtml(alexTerms, id + '-alex-zp-inner') : ''}</div>
+      <div id="${id}-alex-factor">${buildFactorizationHtml(knotName, 'alex', null, isMirror ? 'mirror' : 'original', id + '-alex')}</div>
     </td>
     <td>
       <canvas id="${id}-A1-canvas" width="400" height="400"
@@ -2443,6 +2451,10 @@ function renderInstance(id, knotName) {
   }
 
   const plotMode = isMirror ? 'mirror' : 'original';
+
+  // Alexander
+  const alexR = alexCached ? alexCached.radius : 2.5;
+  drawOrBlank(alexTerms, `${id}-alex-canvas`, alexR, false, 'alex', null, plotMode);
 
   // Jones (A1 fund = rep 1)
   const jonesTerms = jonesTerms0;
