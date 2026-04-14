@@ -53,10 +53,14 @@
           <em>categorification</em> of the Jones polynomial. Rather than assigning a polynomial\
           to a knot, it assigns a bigraded chain complex whose homology groups\
           \\(\\mathrm{Kh}^{i,j}(K)\\) are themselves knot invariants.</p>\
-          <p>The construction starts from a knot diagram, resolves each crossing in two ways\
-          (0- and 1-resolutions), and builds a cube of resolutions. Each vertex of the cube\
+          <p>The construction starts from an oriented knot diagram. At each crossing <code>X[a,b,c,d]</code>\
+          (arcs listed counterclockwise from the incoming under-arc) the crossing is replaced either by the\
+          <strong>0-smoothing</strong> <em>a↔d, b↔c</em> or the <strong>1-smoothing</strong> <em>a↔b, c↔d</em>,\
+          producing \\(2^n\\) resolutions indexed by \\(\\{0,1\\}^n\\). Each vertex of this cube\
           carries a graded vector space built from the Frobenius algebra \\(A = \\mathbb{Z}[X]/(X^2)\\),\
-          and the edges give differential maps.</p>\
+          and the edges give differential maps. Homological degree is shifted by the number of negative\
+          crossings, where a crossing is \\(+1\\) iff the over-strand passes right-to-left as seen\
+          from the under-strand's direction of travel.</p>\
         </div>\
         <div class="expo-panel">\
           <h3>Recovering the Jones Polynomial</h3>\

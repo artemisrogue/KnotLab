@@ -591,7 +591,10 @@
           exactly this degree.</p>
           <h4>Proof 2: Combinatorial (Crossing Signs)</h4>
           <p>Project the link to a generic 2D plane. Each crossing involves one strand from \\(K\\) and one from \\(L\\).
-          The <strong>crossing sign</strong> \\(\\varepsilon_i = \\pm 1\\) is determined by the right-hand rule.
+          The <strong>crossing sign</strong> \\(\\varepsilon_i = \\pm 1\\) is determined as follows: stand on the under-strand
+          facing its direction of travel — if the over-strand passes from your right to your left, the crossing is
+          \\(+1\\); left to right, \\(-1\\). Equivalently, writing the tangent vectors as 2D vectors,
+          \\(\\varepsilon_i = \\operatorname{sign}\\bigl(\\det[\\,\\mathbf{u}_{\\text{under}},\\,\\mathbf{u}_{\\text{over}}\\,]\\bigr)\\).
           Then:</p>
           <div class="formula-box">
             $$\\mathrm{Lk}(K, L) = \\frac{1}{2}\\sum_{i} \\varepsilon_i$$
@@ -721,7 +724,10 @@
           exactly this degree.</p>
           <h4>Proof 2: Combinatorial (Crossing Signs)</h4>
           <p>Project the link to a generic 2D plane. Each crossing involves one strand from \\(K\\) and one from \\(L\\).
-          The <strong>crossing sign</strong> \\(\\varepsilon_i = \\pm 1\\) is determined by the right-hand rule.
+          The <strong>crossing sign</strong> \\(\\varepsilon_i = \\pm 1\\) is determined as follows: stand on the under-strand
+          facing its direction of travel — if the over-strand passes from your right to your left, the crossing is
+          \\(+1\\); left to right, \\(-1\\). Equivalently, writing the tangent vectors as 2D vectors,
+          \\(\\varepsilon_i = \\operatorname{sign}\\bigl(\\det[\\,\\mathbf{u}_{\\text{under}},\\,\\mathbf{u}_{\\text{over}}\\,]\\bigr)\\).
           Then:</p>
           <div class="formula-box">
             $$\\mathrm{Lk}(K, L) = \\frac{1}{2}\\sum_{i} \\varepsilon_i$$

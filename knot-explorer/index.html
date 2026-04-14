@@ -501,6 +501,20 @@ footer {
     The 2<sup>n</sup> vertices of the <em>n</em>-cube correspond to all possible resolution choices. Vertices connected by
     edges differ by exactly one crossing resolution.
   </p>
+  <details style="font-size:0.82rem;color:var(--text-muted);margin-bottom:1rem;border:1px solid var(--border);border-radius:6px;padding:0.5rem 0.75rem">
+    <summary style="cursor:pointer;font-weight:600">Sign &amp; smoothing conventions</summary>
+    <div style="margin-top:0.5rem;line-height:1.5">
+      <p><strong>Crossing sign.</strong> Stand on the under-strand facing its direction of travel. If the over-strand passes from your <strong>right to your left</strong> the crossing is <strong>+1</strong>; left to right is <strong>−1</strong>. Equivalently, with planar tangent vectors,
+      \( \varepsilon = \operatorname{sign}\bigl(\det[\,\mathbf{u}_{\text{under}},\,\mathbf{u}_{\text{over}}\,]\bigr) \).</p>
+      <p><strong>PD labelling.</strong> A crossing is recorded as <code>X[a, b, c, d]</code> where arcs are listed counterclockwise starting from the incoming under-arc: <em>a</em> = incoming under, <em>c</em> = outgoing under, and <em>b</em>, <em>d</em> are the two over-arcs with the over-strand oriented <em>b → d</em> iff the crossing is positive.</p>
+      <p><strong>Resolutions.</strong> Each crossing is replaced by one of two non-crossing arc pairs:</p>
+      <ul style="margin:0.25rem 0 0.25rem 1.25rem;padding:0">
+        <li><strong>0-smoothing (A):</strong> pair <em>a↔d</em> and <em>b↔c</em>. The two new arcs sit on opposite sides of the over-strand's line (they don't cross it).</li>
+        <li><strong>1-smoothing (B):</strong> pair <em>a↔b</em> and <em>c↔d</em>. The two new arcs sit on opposite sides of the under-strand's line.</li>
+      </ul>
+      <p style="margin-top:0.5rem"><strong>Kauffman A/B regions.</strong> Rotate the over-strand 90° <em>counterclockwise</em>: the two regions it sweeps into are the A-regions. The 0-smoothing joins the A-regions; the 1-smoothing joins the B-regions.</p>
+    </div>
+  </details>
   <div class="cor-controls">
     <label><strong>Knot/Link:</strong>
       <select id="cor-knot-sel" onchange="updateCubeOfResolutions()"></select>
