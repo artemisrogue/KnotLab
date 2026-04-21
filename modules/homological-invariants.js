@@ -196,6 +196,164 @@
           <p>Each theory assigns a bigraded chain complex whose graded Euler characteristic is the\
           corresponding polynomial, and each exposes structure (genus, fiberedness, 4-genus bounds,\
           concordance homomorphisms) invisible to the polynomial alone.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>7. Grid homology: combinatorial HFK</h3>\
+          <p>One of the most striking developments in the subject is the\
+          <strong>combinatorial reformulation</strong> of knot Floer homology by\
+          Manolescu&ndash;Ozsv&aacute;th&ndash;Sarkar (2009). Rather than counting pseudo-holomorphic disks,\
+          one works with a purely combinatorial chain complex built from\
+          <span class="kl-term" title="Grid diagram: a finite n×n toroidal grid with exactly one X and one O marker in each row and each column; connecting O→X vertically and X→O horizontally (with appropriate over/under conventions) presents a link L. Every link admits grid presentations.">grid diagrams</span>.</p>\
+          <p><strong>Grid diagrams.</strong> An \\(n \\times n\\) toroidal grid carrying one \\(X\\) and one\
+          \\(O\\) in every row and every column defines an oriented link \\(L \\subset S^3\\) (connect each\
+          \\(O\\) to the \\(X\\) in its column vertically and each \\(X\\) to the \\(O\\) in its row horizontally).</p>\
+          <p><strong>Generators of \\(GC^-(K)\\).</strong> A\
+          <span class="kl-term" title="Perfect matching / generator of grid homology: a set of n points, one in each row and each column of the toroidal grid. Equivalently, a permutation in S_n. The grid complex GC⁻ is free over 𝔽[U₁,…,U_n] on these n! generators.">perfect matching</span>\
+          chooses \\(n\\) points on the grid, one on each horizontal and each vertical circle &mdash;\
+          equivalently a permutation in \\(S_n\\). There are \\(n!\\) such generators.</p>\
+          <p><strong>Differential.</strong> The boundary counts\
+          <span class="kl-term" title="Empty rectangle: an embedded rectangle on the toroidal grid whose interior contains no X-marker, no O-marker, and no generator point. Empty rectangles connecting two generators that differ by a transposition are counted by the grid differential; ∂² = 0 because rectangles compose in pairs.">empty rectangles</span>\
+          on the torus: embedded rectangles with corners on the two generators, whose interior contains\
+          no \\(X\\), no \\(O\\), and no marker of either generator. The equation \\(\\partial^2 = 0\\) is a\
+          short combinatorial argument about pairs of rectangles composing in two ways.</p>\
+          <div class="formula-box">\
+            $$H_\\ast(GC^-(K),\\,\\partial) \\;\\cong\\; \\mathrm{HFK}^-(K) \\qquad\\text{(MOS 2009).}$$\
+          </div>\
+          <p><strong>Micro-example: right-handed trefoil \\(3_1\\).</strong> A minimal\
+          <span class="kl-term" title="Grid homology: the (bi)graded homology of the grid chain complex GC⁻ (or its hat/minus/infinity variants). Isomorphic to knot Floer homology HFK; computable by hand for small grids and by software (HFKcalc, KnotKit) for moderate ones.">grid homology</span>\
+          presentation of \\(3_1\\) uses a \\(5 \\times 5\\) grid, giving \\(5! = 120\\) generators. Despite\
+          that count, the homology collapses to the known</p>\
+          <div class="formula-box">\
+            $$\\widehat{\\mathrm{HFK}}(3_1) \\;=\\; \\mathbb{Z}_{(-1,-2)}\\, \\oplus\\, \\mathbb{Z}_{(0,-1)}\\, \\oplus\\, \\mathbb{Z}_{(1,0)} \\qquad (\\text{bigrading}\\ (s,m)),$$\
+          </div>\
+          <p>i.e.&nbsp;rank 3, supported in Alexander gradings \\(\\{-1, 0, 1\\}\\) and Maslov gradings\
+          \\(\\{-2, -1, 0\\}\\). Note the top Alexander degree is \\(g(3_1) = 1\\) (genus one) with rank 1 &mdash;\
+          reflecting that \\(3_1\\) is fibered.</p>\
+          <p><strong>Why this matters.</strong> Grid homology is, as of today, the only version of any\
+          knot homology theory admitting a fully combinatorial \\(\\partial^2 = 0\\) proof. It enabled direct\
+          software implementations (HFKcalc, KnotKit, GridLink) and lifted knot Floer homology from an\
+          analytic object to a hand-computable one.</p>\
+          <details class="kl-example">\
+            <summary>Warm-up: a \\(3 \\times 3\\) grid for the unknot</summary>\
+            <p>Place \\(X\\)-markers at \\((1,1), (2,2), (3,3)\\) and \\(O\\)-markers at \\((1,2), (2,3), (3,1)\\)\
+            on a \\(3 \\times 3\\) torus. This presents the unknot \\(U\\). There are \\(3! = 6\\) generators.\
+            After identifying empty rectangles that connect pairs of generators (there are exactly two\
+            non-degenerate families up to the torus action), the differential reduces the\
+            complex to a single surviving generator in Alexander grading \\(0\\), Maslov grading \\(0\\):</p>\
+            <div class="formula-box">\
+              $$\\widehat{\\mathrm{HFK}}(U) \\;\\cong\\; \\mathbb{Z}_{(0,0)}.$$\
+            </div>\
+            <p>This is already a non-trivial computation by hand, and illustrates how the\
+            \\(n!\\) generators collapse through the rectangle count to recover the tiny expected answer.</p>\
+          </details>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>8. Concordance invariants beyond \\(\\tau\\): \\(\\Upsilon\\), \\(\\nu^+\\), \\(\\varepsilon\\)</h3>\
+          <p>The \\(\\tau\\) invariant (Panel 4) is only the first in a family of concordance invariants\
+          extracted from the knot Floer complex\
+          <span class="kl-term" title="CFK∞: the ℤ-filtered, ℤ-graded chain complex underlying knot Floer homology, free over 𝔽[U, U⁻¹] with two filtrations (algebraic and Alexander). The full stable-equivalence class of CFK∞ is a knot-concordance invariant and refines τ, Υ, ν⁺, ε.">\\(\\mathrm{CFK}^\\infty(K)\\)</span>.</p>\
+          <h4>\\(\\Upsilon_K(t)\\): the Ozsv&aacute;th&ndash;Stipsicz&ndash;Szab&oacute; upsilon invariant</h4>\
+          <p>For \\(t \\in [0, 2]\\), the\
+          <span class="kl-term" title="Υ-invariant Υ_K(t) (Ozsváth–Stipsicz–Szabó 2017): a piecewise-linear concordance homomorphism from the smooth concordance group C to the space of PL functions on [0,2], defined from t-modified Alexander filtrations on CFK∞. Refines τ via Υ'_K(0⁺) = −τ(K).">\\(\\Upsilon\\)-invariant</span>\
+          is defined from a one-parameter family of \\(t\\)-modified filtrations on \\(\\mathrm{CFK}^\\infty\\):</p>\
+          <div class="formula-box">\
+            $$\\Upsilon_K(t) \\;=\\; -\\max\\!\\Bigl\\{\\, s \\;:\\; \\mathcal{F}_s^{\\,t}\\,\\mathrm{CFK}^\\infty(K) \\longrightarrow \\widehat{\\mathrm{HF}}(S^3) = \\mathbb{Z}\\ \\text{is surjective} \\,\\Bigr\\}.$$\
+          </div>\
+          <p>Key properties:</p>\
+          <ul>\
+            <li>\\(\\Upsilon_K\\) is piecewise-linear on \\([0, 2]\\) with \\(\\Upsilon_K(0) = \\Upsilon_K(2) = 0\\).</li>\
+            <li>4-genus bound: \\(\\,|\\Upsilon_K(t)| \\;\\leq\\; t\\,g_4(K)\\,\\) for \\(t \\in [0,1]\\).</li>\
+            <li>\\(\\Upsilon\\) is a homomorphism from the smooth concordance group \\(\\mathcal{C}\\) to the PL\
+            function space: \\(\\Upsilon_{K_1 \\# K_2} = \\Upsilon_{K_1} + \\Upsilon_{K_2}\\).</li>\
+            <li>Derivative at 0 recovers \\(\\tau\\): \\(\\;\\Upsilon_K'(0^+) = -\\tau(K)\\).</li>\
+            <li>\\(\\Upsilon\\) distinguishes concordance classes that \\(\\tau\\) cannot &mdash; e.g.\
+            the \\((2,3)\\)-cable of the trefoil vs. the \\((2,3)\\)-cable of the unknot share the same \\(\\tau\\)\
+            but differ on some \\(\\Upsilon_K(t)\\).</li>\
+          </ul>\
+          <h4>\\(\\nu^+(K)\\): Hom&ndash;Wu&rsquo;s sharpened 4-genus bound</h4>\
+          <p>The\
+          <span class="kl-term" title="ν⁺(K) (Hom–Wu 2016): integer concordance invariant defined from the minus-flavour knot Floer complex CFK⁻ and the U-action, satisfying τ(K) ≤ ν⁺(K) ≤ g₄(K); often strictly sharper than τ as a 4-genus bound.">\\(\\nu^+\\)</span>-invariant\
+          (Hom&ndash;Wu, 2016) is defined from\
+          <span class="kl-term" title="CFK⁻: the 'minus' flavour of the knot Floer complex, a free chain complex over 𝔽[U] whose U-action lowers Alexander grading by 1. Quotient by U gives ĈFK; inverting U gives CFK∞.">\\(\\mathrm{CFK}^-(K)\\)</span>\
+          and the\
+          <span class="kl-term" title="U-action: the action of the formal variable U on CFK⁻ (or CFK∞) coming from the Heegaard basepoint; lowers Maslov grading by 2 and Alexander grading by 1. Central to the definition of Heegaard Floer d-invariants, ν⁺, and the Υ construction.">\\(U\\)-action</span>. It satisfies</p>\
+          <div class="formula-box">\
+            $$\\tau(K) \\;\\leq\\; \\nu^+(K) \\;\\leq\\; g_4(K),$$\
+          </div>\
+          <p>and in many cases the inequalities are strict, giving a genuinely sharper lower bound on the\
+          smooth 4-genus than \\(\\tau\\) alone.</p>\
+          <h4>\\(\\varepsilon(K) \\in \\{-1, 0, +1\\}\\): Hom&rsquo;s epsilon invariant</h4>\
+          <p>Hom (2014) introduced the\
+          <span class="kl-term" title="ε-invariant ε(K) (Hom 2014): integer ∈ {−1, 0, +1} extracted from the stable-equivalence class of CFK∞ via a bordered-Floer analysis of cables. A complete invariant for staircase (thin) knots and determines the behaviour of τ under cabling.">\\(\\varepsilon\\)-invariant</span>,\
+          a concordance invariant taking values in \\(\\{-1, 0, +1\\}\\), extracted from the\
+          <span class="kl-term" title="Stable equivalence: the equivalence relation on filtered chain complexes generated by filtered chain homotopy equivalence and direct-sum with acyclic trivial complexes. The stable-equivalence class of CFK∞(K) is a concordance invariant and is the natural home of τ, Υ, ν⁺, ε.">stable-equivalence</span>\
+          class of \\(\\mathrm{CFK}^\\infty(K)\\) &mdash; in fact it is a\
+          <span class="kl-term" title="Hom invariant: the concordance homomorphism ε : 𝒞 → {−1, 0, +1}-valued monoid constructed by Hom (2014); together with τ it controls much of the behaviour of CFK∞ under connected sum and cabling.">complete invariant</span>\
+          for &ldquo;staircase&rdquo; (thin) knots, i.e. knots whose \\(\\mathrm{CFK}^\\infty\\) has the simplest\
+          possible shape. \\(\\varepsilon\\) determines exactly when the bound \\(|\\tau| \\leq g_4\\) is tight\
+          after cabling, and is essential for computing \\(\\tau\\) of cables and satellites.</p>\
+          <details class="kl-example">\
+            <summary>A small table: \\(\\tau,\\ \\nu^+,\\ \\varepsilon,\\ \\Upsilon\\) for a few knots</summary>\
+            <div class="formula-box">\
+              $$\\begin{array}{|c|c|c|c|c|}\
+                \\hline\
+                K & \\tau(K) & \\nu^+(K) & \\varepsilon(K) & \\Upsilon_K(1) \\\\\
+                \\hline\
+                3_1 = T(2,3) & 1 & 1 & +1 & -1 \\\\\
+                4_1 & 0 & 0 & 0 & 0 \\\\\
+                5_2 & 1 & 1 & +1 & -1 \\\\\
+                T(2,5) & 2 & 2 & +1 & -2 \\\\\
+                \\hline\
+              \\end{array}$$\
+            </div>\
+            <p>The thin knots \\(3_1, 4_1, 5_2\\) are fully controlled by \\((\\tau, \\varepsilon)\\); for\
+            thicker knots one needs the full function \\(\\Upsilon_K(t)\\) to separate concordance classes.</p>\
+          </details>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>9. Link Floer \\(\\widehat{\\mathrm{HFL}}\\) and bordered Floer</h3>\
+          <h4>Link Floer homology</h4>\
+          <p>Ozsv&aacute;th&ndash;Szab&oacute; (2008) extended knot Floer homology to oriented multi-component\
+          links: the\
+          <span class="kl-term" title="Link Floer homology HFL (Ozsváth–Szabó 2008): a multi-graded homology theory assigning to an oriented n-component link L ⊂ S³ a finitely-generated abelian group ĤFL(L) whose graded Euler characteristic is (up to a normalization factor) the multivariable Alexander polynomial Δ_L(t₁,…,t_n).">link Floer homology</span>\
+          \\(\\widehat{\\mathrm{HFL}}(L)\\) is a multi-graded abelian group with Alexander grading indexed by\
+          (classes of) Seifert surfaces for each component. Its graded Euler characteristic categorifies\
+          the\
+          <span class="kl-term" title="Multivariable Alexander polynomial Δ_L(t₁,…,t_n): a polynomial invariant of an oriented n-component link L ⊂ S³, generalizing the single-variable Alexander polynomial and defined via the Alexander module of the universal abelian cover of the link complement. Graded Euler characteristic of ĤFL.">multivariable Alexander polynomial</span>:</p>\
+          <div class="formula-box">\
+            $$\\chi\\!\\bigl(\\widehat{\\mathrm{HFL}}(L)\\bigr) \\;\\doteq\\; \\Delta_L(t_1, \\ldots, t_n)\\, \\prod_{i=1}^{n}\\bigl(t_i^{1/2} - t_i^{-1/2}\\bigr)^{\\,\\varepsilon_n},$$\
+          </div>\
+          <p>with a normalization factor \\(\\varepsilon_n\\) depending on conventions (commonly\
+          \\(\\varepsilon_n = 1\\) for \\(n \\geq 2\\) and absorbed for \\(n = 1\\) to recover the knot case).\
+          As with HFK, the full homology detects link-theoretic data (Thurston norm, fiberedness of\
+          multi-component fibrations) far beyond what \\(\\Delta_L\\) alone can see.</p>\
+          <h4>Bordered Heegaard Floer homology</h4>\
+          <p>Lipshitz&ndash;Ozsv&aacute;th&ndash;Thurston (2018) built a full\
+          <span class="kl-term" title="Bordered Floer homology (Lipshitz–Ozsváth–Thurston 2018): an extension of Heegaard Floer homology to 3-manifolds with parametrized boundary, packaged as A∞-modules and type-D structures over a differential graded (or A∞) algebra 𝒜(F) of the boundary surface F. Gluing is via A∞ tensor product.">bordered Floer package</span>\
+          that turns HF̂ into a cut-and-paste theory for 3-manifolds with boundary. The structure is:</p>\
+          <ul>\
+            <li>To each parametrized surface \\(F\\), assign an\
+            <span class="kl-term" title="A∞-algebra: an algebra A with higher multiplications μ_n : A^{⊗n} → A of degree 2−n satisfying quadratic A∞-relations; generalizes dg-algebras (where μ_n = 0 for n ≥ 3). The natural algebraic setting for bordered Floer homology of surfaces.">\\(A_\\infty\\)-algebra</span>\
+            \\(\\mathcal{A}(F)\\). For the torus boundary one obtains a specific small DG algebra\
+            <span class="kl-term" title="Torus algebra 𝒜(T²) (bordered Floer): the specific associative DG algebra (in fact a finite-dimensional A∞-algebra) that bordered Heegaard Floer homology assigns to a genus-1 parametrized surface. Generators correspond to matched Reeb chords on the pointed matched circle; used to compute τ, ε, Υ of cables.">\\(\\mathcal{A}(T^2)\\)</span>.</li>\
+            <li>To a bordered 3-manifold \\(Y\\) with \\(\\partial Y = F\\), assign an\
+            \\(A_\\infty\\)-module \\(\\widehat{\\mathrm{CFA}}(Y)\\) over \\(\\mathcal{A}(F)\\) and a\
+            <span class="kl-term" title="Type-D module / structure (bordered Floer): a left module ĈFD(Y) over 𝒜(F) encoded as a chain complex with a structure map δ₁ : X → 𝒜 ⊗ X satisfying a quadratic compatibility; equivalent to a curved A∞-module structure. One half of the bordered Floer package.">type-D module</span>\
+            \\(\\widehat{\\mathrm{CFD}}(Y)\\).</li>\
+            <li>Decomposition \\(Y = Y_1 \\cup_F Y_2\\) recovers the closed invariant via the\
+            <span class="kl-term" title="Pairing theorem (Lipshitz–Ozsváth–Thurston): for Y = Y₁ ∪_F Y₂, ĈF(Y) ≃ ĈFA(Y₁) ⊗_{𝒜(F)} ĈFD(Y₂) (A∞-tensor / box tensor). Reduces Heegaard Floer computations to gluing of bordered pieces.">pairing theorem</span>:</li>\
+          </ul>\
+          <div class="formula-box">\
+            $$\\widehat{\\mathrm{CF}}(Y) \\;\\simeq\\; \\widehat{\\mathrm{CFA}}(Y_1) \\,\\boxtimes_{\\mathcal{A}(F)}\\, \\widehat{\\mathrm{CFD}}(Y_2).$$\
+          </div>\
+          <p>Applied to knot complements (bordered by a torus), bordered Floer enables explicit\
+          computations of \\(\\tau\\), \\(\\varepsilon\\), and \\(\\Upsilon\\) for <em>cables and satellites</em> &mdash;\
+          Hom&rsquo;s 2014 formula for \\(\\tau(K_{p,q})\\) in terms of \\(\\tau(K), \\varepsilon(K), p, q\\) is the\
+          prototype application.</p>\
+          <p><em>Cross-reference.</em> The bordered package also supplies the algebraic foundation for\
+          Szab&oacute;&rsquo;s 2015 combinatorial differential on the cube of resolutions &mdash; see the\
+          <em>Spectral Sequences</em> sub-tab, Ozsv&aacute;th&ndash;Szab&oacute; panel, where the\
+          Khovanov\\(\\,\\to\\,\\)HF̂ spectral sequence is discussed.</p>\
         </div>';
       mathRender(el);
     }
