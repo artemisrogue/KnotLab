@@ -1275,6 +1275,35 @@
       // ---------------------------------------------------------------
       // 3. Khovanov Chain Complex & Homology
       // ---------------------------------------------------------------
+      // Flag: bigraded display and downstream graded Euler / categorification
+      // are meaningful only for the Khovanov algebra (x*x = 0 preserves j).
+      // For Lee / Bar-Natan we show a single explanatory card instead.
+      var isBigradedMeaningful = (algebraName === 'Khovanov');
+      if (!isBigradedMeaningful) {
+        resultHTML += '<div class="exp-card">';
+        resultHTML += '<h3>Bigraded complex, homology, and categorification</h3>';
+        resultHTML += '<p style="background:#fff3cd;border:1px solid #ffe58f;padding:0.6rem 0.8rem;' +
+          'border-radius:4px;font-size:0.9rem;color:#664d03">' +
+          '<strong>Not shown for ' + algebraName + '.</strong> The ' + algebraName +
+          ' multiplication breaks the quantum grading \\(j\\) ' +
+          '(\\(x \\otimes x \\mapsto ' + (algebraName === 'Lee' ? '1' : 'x') + '\\)), so ' +
+          'the bigraded chain complex, bigraded homology \\(Kh^{i,j}\\), graded Euler ' +
+          'characteristic \\(\\chi_q\\), and the categorification identity ' +
+          '\\(\\chi_q(Kh) = (-1)^{c-1}(q+q^{-1})V(q^{-2})\\) are Khovanov-specific and ' +
+          'would be misleading here. Select <strong>Khovanov</strong> to view them.</p>';
+        resultHTML += '<p style="font-size:0.9rem">' +
+          'The meaningful ' + algebraName + ' invariant is the filtered, singly-graded ' +
+          'homology, which for a ' + nComponents + '-component ' +
+          (nComponents > 1 ? 'link' : 'knot') + ' collapses to rank \\(2^{c} = ' +
+          Math.pow(2, nComponents) + '\\) over \\(\\mathbb{Q}\\). ' +
+          (algebraName === 'Lee'
+            ? 'This rank-' + Math.pow(2, nComponents) + ' Lee homology underlies the ' +
+              'Rasmussen \\(s\\)-invariant shown in the card below.'
+            : 'The analogous Bar-Natan statement produces Rasmussen-type concordance ' +
+              'invariants studied by Mackaay-Turner-Vaz.') +
+          '</p>';
+        resultHTML += '</div>';
+      }
       var complexT0 = performance.now();
       var complex = buildKhovanovComplex(pdCode, crossingSigns, algebra, ring);
       var complexT1 = performance.now();
@@ -1282,6 +1311,7 @@
       // Verify d^2 = 0
       var d2check = complex.verify();
 
+      if (isBigradedMeaningful) {
       resultHTML += '<div class="exp-card">';
       resultHTML += '<h3>Khovanov Chain Complex (' + algebraName + ' algebra, ' +
         (ringName === 'Fp' ? 'F_' + (ring.p || '?') : ringName) + ' coefficients)';
@@ -1291,24 +1321,6 @@
         resultHTML += ' <span class="exp-badge fail">d&sup2; &ne; 0</span>';
       }
       resultHTML += '</h3>';
-
-      if (algebraName !== 'Khovanov') {
-        resultHTML += '<p style="background:#fff3cd;border:1px solid #ffe58f;padding:0.6rem 0.8rem;' +
-          'border-radius:4px;font-size:0.85rem;color:#664d03;margin:0.4rem 0">' +
-          '<strong>Caveat.</strong> The ' + algebraName + ' differential does not preserve ' +
-          'the quantum grading \\(j\\) &mdash; for Lee, multiplication sends ' +
-          '\\(x \\otimes x \\mapsto 1\\) (shifting \\(j\\) by \\(+4\\)); for Bar-Natan, ' +
-          '\\(x \\otimes x \\mapsto x\\) (shifting \\(j\\) by \\(+2\\)). ' +
-          'The bigraded complex shown here retains only the \\(j\\)-preserving part of the ' +
-          'differential, which is exactly the Khovanov differential. Consequently the ' +
-          'bigraded table below is identical to the Khovanov case and represents only the ' +
-          '\\(E_1\\)-page of the Lee/Bar-Natan spectral sequence. ' +
-          'The true (filtered) ' + algebraName + ' homology collapses to rank ' +
-          '\\(2^{c} = ' + Math.pow(2, nComponents) + '\\) over \\(\\mathbb{Q}\\) for this ' +
-          nComponents + '-component ' + (nComponents > 1 ? 'link' : 'knot') +
-          '; it is computed separately in the Rasmussen \\(s\\)-invariant card below ' +
-          'via a singly-graded filtered complex.</p>';
-      }
 
       // Chain group ranks table
       resultHTML += '<details><summary>Chain groups \\(C^{i,j}\\) (ranks)</summary>';
@@ -1527,6 +1539,7 @@
       }
 
       resultHTML += '</div>';
+      } // end if (isBigradedMeaningful) — Khovanov-only section
 
       // ---------------------------------------------------------------
       // 6. Rasmussen s-invariant (knots only, standard Khovanov algebra only)
