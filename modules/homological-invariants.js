@@ -88,7 +88,7 @@
           </details>\
           <details class="kl-proof">\
             <summary>Proof sketch: Kh is a knot invariant (chain homotopies for R1, R2, R3)</summary>\
-            <p>Sketch. Reidemeister's theorem reduces invariance to producing explicit chain homotopy equivalences between the Khovanov complexes of diagrams related by a single R-move. For each move one writes down a local complex (involving only arcs inside the R-move disc) and exhibits a deformation retraction: <strong>R1</strong> uses the fact that the Frobenius algebra has a "delooping" isomorphism \\(A \\cong q A[1] \\oplus q^{-1} A\\) that cancels the extra circle introduced by the twist; <strong>R2</strong> uses a "Gaussian elimination" cancellation of a pair of isomorphic summands connected by an iso differential; <strong>R3</strong> follows from R2 via the categorified R2\u2009+\u2009(braid-like slide) argument of Bar-Natan. The homotopies themselves are explicit and local, so invariance extends to functoriality on cobordisms. References: Khovanov (2000); Bar-Natan, <em>Algebr. Geom. Topol.</em> 2 (2002); clean account in Lipshitz\u2013Sarkar notes.</p>\
+            <p>Sketch. Reidemeister&rsquo;s theorem reduces invariance to producing explicit chain homotopy equivalences between the Khovanov complexes of diagrams related by a single R-move. For each move one writes down a local complex (involving only arcs inside the R-move disc) and exhibits a deformation retraction: <strong>R1</strong> uses the fact that the Frobenius algebra has a "delooping" isomorphism \\(A \\cong q A[1] \\oplus q^{-1} A\\) that cancels the extra circle introduced by the twist; <strong>R2</strong> uses a "Gaussian elimination" cancellation of a pair of isomorphic summands connected by an iso differential; <strong>R3</strong> follows from R2 via the categorified R2\u2009+\u2009(braid-like slide) argument of Bar-Natan. The homotopies themselves are explicit and local, so invariance extends to functoriality on cobordisms. References: Khovanov (2000); Bar-Natan, <em>Algebr. Geom. Topol.</em> 2 (2002); clean account in Lipshitz\u2013Sarkar notes.</p>\
           </details>\
         </div>\
         <div class="expo-panel">\
@@ -262,7 +262,7 @@
           <span class="kl-term" title="CFK∞: the ℤ-filtered, ℤ-graded chain complex underlying knot Floer homology, free over 𝔽[U, U⁻¹] with two filtrations (algebraic and Alexander). The full stable-equivalence class of CFK∞ is a knot-concordance invariant and refines τ, Υ, ν⁺, ε.">\\(\\mathrm{CFK}^\\infty(K)\\)</span>.</p>\
           <h4>\\(\\Upsilon_K(t)\\): the Ozsv&aacute;th&ndash;Stipsicz&ndash;Szab&oacute; upsilon invariant</h4>\
           <p>For \\(t \\in [0, 2]\\), the\
-          <span class="kl-term" title="Υ-invariant Υ_K(t) (Ozsváth–Stipsicz–Szabó 2017): a piecewise-linear concordance homomorphism from the smooth concordance group C to the space of PL functions on [0,2], defined from t-modified Alexander filtrations on CFK∞. Refines τ via Υ'_K(0⁺) = −τ(K).">\\(\\Upsilon\\)-invariant</span>\
+          <span class="kl-term" title="Υ-invariant Υ_K(t) (Ozsváth–Stipsicz–Szabó 2017): a piecewise-linear concordance homomorphism from the smooth concordance group C to the space of PL functions on [0,2], defined from t-modified Alexander filtrations on CFK∞. Refines τ via Υ′_K(0⁺) = −τ(K).">\\(\\Upsilon\\)-invariant</span>\
           is defined from a one-parameter family of \\(t\\)-modified filtrations on \\(\\mathrm{CFK}^\\infty\\):</p>\
           <div class="formula-box">\
             $$\\Upsilon_K(t) \\;=\\; -\\max\\!\\Bigl\\{\\, s \\;:\\; \\mathcal{F}_s^{\\,t}\\,\\mathrm{CFK}^\\infty(K) \\longrightarrow \\widehat{\\mathrm{HF}}(S^3) = \\mathbb{Z}\\ \\text{is surjective} \\,\\Bigr\\}.$$\
@@ -273,7 +273,7 @@
             <li>4-genus bound: \\(\\,|\\Upsilon_K(t)| \\;\\leq\\; t\\,g_4(K)\\,\\) for \\(t \\in [0,1]\\).</li>\
             <li>\\(\\Upsilon\\) is a homomorphism from the smooth concordance group \\(\\mathcal{C}\\) to the PL\
             function space: \\(\\Upsilon_{K_1 \\# K_2} = \\Upsilon_{K_1} + \\Upsilon_{K_2}\\).</li>\
-            <li>Derivative at 0 recovers \\(\\tau\\): \\(\\;\\Upsilon_K'(0^+) = -\\tau(K)\\).</li>\
+            <li>Derivative at 0 recovers \\(\\tau\\): \\(\\;\\Upsilon_K&rsquo;(0^+) = -\\tau(K)\\).</li>\
             <li>\\(\\Upsilon\\) distinguishes concordance classes that \\(\\tau\\) cannot &mdash; e.g.\
             the \\((2,3)\\)-cable of the trefoil vs. the \\((2,3)\\)-cable of the unknot share the same \\(\\tau\\)\
             but differ on some \\(\\Upsilon_K(t)\\).</li>\
@@ -463,7 +463,7 @@
           of the KR construction replaces matrix factorizations by\
           <span class="kl-term" title="Soergel bimodule: a summand of tensor products of R ⊗_{R^{s_i}} R over a polynomial ring R = ℂ[x_1,…,x_n], where s_i are simple reflections. Soergel (2007) proved these categorify the Hecke algebra; their homotopy category contains the Rouquier complexes that categorify braids.">Soergel bimodule</span>\
           Rouquier complexes, and Hochschild homology replaces the matrix-factorization cohomology. The\
-          output is the <span class="kl-term" title="Triply-graded HOMFLY homology HHH(K): Khovanov's categorification (2007) of the HOMFLY-PT polynomial, via Hochschild homology of the Rouquier complex of a braid whose closure is K, in the category of Soergel bimodules. Bears three gradings (homological, q-grading, and Hochschild/a-grading).">triply-graded HOMFLY homology</span>\
+          output is the <span class="kl-term" title="Triply-graded HOMFLY homology HHH(K): Khovanov&rsquo;s categorification (2007) of the HOMFLY-PT polynomial, via Hochschild homology of the Rouquier complex of a braid whose closure is K, in the category of Soergel bimodules. Bears three gradings (homological, q-grading, and Hochschild/a-grading).">triply-graded HOMFLY homology</span>\
           \\(\\mathrm{HHH}(K)\\) (Khovanov 2007, Khovanov&ndash;Rozansky 2008):</p>\
           <div class="formula-box">\
             $$\\mathrm{HHH}(K) \\;=\\; \\mathrm{HH}_*\\bigl(\\mathrm{Rouquier}(\\beta)\\bigr), \\qquad \\hat\\beta = K,$$\
@@ -712,7 +712,7 @@
           <div class="formula-box">$$\\mathcal{H}(K) \\;=\\; \\mathrm{HHH}(K) \\;=\\; \\bigoplus_{i,j,k} \\mathcal{H}^{i,j,k}(K)$$</div>\
           <p>denote the <span class="kl-term" title="Triply-graded Khovanov–Rozansky homology HHH: the Hochschild homology of Hochschild homology (hence 'HHH') of the Rouquier complex of Soergel bimodules associated to a braid closure. Triply graded; categorifies the HOMFLY-PT polynomial. Computed in closed form for torus links by Hogancamp–Mellit and Elias–Hogancamp.">triply-graded Khovanov&ndash;Rozansky (HHH) homology</span> &mdash;\
           obtained as Hochschild homology of the Hochschild homology of the\
-          <span class="kl-term" title="Rouquier complex: a complex of Soergel bimodules associated to a braid word, with homotopy type an invariant of the braid. Introduced by Rouquier (math/0409593) as a categorification of the braid group; Khovanov's 2007 observation that its Hochschild homology gives the triply graded HOMFLY homology.">Rouquier complex</span>\
+          <span class="kl-term" title="Rouquier complex: a complex of Soergel bimodules associated to a braid word, with homotopy type an invariant of the braid. Introduced by Rouquier (math/0409593) as a categorification of the braid group; Khovanov&rsquo;s 2007 observation that its Hochschild homology gives the triply graded HOMFLY homology.">Rouquier complex</span>\
           of Soergel bimodules for a braid representative (Khovanov 2007). Its graded Euler characteristic is the\
           <span class="kl-term" title="HOMFLY-PT polynomial: two-variable generalization of the Jones and Alexander polynomials (Freyd–Yetter–Hoste–Lickorish–Millett–Ocneanu 1985; Przytycki–Traczyk 1987). Specializations at specific values of a recover Jones (a = q^2) and, after suitable substitutions, the Alexander polynomial.">HOMFLY-PT polynomial</span>\
           \\(P_K(a, q)\\).</p>\
@@ -752,7 +752,7 @@
                 Hogancamp&ndash;Mellit (2019, arXiv:1909.00418) and Elias&ndash;Hogancamp (2019, arXiv:1603.00407),\
                 verifying the Gorsky&ndash;Oblomkov&ndash;Rasmussen&ndash;Shende conjectures for these families.</li>\
             <li>Gorsky&ndash;Negut&ndash;Rasmussen (2016, arXiv:1608.07308) provided a geometric model for HHH via\
-                <span class="kl-term" title="Flag Hilbert scheme: parameter space of flags of ideals of colength n in the plane; central to the geometric realization of Khovanov–Rozansky homology and to the 'Hilbert scheme' side of Gorsky–Negut–Rasmussen's conjectures.">flag Hilbert schemes</span>\
+                <span class="kl-term" title="Flag Hilbert scheme: parameter space of flags of ideals of colength n in the plane; central to the geometric realization of Khovanov–Rozansky homology and to the &lsquo;Hilbert scheme&rsquo; side of Gorsky&ndash;Negut&ndash;Rasmussen&rsquo;s conjectures.">flag Hilbert schemes</span>\
                 of points in \\(\\mathbb{C}^2\\), tying the categorified story to the algebraic geometry of\
                 Hilbert schemes and to the shuffle algebra.</li>\
           </ul>\

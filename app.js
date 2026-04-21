@@ -1489,8 +1489,8 @@
             if (doc) {
               var hdr = doc.querySelector('header');
               if (hdr) hdr.style.display = 'none';
-              var tb = doc.querySelector('.tab-bar');
-              if (tb) tb.style.display = 'none';
+              // Keep the knot-explorer's own sub-tab bar visible — these are its
+              // Invariants / Cube / Homological / Khovanov Complex sub-tabs.
               if (hdr) { clearInterval(hideCheck); }
             }
           } catch (e) { clearInterval(hideCheck); }
