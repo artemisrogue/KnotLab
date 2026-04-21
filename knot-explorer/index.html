@@ -4513,12 +4513,16 @@ document.addEventListener('DOMContentLoaded', () => {
   loadData();
   const checkKatex = setInterval(() => {
     if (window.renderMathInElement) {
-      renderMathInElement(document.querySelector('.skein-relations'), {
+      const mathOpts = {
         delimiters: [
           {left: '$$', right: '$$', display: true},
           {left: '\\(', right: '\\)', display: false},
         ],
         throwOnError: false,
+      };
+      ['.skein-relations', '.cor-container'].forEach(sel => {
+        const el = document.querySelector(sel);
+        if (el) renderMathInElement(el, mathOpts);
       });
       clearInterval(checkKatex);
     }
