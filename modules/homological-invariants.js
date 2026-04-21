@@ -257,7 +257,32 @@
           <details class="kl-example">\
             <summary>Warm-up: a \\(3 \\times 3\\) grid for the unknot</summary>\
             <p>Place \\(X\\)-markers at \\((1,1), (2,2), (3,3)\\) and \\(O\\)-markers at \\((1,2), (2,3), (3,1)\\)\
-            on a \\(3 \\times 3\\) torus. This presents the unknot \\(U\\). There are \\(3! = 6\\) generators.\
+            on a \\(3 \\times 3\\) torus. This presents the unknot \\(U\\). (The trefoil has grid number \\(5\\);\
+            a 3\u00d73 grid is the smallest possible and only presents the unknot.) There are \\(3! = 6\\) generators.\
+            <div style="text-align:center;margin:0.8rem 0;">\
+              <svg width="210" height="210" viewBox="0 0 210 210" xmlns="http://www.w3.org/2000/svg" aria-label="3 by 3 grid diagram for the unknot">\
+                <rect x="15" y="15" width="180" height="180" fill="#fafafa" stroke="#222" stroke-width="1.6"/>\
+                <line x1="75"  y1="15" x2="75"  y2="195" stroke="#888" stroke-width="1"/>\
+                <line x1="135" y1="15" x2="135" y2="195" stroke="#888" stroke-width="1"/>\
+                <line x1="15"  y1="75"  x2="195" y2="75"  stroke="#888" stroke-width="1"/>\
+                <line x1="15"  y1="135" x2="195" y2="135" stroke="#888" stroke-width="1"/>\
+                <text x="45"  y="8"  font-size="11" fill="#555" text-anchor="middle">1</text>\
+                <text x="105" y="8"  font-size="11" fill="#555" text-anchor="middle">2</text>\
+                <text x="165" y="8"  font-size="11" fill="#555" text-anchor="middle">3</text>\
+                <text x="8"   y="49"  font-size="11" fill="#555" text-anchor="middle">1</text>\
+                <text x="8"   y="109" font-size="11" fill="#555" text-anchor="middle">2</text>\
+                <text x="8"   y="169" font-size="11" fill="#555" text-anchor="middle">3</text>\
+                <!-- X markers at (col, row): (1,1) (2,2) (3,3).  Row index increases downward. -->\
+                <text x="45"  y="55"  font-size="22" fill="#b84900" font-weight="700" text-anchor="middle">X</text>\
+                <text x="105" y="115" font-size="22" fill="#b84900" font-weight="700" text-anchor="middle">X</text>\
+                <text x="165" y="175" font-size="22" fill="#b84900" font-weight="700" text-anchor="middle">X</text>\
+                <!-- O markers at (1,2) (2,3) (3,1) -->\
+                <text x="45"  y="115" font-size="22" fill="#1a6aa5" font-weight="700" text-anchor="middle">O</text>\
+                <text x="105" y="175" font-size="22" fill="#1a6aa5" font-weight="700" text-anchor="middle">O</text>\
+                <text x="165" y="55"  font-size="22" fill="#1a6aa5" font-weight="700" text-anchor="middle">O</text>\
+              </svg>\
+              <div style="font-size:0.85rem;color:#555;">A 3\u00d73 toroidal grid presenting the unknot: one X and one O per row and per column. Connecting O\u2192X in each column vertically and X\u2192O in each row horizontally (with X overstrands) yields a single closed curve that resolves to the unknot after R1/R2 moves.</div>\
+            </div>\
             After identifying empty rectangles that connect pairs of generators (there are exactly two\
             non-degenerate families up to the torus action), the differential reduces the\
             complex to a single surviving generator in Alexander grading \\(0\\), Maslov grading \\(0\\):</p>\

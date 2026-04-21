@@ -728,72 +728,76 @@
   // crossings labelled. Illustrates how the PD X-tuples get filled in from a
   // full diagram.
   function trefoilLabeledSVG() {
+    // Right-handed trefoil = closure of the 2-braid \u03c3\u2081\u00b3.
+    // Each crossing is a positive \u03c3\u2081 (left strand over right).
+    // Arc labelling chosen so that the PD code reads
+    //   X_{6,3,1,4}  X_{4,1,5,2}  X_{2,5,3,6}
+    // using the Bar-Natan convention  a = in-under,
+    // then (b,c,d) = (in-over, out-under, out-over) going CCW from a.
+    // See renderEncodings caption for the walk order 1\u21922\u2192\u2026\u21926.
     var s = '';
-    s += '<svg viewBox="-110 -170 220 340" width="320" height="440" style="display:block;margin:0 auto">';
-    // --- strands: each crossing drawn as two line segments, with the under
-    //     strand having a small gap at the centre.
-    var XL = -30, XR = 30, G = 9, Y = [-70, 0, 70];  // three crossing y-centres
+    s += '<svg viewBox="-120 -180 240 360" width="320" height="460" style="display:block;margin:0 auto" aria-label="Labelled trefoil PD diagram">';
+    var XL = -32, XR = 32, G = 10, Y = [-80, 0, 80];
+    // --- Three \u03c3\u2081 crossings, left-over-right ---
     for (var k = 0; k < 3; k++) {
       var yc = Y[k];
-      // σ₁: left (L) goes OVER right (R). Over-strand is the line from top-left
-      // to bottom-right (NE -> SW if we think of a ±30 cell around the crossing).
-      // Over from (XL, yc-22) to (XR, yc+22), straight.
-      s += '<line x1="' + XL + '" y1="' + (yc - 22) + '" x2="' + XR + '" y2="' + (yc + 22) + '" ' +
-           'stroke="#1f3a5f" stroke-width="3.2" stroke-linecap="round" />';
-      // Under from (XR, yc-22) to (XL, yc+22), broken near the centre.
-      // Direction vector: (XL-XR, 22-(-22)) = (-60, 44); unit ~ (-0.806, 0.591).
-      var ux = -0.806, uy = 0.591;
-      var cx = 0, cy = yc;  // crossing centre
-      s += '<line x1="' + XR + '" y1="' + (yc - 22) + '" ' +
-           'x2="' + (cx - ux * G) + '" y2="' + (cy - uy * G) + '" ' +
-           'stroke="#1f3a5f" stroke-width="3.2" stroke-linecap="round" />';
-      s += '<line x1="' + (cx + ux * G) + '" y1="' + (cy + uy * G) + '" ' +
-           'x2="' + XL + '" y2="' + (yc + 22) + '" ' +
-           'stroke="#1f3a5f" stroke-width="3.2" stroke-linecap="round" />';
-      // Crossing label X1/X2/X3 just to the right
-      s += '<text x="' + (XR + 18) + '" y="' + (yc + 4) + '" font-size="14" ' +
-           'fill="#b84900" font-weight="700">X<tspan font-size="10" dy="3">' + (k + 1) + '</tspan></text>';
+      // OVER strand: top-left (XL, yc-26) -> bottom-right (XR, yc+26)
+      s += '<line x1="' + XL + '" y1="' + (yc - 26) + '" x2="' + XR + '" y2="' + (yc + 26) + '" stroke="#1f3a5f" stroke-width="3.4" stroke-linecap="round" />';
+      // UNDER strand: top-right (XR, yc-26) -> bottom-left (XL, yc+26), with a gap around the centre.
+      // Direction unit \u2248 (-0.777, 0.629).
+      var ux = -0.777, uy = 0.629;
+      s += '<line x1="' + XR + '" y1="' + (yc - 26) + '" x2="' + (-ux * G) + '" y2="' + (yc - uy * G) + '" stroke="#1f3a5f" stroke-width="3.4" stroke-linecap="round" />';
+      s += '<line x1="' + (ux * G) + '" y1="' + (yc + uy * G) + '" x2="' + XL + '" y2="' + (yc + 26) + '" stroke="#1f3a5f" stroke-width="3.4" stroke-linecap="round" />';
+      // Crossing label X_k with a tiny white halo so it stays legible off the strand.
+      s += '<g transform="translate(' + (XR + 28) + ' ' + (yc + 4) + ')">' +
+           '<text font-size="15" font-weight="700" fill="#b84900">X<tspan font-size="10" dy="3">' + (k + 1) + '</tspan></text>' +
+           '</g>';
     }
-    // --- vertical runs between crossings (these are the arcs 1..6 on the straight segments)
-    // Left-side runs (after a under-exit), Right-side runs (after an over-exit)
-    // Arc 1: bottom-left of X3 loops outside-left and top-left of X1 — drawn below.
-    // Here we draw the 4 inter-crossing straight segments.
-    s += '<line x1="' + XR + '" y1="' + (Y[0] + 22) + '" x2="' + XR + '" y2="' + (Y[1] - 22) + '" stroke="#1f3a5f" stroke-width="3.2" />';
-    s += '<line x1="' + XL + '" y1="' + (Y[1] + 22) + '" x2="' + XL + '" y2="' + (Y[2] - 22) + '" stroke="#1f3a5f" stroke-width="3.2" />';
-    s += '<line x1="' + XL + '" y1="' + (Y[0] + 22) + '" x2="' + XL + '" y2="' + (Y[1] - 22) + '" stroke="#1f3a5f" stroke-width="3.2" />';
-    s += '<line x1="' + XR + '" y1="' + (Y[1] + 22) + '" x2="' + XR + '" y2="' + (Y[2] - 22) + '" stroke="#1f3a5f" stroke-width="3.2" />';
-    // Closure arcs: top-left to bottom-left (outside via x = -80) and top-right
-    // to bottom-right (outside via x = +80). These are arcs 1 and 4 in the walk.
-    s += '<path d="M ' + XL + ' ' + (Y[0] - 22) + ' C -80 ' + (Y[0] - 22) +
-         ', -80 ' + (Y[2] + 22) + ', ' + XL + ' ' + (Y[2] + 22) +
-         '" stroke="#1f3a5f" stroke-width="3.2" fill="none" />';
-    s += '<path d="M ' + XR + ' ' + (Y[0] - 22) + ' C 80 ' + (Y[0] - 22) +
-         ', 80 ' + (Y[2] + 22) + ', ' + XR + ' ' + (Y[2] + 22) +
-         '" stroke="#1f3a5f" stroke-width="3.2" fill="none" />';
-    // Orientation arrow on left-closure arc (points downward along the outside)
-    s += '<polygon points="-80,0 -85,-8 -75,-8" fill="#b84900" />';
-    s += '<polygon points="80,0 85,8 75,8" fill="#b84900" />';
-    // --- arc labels (numbered 1..6) following the walk described in the caption
+    // --- Straight inter-crossing runs (4 inner verticals) ---
+    // arc 4: X1 bot-right -> X2 top-right (inner right upper)
+    s += '<line x1="' + XR + '" y1="' + (Y[0] + 26) + '" x2="' + XR + '" y2="' + (Y[1] - 26) + '" stroke="#1f3a5f" stroke-width="3.4" />';
+    // arc 5: X2 bot-left -> X3 top-left (inner left lower)
+    s += '<line x1="' + XL + '" y1="' + (Y[1] + 26) + '" x2="' + XL + '" y2="' + (Y[2] - 26) + '" stroke="#1f3a5f" stroke-width="3.4" />';
+    // arc 1: X1 bot-left -> X2 top-left (inner left upper)
+    s += '<line x1="' + XL + '" y1="' + (Y[0] + 26) + '" x2="' + XL + '" y2="' + (Y[1] - 26) + '" stroke="#1f3a5f" stroke-width="3.4" />';
+    // arc 2: X2 bot-right -> X3 top-right (inner right lower)
+    s += '<line x1="' + XR + '" y1="' + (Y[1] + 26) + '" x2="' + XR + '" y2="' + (Y[2] - 26) + '" stroke="#1f3a5f" stroke-width="3.4" />';
+    // --- Outer closure arcs (arc 3 = left, arc 6 = right) ---
+    s += '<path d="M ' + XL + ' ' + (Y[0] - 26) + ' C -90 ' + (Y[0] - 26) + ', -90 ' + (Y[2] + 26) + ', ' + XL + ' ' + (Y[2] + 26) + '" stroke="#1f3a5f" stroke-width="3.4" fill="none" />';
+    s += '<path d="M ' + XR + ' ' + (Y[0] - 26) + ' C 90 ' + (Y[0] - 26) + ', 90 ' + (Y[2] + 26) + ', ' + XR + ' ' + (Y[2] + 26) + '" stroke="#1f3a5f" stroke-width="3.4" fill="none" />';
+    // --- Orientation arrows ---
+    // One arrow per arc, all pointing in the walk direction. Inner arcs flow
+    // downward (braid direction); outer closure arcs flow upward.
+    function dnArrow(x, y) {
+      // triangle pointing down, apex at (x, y+6)
+      return '<polygon points="' + x + ',' + (y + 6) + ' ' + (x - 5) + ',' + (y - 3) + ' ' + (x + 5) + ',' + (y - 3) + '" fill="#b84900" />';
+    }
+    function upArrow(x, y) {
+      return '<polygon points="' + x + ',' + (y - 6) + ' ' + (x - 5) + ',' + (y + 3) + ' ' + (x + 5) + ',' + (y + 3) + '" fill="#b84900" />';
+    }
+    s += dnArrow(XL, -40);   // arc 1 (inner left upper)
+    s += dnArrow(XR,  40);   // arc 2 (inner right lower)
+    s += upArrow(-90, 0);    // arc 3 (left closure, upward)
+    s += dnArrow(XR, -40);   // arc 4 (inner right upper)
+    s += dnArrow(XL,  40);   // arc 5 (inner left lower)
+    s += upArrow( 90, 0);    // arc 6 (right closure, upward)
+    // --- Arc number labels (1..6). Off to the side of each strand,
+    //     with small white halo rectangles so they never sit on the strand.
     var tagStyle = ' font-size="15" font-weight="700" fill="#2171b5"';
-    // arc 1: left closure (bottom of X3 -> top of X1)
-    s += '<text x="-86" y="-70" text-anchor="middle"' + tagStyle + '>1</text>';
-    // arc 2: right-side run between X1 and X2 (top half)
-    s += '<text x="46" y="-32" text-anchor="middle"' + tagStyle + '>2</text>';
-    // arc 3: left-side run between X2 and X3 (bottom half)
-    s += '<text x="-46" y="38" text-anchor="middle"' + tagStyle + '>3</text>';
-    // arc 4: right closure (bottom of X3 -> top of X1)
-    s += '<text x="86" y="0" text-anchor="middle"' + tagStyle + '>4</text>';
-    // arc 5: left-side run between X1 and X2 (top half)
-    s += '<text x="-46" y="-32" text-anchor="middle"' + tagStyle + '>5</text>';
-    // arc 6: right-side run between X2 and X3 (bottom half)
-    s += '<text x="46" y="38" text-anchor="middle"' + tagStyle + '>6</text>';
-    // Caption
-    s += '<text x="0" y="160" text-anchor="middle" font-size="13" fill="#555">';
-    s += 'Trefoil 3<tspan font-size="10" dy="2">1</tspan>';
-    s += '<tspan dy="-2"> (closure of σ<tspan font-size="10" dy="2">1</tspan><tspan dy="-2">3</tspan>). ';
-    s += 'Arcs 1&ndash;6 in walk order; crossings X<tspan font-size="10" dy="2">1</tspan>';
-    s += '<tspan dy="-2">,X<tspan font-size="10" dy="2">2</tspan><tspan dy="-2">,X<tspan font-size="10" dy="2">3</tspan><tspan dy="-2">.</tspan></tspan></tspan></tspan>';
-    s += '</text>';
+    function arcLabel(x, y, n) {
+      return '<rect x="' + (x - 8) + '" y="' + (y - 11) + '" width="16" height="16" fill="#ffffff" opacity="0.9" />' +
+             '<text x="' + x + '" y="' + (y + 2) + '" text-anchor="middle"' + tagStyle + '>' + n + '</text>';
+    }
+    s += arcLabel(XL - 12, -40, 1);   // arc 1: just to the left of inner-left-upper
+    s += arcLabel(XR + 12,  40, 2);   // arc 2: just to the right of inner-right-lower
+    s += arcLabel(-104, 0, 3);        // arc 3: on left closure (outside)
+    s += arcLabel(XR + 12, -40, 4);   // arc 4: just to the right of inner-right-upper
+    s += arcLabel(XL - 12,  40, 5);   // arc 5: just to the left of inner-left-lower
+    s += arcLabel( 104, 0, 6);        // arc 6: on right closure (outside)
+    // --- Caption ---
+    s += '<text x="0" y="165" text-anchor="middle" font-size="13" fill="#555">' +
+         'Trefoil 3<tspan font-size="10" dy="2">1</tspan><tspan dy="-2"> as closure of \u03c3<tspan font-size="10" dy="2">1</tspan><tspan dy="-2">\u00b3</tspan></tspan>; arcs 1\u20136 walk-ordered, crossings X<tspan font-size="10" dy="2">1</tspan><tspan dy="-2">,X<tspan font-size="10" dy="2">2</tspan><tspan dy="-2">,X<tspan font-size="10" dy="2">3</tspan><tspan dy="-2">.</tspan></tspan></tspan></tspan>' +
+         '</text>';
     s += '</svg>';
     return s;
   }
@@ -951,170 +955,156 @@
     <div class="expo-panel">
       <h3>Pictures of braid generators and relations</h3>
       <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;">
-        <figure style="margin:0;text-align:center;max-width:220px;">
-          <svg width="160" height="180" viewBox="0 0 160 180" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke-linecap="round">
-              <!-- Under strand i -> i+1 (drawn first, with a gap at the crossing) -->
-              <path d="M40,20 C40,55 120,95 120,130 L120,170" stroke="#2171b5" stroke-width="3"/>
-              <!-- Gap in the under strand at crossing (x~80,y~75) -->
-              <line x1="72" y1="67" x2="88" y2="83" stroke="#ffffff" stroke-width="10"/>
-              <!-- Over strand i+1 -> i, thicker -->
-              <path d="M120,20 C120,55 40,95 40,130 L40,170" stroke="#d94801" stroke-width="5"/>
+        <figure style="margin:0;text-align:center;max-width:150px;">
+          <svg width="140" height="170" viewBox="0 0 140 170" xmlns="http://www.w3.org/2000/svg" aria-label="Generator sigma_i">
+            <g fill="none" stroke-linecap="round" stroke-width="4">
+              <!-- Under strand (blue) drawn as TWO segments with explicit break at crossing (70,85). -->
+              <line x1="100" y1="20" x2="78" y2="71" stroke="#2171b5"/>
+              <line x1="62" y1="99" x2="40" y2="150" stroke="#2171b5"/>
+              <!-- Over strand (orange) continuous, drawn on top. -->
+              <line x1="40" y1="20" x2="100" y2="150" stroke="#d94801"/>
             </g>
             <text x="40" y="14" font-size="11" fill="#666" text-anchor="middle">i</text>
-            <text x="120" y="14" font-size="11" fill="#666" text-anchor="middle">i+1</text>
-            <text x="40" y="178" font-size="11" fill="#666" text-anchor="middle">i+1</text>
-            <text x="120" y="178" font-size="11" fill="#666" text-anchor="middle">i</text>
+            <text x="100" y="14" font-size="11" fill="#666" text-anchor="middle">i+1</text>
+            <text x="40" y="164" font-size="11" fill="#666" text-anchor="middle">i+1</text>
+            <text x="100" y="164" font-size="11" fill="#666" text-anchor="middle">i</text>
           </svg>
           <figcaption style="font-size:0.88rem;color:#555;">
-            Generator \\(\\sigma_i\\): strand \\(i\\) crosses <strong>over</strong> strand
-            \\(i+1\\). The under-strand (blue) has a clear gap at the crossing; the
-            over-strand (orange) is thicker. \\(\\sigma_i^{-1}\\) reverses over/under.
+            Generator \\(\\sigma_i\\): strand at position \\(i\\) crosses
+            <strong>over</strong> strand at position \\(i+1\\) (orange over blue).
           </figcaption>
         </figure>
 
-        <figure style="margin:0;text-align:center;max-width:340px;">
-          <svg width="320" height="200" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke-linecap="round">
-              <!-- LHS: sigma_i sigma_{i+1} sigma_i -->
-              <!-- strand A (red) enters left, goes over at top (sigma_i), under at middle, over at bottom -->
-              <!-- strand B (blue) enters middle, goes under at top, over at middle (sigma_{i+1}? no), under at bottom -->
-              <!-- strand C (green) enters right, straight-ish, crosses in -->
-              <!-- We draw three strands with three crossings reading top->bottom:
-                   level y=30-55 crossing between strands 1 and 2 (sigma_i)
-                   level y=80-105 crossing between strands 2 and 3 (sigma_{i+1})
-                   level y=130-155 crossing between strands 1 and 2 (sigma_i) -->
-              <!-- Strand A (red): starts x=20, ends x=140. Pattern: (20,10)->(80,42)->(140,85)->(140,190) -->
-              <path d="M20,10 C20,25 80,30 80,42 C80,60 140,70 140,85 L140,190"
-                    stroke="#c0392b" stroke-width="3"/>
-              <!-- Strand B (blue): (80,10)->(20,42)->(20,85)->(80,128)->(140,170)... actually we need 3 strands on LHS width 140 -->
-              <!-- Simpler clean 3-strand LHS using 3 crossings at distinct y-levels: -->
+        <figure style="margin:0;text-align:center;max-width:150px;">
+          <svg width="140" height="170" viewBox="0 0 140 170" xmlns="http://www.w3.org/2000/svg" aria-label="Generator sigma_i inverse">
+            <g fill="none" stroke-linecap="round" stroke-width="4">
+              <!-- Under strand (orange) drawn as TWO segments with explicit break at (70,85). -->
+              <line x1="40" y1="20" x2="62" y2="71" stroke="#d94801"/>
+              <line x1="78" y1="99" x2="100" y2="150" stroke="#d94801"/>
+              <!-- Over strand (blue) continuous, drawn on top. -->
+              <line x1="100" y1="20" x2="40" y2="150" stroke="#2171b5"/>
             </g>
-            <!-- Rewrite cleanly -->
-            <g fill="none" stroke-linecap="round">
-              <!-- LHS block x: 20..140, three strands at x=20,80,140 at top -->
-              <!-- Crossing 1 (sigma_i) between positions 1&2 at y=25..55 -->
-              <!-- Crossing 2 (sigma_{i+1}) between positions 2&3 at y=75..105 -->
-              <!-- Crossing 3 (sigma_i) between positions 1&2 at y=125..155 -->
-              <!-- Strand R: top x=20 -> (after c1) x=80 -> (after c2) x=140 -> (c3 not touched) x=140 -->
-              <path d="M20,15 L20,25 C20,40 80,40 80,55 L80,75 C80,90 140,90 140,105 L140,180"
-                    stroke="#c0392b" stroke-width="5"/>
-              <!-- gap on R at c1 where R is under? In sigma_i we say left (strand i) goes OVER.
-                   Let sigma_i be: strand at position i goes over. -->
-              <!-- Strand B: top x=80 -> (after c1) x=20 -> (c2 not touched on position 1) x=20 -> (c3) x=80 -->
-              <path d="M80,15 L80,25 C80,40 20,40 20,55 L20,125 C20,140 80,140 80,155 L80,180"
-                    stroke="#2e86de" stroke-width="3"/>
-              <!-- gap on B at c1 (B under) -->
-              <line x1="47" y1="37" x2="53" y2="43" stroke="#ffffff" stroke-width="9"/>
-              <!-- Strand G: top x=140 -> (c2) x=80 -> (c3) x=20 -->
-              <path d="M140,15 L140,75 C140,90 80,90 80,105 L80,125 C80,140 20,140 20,155 L20,180"
-                    stroke="#27ae60" stroke-width="3"/>
-              <!-- gap on G at c2 (G under since strand at position i=middle goes over) -->
-              <line x1="107" y1="87" x2="113" y2="93" stroke="#ffffff" stroke-width="9"/>
-              <!-- gap on B at c3 (B under) -->
-              <line x1="47" y1="137" x2="53" y2="143" stroke="#ffffff" stroke-width="9"/>
-              <!-- Redraw over portions on top of gaps: R over B at c1 -->
-              <path d="M20,25 C20,40 80,40 80,55" stroke="#c0392b" stroke-width="5" fill="none"/>
-              <!-- B over G at c2 -->
-              <path d="M80,75 C80,90 140,90 140,105" stroke="#c0392b" stroke-width="5" fill="none"/>
-              <!-- R over B at c3 -->
-              <path d="M80,125 C80,140 140,140 140,155" stroke="#c0392b" stroke-width="5" fill="none"/>
+            <text x="40" y="14" font-size="11" fill="#666" text-anchor="middle">i</text>
+            <text x="100" y="14" font-size="11" fill="#666" text-anchor="middle">i+1</text>
+            <text x="40" y="164" font-size="11" fill="#666" text-anchor="middle">i+1</text>
+            <text x="100" y="164" font-size="11" fill="#666" text-anchor="middle">i</text>
+          </svg>
+          <figcaption style="font-size:0.88rem;color:#555;">
+            Inverse \\(\\sigma_i^{-1}\\): strand at position \\(i+1\\) crosses
+            <strong>over</strong> strand at position \\(i\\) (blue over orange).
+          </figcaption>
+        </figure>
 
-              <!-- Equality sign -->
+        <figure style="margin:0;text-align:center;max-width:360px;">
+          <svg width="360" height="230" viewBox="0 0 360 230" xmlns="http://www.w3.org/2000/svg" aria-label="Braid relation sigma_i sigma_{i+1} sigma_i equals sigma_{i+1} sigma_i sigma_{i+1}">
+            <!--
+              3 strands tracked by colour (R=start-pos-1, B=2, G=3).
+              Straight-line X crossings.  Under-strand is drawn as two
+              separate polylines with an explicit gap around the crossing
+              centre; over-strand is a single polyline on top.
+            -->
+            <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5">
+              <!-- ===== LHS: sigma_i sigma_{i+1} sigma_i.  cols x = 20, 70, 120. ===== -->
+              <!-- R (over at c1,c2; unaffected at c3): single polyline. -->
+              <polyline points="20,15 20,30 70,60 70,80 120,110 120,215" stroke="#c0392b"/>
+              <!-- G has ONE under-break (c2: 120,80 -> 70,110).  Also over at c3. -->
+              <polyline points="120,15 120,80 102.5,90.5" stroke="#27ae60"/>
+              <polyline points="87.5,99.5 70,110 70,130 20,160 20,215" stroke="#27ae60"/>
+              <!-- B has TWO under-breaks: c1 (70,30->20,60) and c3 (20,130->70,160). -->
+              <polyline points="70,15 70,30 52.5,40.5" stroke="#2e86de"/>
+              <polyline points="37.5,49.5 20,60 20,130 37.5,140.5" stroke="#2e86de"/>
+              <polyline points="52.5,149.5 70,160 70,215" stroke="#2e86de"/>
+
+              <!-- ===== RHS: sigma_{i+1} sigma_i sigma_{i+1}.  cols x = 220, 270, 320. ===== -->
+              <!-- R unaffected at c1, over at c2 and c3: single polyline. -->
+              <polyline points="220,15 220,80 270,110 270,130 320,160 320,215" stroke="#c0392b"/>
+              <!-- B over at c1, unaffected at c2, UNDER at c3 (320,130 -> 270,160). -->
+              <polyline points="270,15 270,30 320,60 320,130 302.5,140.5" stroke="#2e86de"/>
+              <polyline points="287.5,149.5 270,160 270,215" stroke="#2e86de"/>
+              <!-- G UNDER at c1 (320,30->270,60) and UNDER at c2 (270,80->220,110); unaffected c3. -->
+              <polyline points="320,15 320,30 302.5,40.5" stroke="#27ae60"/>
+              <polyline points="287.5,49.5 270,60 270,80 252.5,90.5" stroke="#27ae60"/>
+              <polyline points="237.5,99.5 220,110 220,215" stroke="#27ae60"/>
             </g>
-            <text x="160" y="100" font-size="22" fill="#333" text-anchor="middle">=</text>
-            <g fill="none" stroke-linecap="round">
-              <!-- RHS block x: 180..300, three strands at x=180,240,300 -->
-              <!-- Crossing 1 (sigma_{i+1}) between positions 2&3 at y=25..55 -->
-              <!-- Crossing 2 (sigma_i)     between positions 1&2 at y=75..105 -->
-              <!-- Crossing 3 (sigma_{i+1}) between positions 2&3 at y=125..155 -->
-              <!-- Strand R (left): straight until c2, then right until c3 no; strand at pos 1 only touches c2 -->
-              <path d="M180,15 L180,75 C180,90 240,90 240,105 L240,180"
-                    stroke="#c0392b" stroke-width="5"/>
-              <!-- Strand B (middle): c1 (with G), then c2 (with R), then c3 -->
-              <path d="M240,15 L240,25 C240,40 300,40 300,55 L300,75 C300,75 300,75 300,75"
-                    stroke="#2e86de" stroke-width="3"/>
-              <!-- Redraw B continuing: after c1 B at pos 3 (x=300), then straight-ish until c3 -->
-              <path d="M300,55 L300,125 C300,140 240,140 240,155 L240,180"
-                    stroke="#2e86de" stroke-width="3"/>
-              <!-- Strand G (right): c1 then pos 2 (x=240) then c2 then pos 1 (x=180) then c3 not touched -->
-              <path d="M300,15 L300,25 C300,40 240,40 240,55 L240,75 C240,90 180,90 180,105 L180,180"
-                    stroke="#27ae60" stroke-width="3"/>
-              <!-- Gaps: at c1, G under (since strand at smaller index position 2 is "strand i+1"? here i&i+1 becomes middle/right) -->
-              <!-- For RHS sigma_{i+1} sigma_i sigma_{i+1}: in sigma_{i+1}, left of the pair (position i+1) goes over.
-                   At c1 (pair 2,3): strand at position 2 (B) goes over strand at position 3 (G). -->
-              <line x1="267" y1="37" x2="273" y2="43" stroke="#ffffff" stroke-width="9"/>
-              <!-- At c2 (pair 1,2): strand at position 1 (R) goes over strand at position 2 (G). -->
-              <line x1="207" y1="87" x2="213" y2="93" stroke="#ffffff" stroke-width="9"/>
-              <!-- At c3 (pair 2,3): strand at position 2 (B) goes over strand at position 3 -->
-              <line x1="267" y1="137" x2="273" y2="143" stroke="#ffffff" stroke-width="9"/>
-              <!-- Redraw over-portions -->
-              <path d="M240,25 C240,40 300,40 300,55" stroke="#2e86de" stroke-width="5" fill="none"/>
-              <path d="M180,75 C180,90 240,90 240,105" stroke="#c0392b" stroke-width="5" fill="none"/>
-              <path d="M300,125 C300,140 240,140 240,155" stroke="#2e86de" stroke-width="5" fill="none"/>
-            </g>
+            <text x="180" y="120" font-size="26" fill="#333" text-anchor="middle">=</text>
+            <!-- Endpoint labels (same colour order on both sides, as a sanity check) -->
+            <text x="20" y="12" font-size="10" fill="#c0392b" text-anchor="middle">1</text>
+            <text x="70" y="12" font-size="10" fill="#2e86de" text-anchor="middle">2</text>
+            <text x="120" y="12" font-size="10" fill="#27ae60" text-anchor="middle">3</text>
+            <text x="220" y="12" font-size="10" fill="#c0392b" text-anchor="middle">1</text>
+            <text x="270" y="12" font-size="10" fill="#2e86de" text-anchor="middle">2</text>
+            <text x="320" y="12" font-size="10" fill="#27ae60" text-anchor="middle">3</text>
           </svg>
           <figcaption style="font-size:0.88rem;color:#555;">
             <strong>Braid relation</strong>
-            \\(\\sigma_i\\,\\sigma_{i+1}\\,\\sigma_i = \\sigma_{i+1}\\,\\sigma_i\\,\\sigma_{i+1}\\):
-            the genuine three-strand triangle (Yang&ndash;Baxter) move. The three strands enter
-            in the same order on both sides and leave in the same order; the three crossings
-            are reshuffled by sliding the middle strand across the opposite crossing.
+            \\(\\sigma_i\\,\\sigma_{i+1}\\,\\sigma_i = \\sigma_{i+1}\\,\\sigma_i\\,\\sigma_{i+1}\\).
+            The three coloured strands start in the same order on both sides and finish in the
+            same permuted order \\((3,2,1)\\); each strand&rsquo;s over/under pattern matches across
+            the equality, so the two braid words are isotopic rel endpoints
+            (the &ldquo;triangle move&rdquo; / Yang&ndash;Baxter).
           </figcaption>
         </figure>
 
         <figure style="margin:0;text-align:center;max-width:260px;">
-          <svg width="240" height="180" viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+          <svg width="240" height="200" viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" aria-label="Commutation sigma_i sigma_j equals sigma_j sigma_i for |i-j| at least 2">
+            <!-- Four strands at x=30, 75, 155, 210.  Left pair (cols 1,2) and right pair (cols 3,4) are far apart. -->
             <g fill="none" stroke-linecap="round">
-              <!-- Four strands at x=20,70,140,200. sigma_i between strands 1,2 at y=25..55; sigma_j between strands 3,4 at y=95..125. -->
-              <!-- Strand 1 (blue): top x=20 -> (c1) x=70 -->
-              <path d="M20,15 L20,25 C20,40 70,40 70,55 L70,170" stroke="#2171b5" stroke-width="3"/>
-              <!-- Strand 2 (orange): top x=70 -> (c1) x=20 -->
-              <path d="M70,15 L70,25 C70,40 20,40 20,55 L20,170" stroke="#d94801" stroke-width="3"/>
-              <!-- gap on strand 2 at c1 (under) -->
-              <line x1="42" y1="37" x2="48" y2="43" stroke="#ffffff" stroke-width="9"/>
-              <!-- redraw over: strand 1 over -->
-              <path d="M20,25 C20,40 70,40 70,55" stroke="#2171b5" stroke-width="5" fill="none"/>
-              <!-- Strand 3 (green): top x=140 -> (c2) x=200 -->
-              <path d="M140,15 L140,95 C140,110 200,110 200,125 L200,170" stroke="#27ae60" stroke-width="3"/>
-              <!-- Strand 4 (purple): top x=200 -> (c2) x=140 -->
-              <path d="M200,15 L200,95 C200,110 140,110 140,125 L140,170" stroke="#984ea3" stroke-width="3"/>
-              <!-- gap on strand 4 at c2 (under) -->
-              <line x1="167" y1="107" x2="173" y2="113" stroke="#ffffff" stroke-width="9"/>
-              <!-- redraw over: strand 3 over -->
-              <path d="M140,95 C140,110 200,110 200,125" stroke="#27ae60" stroke-width="5" fill="none"/>
+              <!-- Left pair: \u03c3_i crossing at y=40..80 -->
+              <!-- Strand 1 (blue): col1 top -> col2 bottom, OVER -->
+              <path d="M30,20 C30,40 75,40 75,80 L75,180" stroke="#2171b5" stroke-width="3"/>
+              <!-- Strand 2 (orange): col2 top -> col1 bottom, UNDER -->
+              <path d="M75,20 C75,40 30,40 30,80 L30,180" stroke="#d94801" stroke-width="3"/>
+              <!-- gap on strand 2 at centre (52, 60) -->
+              <line x1="45" y1="57" x2="60" y2="63" stroke="#ffffff" stroke-width="10"/>
+              <path d="M30,20 C30,40 75,40 75,80" stroke="#2171b5" stroke-width="5" fill="none"/>
+              <!-- Right pair: \u03c3_j crossing at y=110..150 -->
+              <!-- Strand 3 (green): col3 top -> col4 bottom, OVER -->
+              <path d="M155,20 L155,110 C155,130 210,130 210,150 L210,180" stroke="#27ae60" stroke-width="3"/>
+              <!-- Strand 4 (purple): col4 top -> col3 bottom, UNDER -->
+              <path d="M210,20 L210,110 C210,130 155,130 155,150 L155,180" stroke="#984ea3" stroke-width="3"/>
+              <!-- gap on strand 4 at (182, 130) -->
+              <line x1="175" y1="127" x2="190" y2="133" stroke="#ffffff" stroke-width="10"/>
+              <path d="M155,110 C155,130 210,130 210,150" stroke="#27ae60" stroke-width="5" fill="none"/>
             </g>
-            <text x="45" y="13" font-size="10" fill="#666" text-anchor="middle">i  i+1</text>
-            <text x="170" y="13" font-size="10" fill="#666" text-anchor="middle">j  j+1</text>
+            <text x="30" y="14" font-size="10" fill="#666" text-anchor="middle">i</text>
+            <text x="75" y="14" font-size="10" fill="#666" text-anchor="middle">i+1</text>
+            <text x="155" y="14" font-size="10" fill="#666" text-anchor="middle">j</text>
+            <text x="210" y="14" font-size="10" fill="#666" text-anchor="middle">j+1</text>
+            <text x="120" y="195" font-size="11" fill="#555" text-anchor="middle">\\(|i-j|\\ge 2\\)</text>
           </svg>
           <figcaption style="font-size:0.88rem;color:#555;">
             <strong>Commutation</strong>
             \\(\\sigma_i\\sigma_j = \\sigma_j\\sigma_i\\) for \\(|i-j|\\geq 2\\):
-            the two crossings act on disjoint pairs of strands, so their vertical order
+            the two crossings touch disjoint pairs of strands, so their vertical order
             is immaterial &mdash; sliding one past the other is a planar isotopy.
           </figcaption>
         </figure>
 
-        <figure style="margin:0;text-align:center;max-width:240px;">
-          <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" stroke-linecap="round">
-              <!-- The braid body: three vertical strands with a few crossings -->
-              <path d="M50,30 L50,50 C50,65 100,65 100,80 L100,110 C100,125 50,125 50,140 L50,160" stroke="#2171b5" stroke-width="3"/>
-              <path d="M100,30 L100,50 C100,65 50,65 50,80 L50,140 C50,140 50,140 50,140" stroke="#d94801" stroke-width="3"/>
-              <path d="M100,140 L100,160" stroke="#d94801" stroke-width="3"/>
-              <!-- simplified: redraw with gaps -->
-              <line x1="72" y1="57" x2="78" y2="63" stroke="#ffffff" stroke-width="9"/>
-              <line x1="72" y1="117" x2="78" y2="123" stroke="#ffffff" stroke-width="9"/>
-              <path d="M50,50 C50,65 100,65 100,80" stroke="#2171b5" stroke-width="5" fill="none"/>
-              <path d="M100,110 C100,125 50,125 50,140" stroke="#2171b5" stroke-width="5" fill="none"/>
-              <path d="M150,30 L150,160" stroke="#27ae60" stroke-width="3"/>
-              <!-- Closure arcs behind: top connects to bottom of same column -->
-              <path d="M50,30 C50,10 10,10 10,30 L10,160 C10,180 50,180 50,160" stroke="#2171b5" stroke-width="2" fill="none" stroke-dasharray="3,2"/>
-              <path d="M100,30 C100,15 110,15 110,30 L110,160 C110,180 100,180 100,160" stroke="#d94801" stroke-width="2" fill="none" stroke-dasharray="3,2"/>
-              <path d="M150,30 C150,10 190,10 190,30 L190,160 C190,180 150,180 150,160" stroke="#27ae60" stroke-width="2" fill="none" stroke-dasharray="3,2"/>
+        <figure style="margin:0;text-align:center;max-width:260px;">
+          <svg width="230" height="200" viewBox="0 0 230 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Dashed closure arcs (behind), STRICTLY nested rounded rectangles on the right. -->
+            <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" stroke-dasharray="4,3">
+              <!-- Blue (leftmost strand, x=80): outermost rectangle, extent x=[80,215], y=[8,192] -->
+              <path d="M80,50 V18 Q80,8 90,8 H207 Q215,8 215,18 V182 Q215,192 207,192 H90 Q80,192 80,182 V150" stroke="#2171b5"/>
+              <!-- Orange (middle strand, x=110): middle rectangle, extent x=[110,195], y=[20,180] -->
+              <path d="M110,50 V30 Q110,20 120,20 H187 Q195,20 195,30 V170 Q195,180 187,180 H120 Q110,180 110,170 V150" stroke="#d94801"/>
+              <!-- Green (rightmost strand, x=140): innermost rectangle, extent x=[140,175], y=[32,168] -->
+              <path d="M140,50 V42 Q140,32 150,32 H167 Q175,32 175,42 V158 Q175,168 167,168 H150 Q140,168 140,158 V150" stroke="#27ae60"/>
             </g>
-            <text x="100" y="22" font-size="10" fill="#666" text-anchor="middle">top</text>
-            <text x="100" y="180" font-size="10" fill="#666" text-anchor="middle">bottom</text>
+            <!-- Braid-body box (schematic beta inside) -->
+            <rect x="65" y="50" width="90" height="100" fill="#ffffff" stroke="#aaa" stroke-width="1" rx="4"/>
+            <text x="110" y="106" font-size="28" fill="#555" text-anchor="middle" font-style="italic">&#946;</text>
+            <!-- Strand stubs entering/leaving the box -->
+            <g fill="none" stroke-linecap="round" stroke-width="3">
+              <line x1="80" y1="45" x2="80" y2="55" stroke="#2171b5"/>
+              <line x1="80" y1="145" x2="80" y2="155" stroke="#2171b5"/>
+              <line x1="110" y1="45" x2="110" y2="55" stroke="#d94801"/>
+              <line x1="110" y1="145" x2="110" y2="155" stroke="#d94801"/>
+              <line x1="140" y1="45" x2="140" y2="55" stroke="#27ae60"/>
+              <line x1="140" y1="145" x2="140" y2="155" stroke="#27ae60"/>
+            </g>
+            <text x="110" y="40" font-size="10" fill="#666" text-anchor="middle">top</text>
+            <text x="110" y="172" font-size="10" fill="#666" text-anchor="middle">bottom</text>
           </svg>
           <figcaption style="font-size:0.88rem;color:#555;">
             <strong>Closure</strong> \\(\\widehat{\\beta}\\): connect top endpoint \\(k\\) to
@@ -1268,12 +1258,71 @@
       assign a generator to each arc of the diagram and a relation at each crossing. Despite being a
       complete invariant for prime knots (by the Gordon&ndash;Luecke theorem), the knot group is difficult
       to work with computationally because group isomorphism is generally undecidable.</p>
-      <p>The knot group is explored further in the <em>Miscellaneous</em> tab.</p>
+      <p>The knot group is explored further in the <em>Miscellaneous</em> tab; the next panel shows
+      how to read a presentation directly off a diagram.</p>
 
       <details class="kl-proof">
         <summary>Proof sketch: trefoil group \\(\\cong \\langle a,b \\mid aba = bab\\rangle\\)</summary>
-        <p>Sketch. Use the standard 3-crossing diagram of \\(3_1\\). Wirtinger assigns one meridian generator per arc: three arcs \\(a, b, c\\). Each crossing contributes a relation of the form "outgoing under = (over) \\(\\cdot\\) (incoming under) \\(\\cdot\\) (over)\\(^{-1}\\)". The three relations read \\(c = aba^{-1}\\), \\(a = bcb^{-1}\\), \\(b = cac^{-1}\\); any two imply the third (a general fact about Wirtinger presentations \u2014 there is always one redundant relation). Eliminating \\(c\\) via the first, the second becomes \\(aba = bab\\). Substituting \\(x = ab, y = aba\\) yields the alternative presentation \\(\\langle x, y \\mid x^3 = y^2\\rangle\\), the standard form of the \\((2,3)\\)-torus knot group and isomorphic to the braid group \\(B_3\\).</p>
+        <p>Sketch. Use the standard 3-crossing diagram of \\(3_1\\). Wirtinger assigns one meridian generator per arc: three arcs \\(a, b, c\\). Each crossing contributes a relation of the form &ldquo;outgoing under = (over) \\(\\cdot\\) (incoming under) \\(\\cdot\\) (over)\\(^{-1}\\)&rdquo;. The three relations read \\(c = aba^{-1}\\), \\(a = bcb^{-1}\\), \\(b = cac^{-1}\\); any two imply the third (a general fact about Wirtinger presentations &mdash; there is always one redundant relation). Eliminating \\(c\\) via the first, the second becomes \\(aba = bab\\). Substituting \\(x = ab, y = aba\\) yields the alternative presentation \\(\\langle x, y \\mid x^3 = y^2\\rangle\\), the standard form of the \\((2,3)\\)-torus knot group and isomorphic to the braid group \\(B_3\\).</p>
       </details>
+    </div>
+
+    <div class="expo-panel">
+      <h3>Wirtinger presentation of the knot group</h3>
+      <p>Given an oriented diagram \\(D\\) of \\(K\\), the <strong>Wirtinger presentation</strong>
+      (Wirtinger 1905) writes \\(\\pi_1(S^3 \\setminus K)\\) as a finitely presented group read
+      directly off \\(D\\):</p>
+      <ul style="line-height:1.8;">
+        <li><strong>Generators:</strong> one for each <em>arc</em> of \\(D\\) (a maximal segment
+        of the diagram between two under-crossings). Each generator is the homotopy class of
+        a small oriented loop &mdash; a <em>meridian</em> &mdash; linking the corresponding arc
+        once positively.</li>
+        <li><strong>Relations:</strong> one per crossing. At a crossing with over-arc
+        \\(a\\) and the two broken under-arcs \\(b\\) (incoming) and \\(c\\) (outgoing), write
+          <div class="formula-box">$$c \\;=\\; a\\,b\\,a^{-1} \\qquad (\\text{positive crossing})$$</div>
+          <div class="formula-box">$$c \\;=\\; a^{-1}\\,b\\,a \\qquad (\\text{negative crossing})$$</div>
+        &mdash; the meridian around the outgoing under-arc is conjugated by the over-strand
+        meridian, with the sign of the conjugation matching the sign of the crossing.</li>
+      </ul>
+      <p>A diagram with \\(n\\) crossings then has \\(n\\) generators and \\(n\\) relations, but
+      <em>one relation is always a consequence of the others</em>, so the deficiency is
+      \\(n - (n - 1) = 1\\) &mdash; consistent with \\(H_1(S^3 \\setminus K) \\cong \\mathbb{Z}\\).</p>
+      <div class="kl-diagram" style="text-align:center;margin:1rem 0;">
+        <svg width="280" height="180" viewBox="0 0 280 180" xmlns="http://www.w3.org/2000/svg" aria-label="Wirtinger relation at a positive crossing">
+          <g fill="none" stroke-linecap="round">
+            <!-- Over strand a: horizontal left-to-right, arrow head on the right -->
+            <line x1="30" y1="90" x2="250" y2="90" stroke="#d94801" stroke-width="5"/>
+            <polygon points="250,90 240,85 240,95" fill="#d94801"/>
+            <!-- Under strand: vertical, top (b) -> bottom (c), broken at (140,90) -->
+            <line x1="140" y1="20" x2="140" y2="78" stroke="#2171b5" stroke-width="3"/>
+            <line x1="140" y1="102" x2="140" y2="160" stroke="#2171b5" stroke-width="3"/>
+            <polygon points="140,160 135,150 145,150" fill="#2171b5"/>
+          </g>
+          <text x="260" y="94" font-size="14" fill="#d94801" font-weight="700">a</text>
+          <text x="146" y="40" font-size="14" fill="#2171b5" font-weight="700">b</text>
+          <text x="146" y="150" font-size="14" fill="#2171b5" font-weight="700">c</text>
+          <text x="140" y="176" font-size="12" fill="#555" text-anchor="middle">positive crossing: \u00a0 c = a b a\u207b\u00b9</text>
+        </svg>
+      </div>
+      <div class="kl-example">
+        <div class="kl-head">Worked example: right-handed trefoil \\(3_1\\)</div>
+        <p>The standard 3-crossing diagram of \\(3_1\\) has three arcs \\(a, b, c\\) and three
+        positive crossings. Reading the relation at each crossing (over-arc then the two
+        under-arcs in orientation order) gives</p>
+        <div class="formula-box">$$c = a\\,b\\,a^{-1}, \\qquad a = b\\,c\\,b^{-1}, \\qquad b = c\\,a\\,c^{-1}.$$</div>
+        <p>Any two of these imply the third. Using the first to eliminate
+        \\(c = a b a^{-1}\\) in the second:</p>
+        <div class="formula-box">$$a = b (a b a^{-1}) b^{-1} \\;\\Longrightarrow\\; a b a = b a b.$$</div>
+        <p>So the trefoil group reduces to the two-generator, one-relation presentation</p>
+        <div class="formula-box">$$\\pi_1(S^3 \\setminus 3_1) \\;\\cong\\; \\langle a, b \\mid a b a = b a b\\rangle,$$</div>
+        <p>the braid group \\(B_3\\). (The substitution \\(x = aba, y = ab\\) gives the alternative
+        torus-knot form \\(\\langle x, y \\mid x^2 = y^3\\rangle\\).)</p>
+      </div>
+      <p>The abelianisation of a Wirtinger presentation is always \\(\\mathbb{Z}\\): every relation
+      \\(c = a b a^{\\pm 1}\\) becomes \\(c = b\\) modulo commutators, and all arcs turn out to be
+      conjugate (hence equal) generators. That is the statement \\(H_1(S^3 \\setminus K) \\cong \\mathbb{Z}\\).
+      The non-abelian information in the Wirtinger presentation is precisely what distinguishes
+      the knot group from that of the unknot.</p>
     </div>
 
     <div class="expo-panel">
