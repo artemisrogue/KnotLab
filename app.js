@@ -18,6 +18,7 @@
     'gauss-linking':          { fn: 'renderGaussLinking',          root: 'gauss-linking-root' },
     'polynomial-invariants':  { fn: 'renderPolynomialInvariants',  root: 'polynomial-invariants-root' },
     'homological-invariants': { fn: 'renderHomologicalInvariants', root: 'homological-invariants-root' },
+    'number-theory':          { fn: 'renderNumberTheory',          root: 'number-theory-root' },
     'miscellaneous':          { fn: 'renderMiscellaneous',         root: 'miscellaneous-root' },
     'appendix':               { fn: 'renderAppendix',              root: 'appendix-root' }
   };

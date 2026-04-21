@@ -28,7 +28,6 @@
     'Signature',
     'Arf & Kervaire',
     'The Knot Group',
-    'Number Theory',
     'Virtual Knots'
   ];
 
@@ -379,8 +378,15 @@
         'can only happen for \\(j \\leq \\infty\\) satisfying a combinatorial constraint on Adams-spectral ' +
         'sequence differentials; \\(\\theta_1, \\ldots, \\theta_5\\) are known to exist (in dimensions ' +
         '\\(2, 6, 14, 30, 62\\)). <span class="kl-term" title="Hill–Hopkins–Ravenel (2009): θⱼ ∈ π^s_{2^{j+1}−2}(S⁰) vanishes for j ≥ 7, settling the Kervaire invariant problem in all dimensions except 2,6,14,30,62,126. Proof uses equivariant stable homotopy and a slice filtration.">Hill&ndash;Hopkins&ndash;Ravenel</span> (2009) proved that \\(\\theta_j\\) does ' +
-        '<em>not</em> exist for \\(j \\geq 7\\), leaving \\(j = 6\\) (dimension 126) as the only open case ' +
-        '&mdash; one of the most celebrated results in modern homotopy theory.</p>' +
+        '<em>not</em> exist for \\(j \\geq 7\\), leaving \\(j = 6\\) (dimension 126) as the only remaining open case ' +
+        'for over a decade.</p>' +
+        '<p><strong>Status as of 2024: resolved.</strong> The Kervaire invariant problem is <em>no longer open</em>. ' +
+        '<span class="kl-term" title="Lin–Wang–Xu (2024): On the last Kervaire invariant problem, arXiv:2412.10879. Proves Θ₅ ≠ 0, realizing the Kervaire invariant in dimension 126 and completing the Kervaire invariant problem.">Lin&ndash;Wang&ndash;Xu</span> ' +
+        '(Weinan Lin, Guozhen Wang, Zhouli Xu, <em>On the last Kervaire invariant problem</em>, ' +
+        'arXiv:2412.10879, December 2024) proved that \\(\\Theta_5 \\neq 0\\) &mdash; i.e. the Kervaire ' +
+        'invariant-one element <em>does</em> exist in dimension 126. Combined with Hill&ndash;Hopkins&ndash;Ravenel, ' +
+        'the final picture is: the Kervaire invariant is realized precisely in dimensions \\(2, 6, 14, 30, 62, 126\\), ' +
+        'and in no other dimension. A line of inquiry going back to Kervaire&rsquo;s 1960 paper is now closed.</p>' +
         '<p>The takeaway: the humble mod-2 Arf invariant of a knot, originally introduced for purely ' +
         'three-dimensional reasons, is the first non-trivial instance of an invariant that determines the ' +
         'existence of exotic framed manifolds in <em>every</em> dimension \\(4k+2\\). The same local ' +
@@ -462,178 +468,6 @@
   }
 
   // ───────────────────────────────────────────────────────────────────
-  //  Number theory  (moved from Appendix; Morishita's dictionary with
-  //  expanded descriptions)
-  // ───────────────────────────────────────────────────────────────────
-
-  function numberTheoryHTML() {
-    return '' +
-      '<div class="expo-panel">' +
-        '<h3>Knots and Primes &mdash; Arithmetic Topology</h3>' +
-        '<p>A striking analogy, now called <strong>arithmetic topology</strong>, relates the topology of knots in ' +
-        '\\(S^3\\) to the arithmetic of prime numbers in \\(\\operatorname{Spec}(\\mathbb{Z})\\). Noticed in ' +
-        'fragments by Mazur, Manin, Mumford, Kapranov, and Reznikov in the 1960s&ndash;90s and codified in a ' +
-        'systematic dictionary by Masanori Morishita, the analogy is not a theorem but a remarkably fruitful ' +
-        'heuristic: concepts on one side translate into concepts on the other, and many (though not all) ' +
-        'theorems carry across.</p>' +
-        '<p>The central identification is</p>' +
-        '<div class="formula-box">$$\\text{knot } K \\subset S^3 \\;\\longleftrightarrow\\; \\text{prime } (p) \\subset \\operatorname{Spec}(\\mathbb{Z}).$$</div>' +
-        '<p>Topologically, \\(S^3\\) is simply-connected and \\(K\\) is a 1-dimensional submanifold. ' +
-        'Arithmetically, \\(\\operatorname{Spec}(\\mathbb{Z})\\) has trivial \u00e9tale \\(\\pi_1\\) (no unramified extensions of ' +
-        '\\(\\mathbb{Q}\\)) and a prime \\((p)\\) is a &ldquo;codimension-1&rdquo; subscheme; an even better match is ' +
-        'between the <span class="kl-term" title="Étale fundamental group π₁^ét(X,x̄): profinite group classifying finite étale covers of X. For Spec(ℤ) it is trivial (Minkowski); for Spec(ℤ[1/p]) it classifies extensions of ℚ unramified outside p.">étale fundamental group</span> \\(\\pi_1^{\\mathrm{\u00e9t}}(\\operatorname{Spec}(\\mathbb{Z}))\\) and \\(\\pi_1(S^3)\\), both of which are trivial.</p>' +
-      '</div>' +
-
-      '<div class="expo-panel">' +
-        '<h3>Morishita&rsquo;s Dictionary</h3>' +
-        '<p>The following table summarises the main entries of the dictionary. Each row pairs a knot-theoretic ' +
-        'object or invariant with its number-theoretic counterpart; an expanded description of each row appears ' +
-        'below the table.</p>' +
-        '<table class="dict-table" style="width:100%">' +
-          '<thead><tr><th>Knot theory / 3-manifolds</th><th>Number theory / arithmetic</th></tr></thead>' +
-          '<tbody>' +
-            '<tr><td>\\(S^3\\)</td><td>\\(\\operatorname{Spec}(\\mathbb{Z})\\)</td></tr>' +
-            '<tr><td>Knot \\(K \\subset S^3\\)</td><td>Prime ideal \\((p) \\subset \\operatorname{Spec}(\\mathbb{Z})\\)</td></tr>' +
-            '<tr><td>Link \\(L = K_1 \\cup \\cdots \\cup K_n\\)</td><td>Finite set of primes \\(\\{p_1,\\ldots,p_n\\}\\)</td></tr>' +
-            '<tr><td>Knot complement \\(S^3 \\setminus K\\)</td><td>\\(\\operatorname{Spec}(\\mathbb{Z}) \\setminus \\{(p)\\} = \\operatorname{Spec}(\\mathbb{Z}[1/p])\\)</td></tr>' +
-            '<tr><td>Knot group \\(\\pi_1(S^3 \\setminus K)\\)</td><td>\u00c9tale fundamental group \\(\\pi_1^{\\mathrm{\u00e9t}}(\\operatorname{Spec}(\\mathbb{Z}[1/p]))\\)</td></tr>' +
-            '<tr><td>Meridian of \\(K\\)</td><td>Inertia element \\(I_p\\) at \\(p\\)</td></tr>' +
-            '<tr><td>Longitude of \\(K\\)</td><td>Frobenius element \\(\\mathrm{Frob}_p\\)</td></tr>' +
-            '<tr><td>Linking number \\(\\operatorname{lk}(K,L) \\bmod 2\\)</td><td>Legendre symbol \\(\\left(\\tfrac{p}{q}\\right)\\)</td></tr>' +
-            '<tr><td>Triple linking (Milnor) \\(\\mu(K_1,K_2,K_3)\\)</td><td>R\u00e9dei symbol \\([p_1,p_2,p_3]\\)</td></tr>' +
-            '<tr><td>Infinite cyclic cover of \\(S^3 \\setminus K\\)</td><td>Maximal pro-\\(p\\) unramified outside \\(p\\) extension of \\(\\mathbb{Q}\\)</td></tr>' +
-            '<tr><td>Alexander polynomial \\(\\Delta_K(t)\\)</td><td>Iwasawa polynomial of the \\(\\mathbb{Z}_p\\)-extension</td></tr>' +
-            '<tr><td>Branched cyclic cover \\(\\Sigma_n(K)\\)</td><td>Ring of integers of the \\(n\\)-th cyclotomic field</td></tr>' +
-            '<tr><td>\\(H_1(\\Sigma_n(K);\\mathbb{Z})\\)</td><td>Ideal class group of the extension</td></tr>' +
-            '<tr><td>Seifert surface for \\(K\\)</td><td>Arithmetic 1-chain bounding \\((p)\\)</td></tr>' +
-            '<tr><td>Reidemeister torsion</td><td>\\(p\\)-adic \\(L\\)-function</td></tr>' +
-          '</tbody>' +
-        '</table>' +
-      '</div>' +
-
-      '<div class="expo-panel">' +
-        '<h3>Descriptions and exposition</h3>' +
-
-        '<h4>\\(S^3 \\longleftrightarrow \\operatorname{Spec}(\\mathbb{Z})\\)</h4>' +
-        '<p>Both are &ldquo;absolute&rdquo; objects in their categories: \\(S^3\\) is simply-connected and has no ' +
-        'non-trivial unramified covers; \\(\\operatorname{Spec}(\\mathbb{Z})\\) has no non-trivial unramified extensions ' +
-        '(Minkowski: every number field other than \\(\\mathbb{Q}\\) has ramification). In the Grothendieck view ' +
-        '\\(\\operatorname{Spec}(\\mathbb{Z})\\) is a 3-dimensional arithmetic object: \\(\\mathbb{Z}\\) has Krull ' +
-        'dimension 1, but \\(\\operatorname{Spec}(\\mathbb{Z})\\) carries \u00e9tale cohomology that is ' +
-        '&ldquo;Poincar\u00e9-dual to \\(H^{3-*}\\)&rdquo; in an appropriate sense (Mazur, Artin&ndash;Verdier ' +
-        'duality).</p>' +
-
-        '<h4>Knot \\(\\longleftrightarrow\\) prime</h4>' +
-        '<p>A knot is a codimension-2 submanifold of \\(S^3\\); a prime \\((p)\\) is a codimension-1 closed point ' +
-        'of \\(\\operatorname{Spec}(\\mathbb{Z})\\). The dimensional mismatch is resolved by regarding ' +
-        '\\(\\operatorname{Spec}(\\mathbb{Z})\\) as a 3-dimensional arithmetic scheme (points of residue field ' +
-        '\\(\\mathbb{F}_p\\) behave like 1-cycles). Both \\(K\\) and \\((p)\\) are indecomposable and ' +
-        'codimension-2 in the relevant cohomological sense.</p>' +
-
-        '<h4>Link \\(\\longleftrightarrow\\) finite set of primes</h4>' +
-        '<p>Multi-component links parallel finite sets of primes. The &ldquo;linking&rdquo; of different primes ' +
-        'shows up in power-residue symbols (quadratic, cubic, ...) just as linking numbers detect how two knots ' +
-        'are intertwined.</p>' +
-
-        '<h4>Complement \\(\\longleftrightarrow \\operatorname{Spec}(\\mathbb{Z}[1/p])\\)</h4>' +
-        '<p>Removing \\(K\\) from \\(S^3\\) gives a non-compact 3-manifold whose fundamental group is the knot ' +
-        'group. Inverting \\(p\\) in \\(\\mathbb{Z}\\) gives the localisation \\(\\mathbb{Z}[1/p]\\), whose ' +
-        '\u00e9tale fundamental group classifies extensions of \\(\\mathbb{Q}\\) unramified outside \\(p\\). ' +
-        'Both are &ldquo;one prime removed&rdquo; objects whose \\(\\pi_1\\) encodes how complicated the removed ' +
-        'thing is.</p>' +
-
-        '<h4>Knot group \\(\\longleftrightarrow\\) \u00e9tale fundamental group</h4>' +
-        '<p>The analogy is very tight here. Both groups are finitely generated, have abelianisation ' +
-        '\\(\\mathbb{Z}\\) (or \\(\\hat{\\mathbb{Z}}\\) profinitely) and a meaningful notion of meridian. The ' +
-        '\u00e9tale \\(\\pi_1\\) governs Galois extensions of \\(\\mathbb{Q}\\) ramified only at \\(p\\); the ' +
-        'knot group governs covering spaces of \\(S^3 \\setminus K\\). Many classical number-theoretic theorems ' +
-        '(\u010Cebotarev, Minkowski, class field theory) have knot-theoretic shadows via this analogy.</p>' +
-
-        '<h4>Meridian \\(\\longleftrightarrow\\) inertia, Longitude \\(\\longleftrightarrow\\) Frobenius</h4>' +
-        '<p>The meridian \\(\\mu\\) lives in the peripheral subgroup and maps to a generator of the local ' +
-        'fundamental group at \\(K\\); the longitude \\(\\lambda\\) is a canonical non-meridional curve. The ' +
-        'arithmetic decomposition group \\(D_p \\subset \\pi_1^{\\mathrm{\u00e9t}}\\) at a prime \\(p\\) has an ' +
-        '<span class="kl-term" title="Inertia subgroup I_p ⊂ D_p: the kernel of the map D_p → Gal(k̄/k) to the residue-field Galois group; measures ramification at p. Trivial iff p is unramified.">inertia subgroup</span> \\(I_p\\) (generating the ramification) and a <span class="kl-term" title="Frobenius element Frob_p: for an unramified prime p in a Galois extension, the canonical generator of D_p/I_p acting as x ↦ x^p on the residue field. Well-defined up to conjugacy.">Frobenius</span> element \\(\\mathrm{Frob}_p \\in D_p/I_p\\) ' +
-        '(the action on residue fields, where Frobenius is the canonical automorphism \\(x \\mapsto x^{p}\\)). Under the dictionary meridian \\(\\leftrightarrow\\) inertia and ' +
-        'longitude \\(\\leftrightarrow\\) Frobenius &mdash; both pairs are the &ldquo;local&rdquo; generators of ' +
-        'their boundary tori.</p>' +
-
-        '<h4>Linking number \\(\\longleftrightarrow\\) Legendre symbol</h4>' +
-        '<p>For knots \\(K, L\\) in \\(S^3\\) the mod-2 linking number \\(\\operatorname{lk}(K,L) \\bmod 2\\) tells ' +
-        'whether they are &ldquo;\\(\\mathbb{Z}/2\\)-linked.&rdquo; For primes \\(p, q\\) the Legendre symbol ' +
-        '<span class="kl-term" title="Legendre symbol (a/p): equals +1 if a is a non-zero quadratic residue mod p, −1 if a non-residue, 0 if p|a. Completely multiplicative in a.">Legendre symbol</span> \\(\\left(\\frac{p}{q}\\right)\\) tells whether \\(p\\) is a quadratic residue mod \\(q\\). ' +
-        '<strong><span class="kl-term" title="Quadratic reciprocity (Gauss): for distinct odd primes p,q, (p/q)(q/p) = (−1)^{(p−1)(q−1)/4}. The prototype of all reciprocity laws; analogous to symmetry of linking numbers.">Quadratic reciprocity</span></strong></p>' +
-        '<div class="formula-box">$$\\left(\\tfrac{p}{q}\\right)\\left(\\tfrac{q}{p}\\right) = (-1)^{\\frac{p-1}{2}\\cdot\\frac{q-1}{2}}$$</div>' +
-        '<p>corresponds to the symmetry \\(\\operatorname{lk}(K,L) = \\operatorname{lk}(L,K)\\) &mdash; but with a sign ' +
-        'twist when both primes are \\(\\equiv 3 \\pmod 4\\), reflecting a subtle orientation correction.</p>' +
-
-        '<h4>Triple linking \\(\\longleftrightarrow\\) R\u00e9dei symbol</h4>' +
-        '<p>Milnor\'s triple \\(\\bar\\mu\\)-invariant \\(\\mu_{123}(L)\\) detects Borromean rings &mdash; a ' +
-        'three-component link that is non-trivial even though every pair of components is a split link. The ' +
-        '<strong><span class="kl-term" title="Rédei symbol [p₁,p₂,p₃] ∈ ℤ/2: a ternary mod-2 reciprocity invariant, non-zero iff the three primes are arithmetically &lsquo;Borromean&rsquo;.">R\u00e9dei symbol</span></strong> \\([p_1, p_2, p_3] \\in \\mathbb{Z}/2\\) is the arithmetic analogue: a ' +
-        'mod-2 ternary reciprocity refinement of Legendre, non-zero iff the three primes are &ldquo;Borromean&rdquo; ' +
-        'in an arithmetic sense. Morishita uses this to give a number-theoretic definition of Borromean triples ' +
-        'of primes.</p>' +
-
-        '<h4>Infinite cyclic cover \\(\\longleftrightarrow\\) \\(\\mathbb{Z}_p\\)-extension</h4>' +
-        '<p>The maximal abelian cover of \\(S^3 \\setminus K\\) has deck group \\(\\mathbb{Z}\\), and its ' +
-        'first homology is the <span class="kl-term" title="Alexander module: H₁ of the infinite cyclic cover X̃ of S³∖K, regarded as a ℤ[t,t⁻¹]-module via the deck transformation. Finitely presented; torsion for knots.">Alexander module</span> \\(H_1(\\widetilde{X}; \\mathbb{Z})\\), a module over ' +
-        '\\(\\mathbb{Z}[t, t^{-1}]\\). The arithmetic analogue is the cyclotomic \\(\\mathbb{Z}_p\\)-extension ' +
-        '\\(\\mathbb{Q}_\\infty / \\mathbb{Q}\\) (obtained by adjoining all \\(p^n\\)-th roots of unity and ' +
-        'restricting to the \\(p\\)-part); its <span class="kl-term" title="Iwasawa module: the inverse limit X_∞ = lim A_n of p-parts of ideal class groups along the ℤ_p-extension, a compact finitely generated Λ = ℤ_p[[T]]-module.">Iwasawa module</span> is a module over \\(\\mathbb{Z}_p[\\![T]\\!]\\). ' +
-        'Both are modules over a one-variable (completed) group ring with deck action \\(t\\) or \\(\\gamma\\).</p>' +
-
-        '<h4>Alexander polynomial \\(\\longleftrightarrow\\) Iwasawa polynomial</h4>' +
-        '<p>The Alexander polynomial \\(\\Delta_K(t)\\) is the generator of the first elementary ideal of the ' +
-        'Alexander module. The <span class="kl-term" title="Iwasawa polynomial: a distinguished (Weierstrass) generator of the characteristic ideal of a finitely generated torsion Λ-module; its λ, μ invariants govern the growth |A_n| ~ p^{λn + μp^n + ν}.">Iwasawa polynomial</span> is the generator of the characteristic ideal of the Iwasawa ' +
-        'module. Both measure the &ldquo;size&rdquo; and torsion of the relevant module over a one-variable ring. ' +
-        'Mazur&rsquo;s 1964 observation that these should be analogous was the seed of the entire Morishita ' +
-        'programme.</p>' +
-
-        '<h4>Branched cover \\(\\longleftrightarrow\\) cyclotomic field</h4>' +
-        '<p>The \\(n\\)-fold branched cover \\(\\Sigma_n(K) \\to S^3\\) is obtained by taking the \\(n\\)-fold ' +
-        'cyclic cover of the complement and gluing back along the branch locus. Its arithmetic analogue is the ' +
-        '\\(n\\)-th cyclotomic field \\(\\mathbb{Q}(\\zeta_n)\\), obtained by extracting an \\(n\\)-th root of ' +
-        'unity &mdash; a degree-\\(\\varphi(n)\\) extension of \\(\\mathbb{Q}\\) ramified at primes dividing \\(n\\).</p>' +
-
-        '<h4>\\(H_1(\\Sigma_n) \\longleftrightarrow\\) ideal class group</h4>' +
-        '<p>\\(H_1(\\Sigma_n(K); \\mathbb{Z})\\) measures how far \\(\\Sigma_n\\) is from being a homology sphere &mdash; ' +
-        'it encodes the non-trivial linking inside the branched cover. The ideal class group ' +
-        '\\(\\operatorname{Cl}(\\mathbb{Q}(\\zeta_n))\\) measures how far the ring of cyclotomic integers is from ' +
-        'being a PID. Both are finite abelian groups of surprising arithmetic depth: the orders of ' +
-        'class groups of cyclotomic fields drive Iwasawa theory, just as the orders ' +
-        '\\(|H_1(\\Sigma_n)|\\) drive the covering-space invariants of knots.</p>' +
-
-        '<h4>Seifert surface \\(\\longleftrightarrow\\) arithmetic bounding chain</h4>' +
-        '<p>A Seifert surface \\(\\Sigma\\) is a 2-chain in \\(S^3\\) with \\(\\partial\\Sigma = K\\). Under the ' +
-        'dictionary (a prime is codim-1 in a 3-scheme), the arithmetic analogue is a divisor on an arithmetic ' +
-        'surface / ideal class bounding \\((p)\\) up to principal ideals. In Arakelov theory these become ' +
-        'literal 2-chains on arithmetic surfaces.</p>' +
-
-        '<h4>Reidemeister torsion \\(\\longleftrightarrow\\) \\(p\\)-adic \\(L\\)-function</h4>' +
-        '<p><span class="kl-term" title="Reidemeister torsion τ(X,ρ): an element of K₁(ℂ)/±(det of a basis change) associated to an acyclic chain complex, refining the Euler characteristic. Invariant under simple-homotopy; distinguishes lens spaces.">Reidemeister torsion</span> is a refinement of the Alexander polynomial that tracks sign and base-point ' +
-        'information &mdash; a multiplicative analogue of the Euler characteristic. The \\(p\\)-adic ' +
-        '<span class="kl-term" title="p-adic L-function L_p(s,χ) (Kubota–Leopoldt): p-adic analytic function interpolating classical L(1−n,χ) at negative integers; characteristic ideal of the Iwasawa module by the main conjecture.">\\(L\\)-function</span> \\(L_p(s, \\chi)\\) is Iwasawa\'s refinement of the classical \\(L\\)-function; its ' +
-        'zeros control the Iwasawa module. Main conjectures of Iwasawa theory assert an identity between ' +
-        '\\(p\\)-adic \\(L\\)-functions and characteristic ideals &mdash; exactly paralleling the knot-theoretic ' +
-        'Turaev theorem identifying Reidemeister torsion with the Alexander polynomial up to units.</p>' +
-      '</div>' +
-
-      '<div class="expo-panel">' +
-        '<h3>Further reading</h3>' +
-        '<ul>' +
-          '<li>M. Morishita, <em>Knots and Primes: An Introduction to Arithmetic Topology</em> ' +
-          '(Springer Universitext, 2012). The definitive reference.</li>' +
-          '<li>B. Mazur, <em>Remarks on the Alexander polynomial</em>, unpublished notes ca. 1963&ndash;64. ' +
-          'The origin of the analogy.</li>' +
-          '<li>M. Kapranov, <em>Analogies between the Langlands correspondence and topological quantum ' +
-          'field theory</em>, <em>Functional Analysis on the Eve of the 21st Century</em>, Birkh\u00e4user 1995.</li>' +
-          '<li>A. Reznikov, <em>Three-manifolds class field theory</em>, Selecta Math. 3 (1997).</li>' +
-        '</ul>' +
-      '</div>';
-  }
-
-  // ───────────────────────────────────────────────────────────────────
   //  Virtual knots (kept mostly as-is)
   // ───────────────────────────────────────────────────────────────────
 
@@ -701,7 +535,6 @@
     signatureHTML,
     arfKervaireHTML,
     knotGroupHTML,
-    numberTheoryHTML,
     virtualKnotsHTML
   ];
 
@@ -739,8 +572,8 @@
 
     function renderTab(idx) {
       content.innerHTML = RENDERERS[idx]();
-      // Virtual Knots subtab is index 9 (last tab): initialise iframe lazily.
-      if (idx === 9) initVirtualFrame();
+      // Virtual Knots subtab is index 8 (last tab): initialise iframe lazily.
+      if (idx === 8) initVirtualFrame();
       try {
         if (typeof renderMathInElement === 'function') {
           renderMathInElement(content, {

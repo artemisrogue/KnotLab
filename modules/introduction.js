@@ -583,11 +583,7 @@
       </div>
     </div>
 
-    <div class="expo-panel">
-      <h3>Why Invariants?</h3>
-      <p>A <strong>knot invariant</strong> is a quantity associated to a knot that is preserved under ambient isotopy. If two knots have different values of some invariant, they must be distinct knots. However, matching invariants do not guarantee equivalence.</p>
-      <p>Simple numerical invariants include the <em>crossing number</em>, <em>unknotting number</em>, <em>signature</em>, and <em>determinant</em>. More powerful <strong>polynomial invariants</strong> (Alexander, Jones, HOMFLY-PT) and <strong>homological invariants</strong> (Khovanov homology) are explored in the other tabs.</p>
-    </div>`;
+`;
 
     // Create 3D viewers
     var v1 = create3DViewer(el.querySelector('#intro-viewer-1'), 350, 350);
@@ -649,10 +645,7 @@
       </div>
     </div>
 
-    <div class="expo-panel">
-      <h3>From Diagrams to Invariants</h3>
-      <p>This theorem motivates the study of knot invariants from diagrams: a function of a knot diagram is a knot invariant if and only if it is unchanged by all three Reidemeister moves (and planar isotopy). Many classical invariants &mdash; the Jones polynomial, Kauffman bracket, and writhe &mdash; are defined and verified via this approach.</p>
-    </div>`;
+`;
 
     // Populate diagram selector
     const sel = el.querySelector('#intro-diagram-sel');
@@ -695,20 +688,30 @@
   }
 
   function pdCrossingSVG() {
-    return '<svg viewBox="-130 -80 260 180" width="320" height="220" style="display:block;margin:0 auto">' +
-      '<line x1="-50" y1="50" x2="50" y2="-50" stroke="#1f3a5f" stroke-width="4" stroke-linecap="round" />' +
-      '<line x1="50"  y1="50"  x2="12" y2="12"  stroke="#1f3a5f" stroke-width="4" stroke-linecap="round" />' +
-      '<line x1="-12" y1="-12" x2="-50" y2="-50" stroke="#1f3a5f" stroke-width="4" stroke-linecap="round" />' +
-      '<polygon points="50,-50 40,-48 45,-38" fill="#b84900" />' +
-      '<polygon points="-50,-50 -45,-38 -40,-48" fill="#b84900" />' +
-      '<text x="34"  y="48"  font-size="15" fill="#333" font-style="italic">a</text>' +
-      '<text x="-42" y="48"  font-size="15" fill="#333" font-style="italic">b</text>' +
-      '<text x="-42" y="-28" font-size="15" fill="#333" font-style="italic">c</text>' +
-      '<text x="34"  y="-28" font-size="15" fill="#333" font-style="italic">d</text>' +
-      '<path d="M 16,5 A 16 16 0 0 1 -5,16" stroke="#888" stroke-width="1.2" fill="none" />' +
-      '<polygon points="-5,16 -2,11 -10,12" fill="#888" />' +
-      '<text x="10" y="75" text-anchor="middle" font-size="12" fill="#666">' +
-        'positive crossing \u2014 read a, b, c, d counter-clockwise' +
+    // Positive crossing. Over-strand: SW -> NE (one solid line).
+    // Under-strand: SE -> NW (broken at the centre).
+    // Arcs labelled a, b, c, d going counter-clockwise (as drawn on screen):
+    //   a = incoming under (SE) -> b = outgoing over (NE)
+    //   -> c = outgoing under (NW) -> d = incoming over (SW).
+    return '<svg viewBox="-140 -100 280 230" width="360" height="295" style="display:block;margin:0 auto">' +
+      // Over-strand SW -> NE (continuous)
+      '<line x1="-60" y1="60" x2="60" y2="-60" stroke="#1f3a5f" stroke-width="4" stroke-linecap="round" />' +
+      // Under-strand SE -> NW (broken)
+      '<line x1="60"  y1="60"  x2="14" y2="14"  stroke="#1f3a5f" stroke-width="4" stroke-linecap="round" />' +
+      '<line x1="-14" y1="-14" x2="-60" y2="-60" stroke="#1f3a5f" stroke-width="4" stroke-linecap="round" />' +
+      // Arrowheads: over-strand tip at NE (60,-60), under-strand tip at NW (-60,-60)
+      '<polygon points="60,-60 48,-58 54,-48" fill="#b84900" />' +
+      '<polygon points="-60,-60 -54,-48 -48,-58" fill="#b84900" />' +
+      // Labels, counter-clockwise starting from the incoming under-arc a (SE)
+      '<text x="56"  y="80"  font-size="22" fill="#222" font-style="italic" font-weight="600">a</text>' +
+      '<text x="56"  y="-66" font-size="22" fill="#222" font-style="italic" font-weight="600">b</text>' +
+      '<text x="-66" y="-66" font-size="22" fill="#222" font-style="italic" font-weight="600">c</text>' +
+      '<text x="-66" y="80"  font-size="22" fill="#222" font-style="italic" font-weight="600">d</text>' +
+      // Small CCW direction hint arrow at the centre (arc sweeping from SE to NE to NW)
+      '<path d="M 24,0 A 24 24 0 0 1 0,-24" stroke="#888" stroke-width="1.4" fill="none" />' +
+      '<polygon points="0,-24 -6,-18 4,-18" fill="#888" />' +
+      '<text x="0" y="110" text-anchor="middle" font-size="14" fill="#555">' +
+        'positive crossing \u2014 read a, b, c, d counter-clockwise from the incoming under-arc' +
       '</text>' +
       '</svg>';
   }
@@ -855,6 +858,83 @@
     </div>
 
     <div class="expo-panel">
+      <h3>Pictures of braid generators and relations</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:flex-start;">
+        <figure style="margin:0;text-align:center;max-width:200px;">
+          <svg width="140" height="180" viewBox="0 0 140 180" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke-linecap="round">
+              <path d="M30,10 C30,60 110,120 110,170" stroke="white" stroke-width="7"/>
+              <path d="M30,10 C30,60 110,120 110,170" stroke="#2171b5" stroke-width="3"/>
+              <line x1="63" y1="80" x2="77" y2="100" stroke="white" stroke-width="8"/>
+              <path d="M110,10 C110,60 30,120 30,170" stroke="#d94801" stroke-width="3"/>
+            </g>
+            <text x="30" y="178" font-size="11" fill="#666" text-anchor="middle">i</text>
+            <text x="110" y="178" font-size="11" fill="#666" text-anchor="middle">i+1</text>
+          </svg>
+          <figcaption style="font-size:0.88rem;color:#555;">
+            Generator \\(\\sigma_i\\): strand \\(i+1\\) passes <strong>over</strong> strand \\(i\\)
+            (right strand over left).
+          </figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center;max-width:200px;">
+          <svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke-linecap="round">
+              <path d="M20,10 L20,70 L160,90 L160,140 L20,160 L20,170" stroke="#2171b5" stroke-width="3"/>
+              <path d="M90,10 L90,50 L20,70 L20,90 L90,110 L90,140 L90,170" stroke="#d94801" stroke-width="3"/>
+              <path d="M160,10 L160,30 L90,50 L90,90 L160,140 L160,170" stroke="#4daf4a" stroke-width="3"/>
+            </g>
+          </svg>
+          <figcaption style="font-size:0.88rem;color:#555;">
+            Braid relation \\(\\sigma_i\\,\\sigma_{i+1}\\,\\sigma_i = \\sigma_{i+1}\\,\\sigma_i\\,\\sigma_{i+1}\\).
+            Schematic: three-strand &ldquo;Yang&ndash;Baxter&rdquo; equivalence.
+          </figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center;max-width:200px;">
+          <svg width="200" height="160" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke-linecap="round">
+              <path d="M20,10 C20,50 60,50 60,80 C60,110 20,110 20,150" stroke="white" stroke-width="7"/>
+              <path d="M20,10 C20,50 60,50 60,80 C60,110 20,110 20,150" stroke="#2171b5" stroke-width="3"/>
+              <line x1="35" y1="62" x2="48" y2="72" stroke="white" stroke-width="8"/>
+              <path d="M60,10 C60,50 20,50 20,80 C20,110 60,110 60,150" stroke="#d94801" stroke-width="3"/>
+              <path d="M130,10 C130,50 170,50 170,80 C170,110 130,110 130,150" stroke="white" stroke-width="7"/>
+              <path d="M130,10 C130,50 170,50 170,80 C170,110 130,110 130,150" stroke="#4daf4a" stroke-width="3"/>
+              <line x1="145" y1="62" x2="158" y2="72" stroke="white" stroke-width="8"/>
+              <path d="M170,10 C170,50 130,50 130,80 C130,110 170,110 170,150" stroke="#984ea3" stroke-width="3"/>
+            </g>
+          </svg>
+          <figcaption style="font-size:0.88rem;color:#555;">
+            Far commutativity \\(\\sigma_i\\sigma_j = \\sigma_j\\sigma_i\\) for \\(|i-j|\\geq 2\\):
+            disjoint crossings on separated pairs of strands.
+          </figcaption>
+        </figure>
+
+        <figure style="margin:0;text-align:center;max-width:200px;">
+          <svg width="180" height="180" viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke-linecap="round">
+              <path d="M40,30 C40,70 40,100 40,130" stroke="white" stroke-width="7"/>
+              <path d="M40,30 C40,70 40,100 40,130" stroke="#2171b5" stroke-width="3"/>
+              <line x1="55" y1="62" x2="65" y2="72" stroke="white" stroke-width="8"/>
+              <path d="M80,30 C80,70 80,100 80,130" stroke="#d94801" stroke-width="3"/>
+              <path d="M120,30 C120,60 120,100 120,130" stroke="#4daf4a" stroke-width="3"/>
+              <path d="M40,30 C40,10 120,10 120,30" stroke="#2171b5" stroke-width="2.5" fill="none"/>
+              <path d="M80,30 C80,18 140,18 140,30 C140,70 140,100 140,130 C140,160 80,160 80,130"
+                    stroke="#d94801" stroke-width="2.5" fill="none"/>
+              <path d="M120,30 C120,20 160,20 160,30 C160,70 160,100 160,130 C160,165 40,165 40,130"
+                    stroke="#4daf4a" stroke-width="2.5" fill="none"/>
+            </g>
+          </svg>
+          <figcaption style="font-size:0.88rem;color:#555;">
+            Closure \\(\\widehat{\\beta}\\) of a braid \\(\\beta\\): connect each strand&rsquo;s top
+            to the corresponding bottom by arcs behind the braid. Every link arises this way
+            (Alexander&rsquo;s theorem).
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="expo-panel">
       <h3>Artin Presentation</h3>
       <p>The braid group \\(B_n\\) has the presentation:</p>
       <div class="formula-box">
@@ -979,6 +1059,66 @@
     <div class="expo-panel">
       <h3>Homological Invariants</h3>
       <p><strong>Khovanov homology</strong> is a bigraded homology theory that <em>categorifies</em> the Jones polynomial: the graded Euler characteristic of Khovanov homology recovers the Jones polynomial. It is a strictly stronger invariant &mdash; there exist knots with identical Jones polynomials but distinct Khovanov homology. This invariant is explored further in the <em>Knot Explorer</em> tab.</p>
+    </div>
+
+    <div class="expo-panel">
+      <h3>No single invariant tells the whole story</h3>
+      <p>In practice one uses a <em>battery</em> of invariants. Each invariant is blind to some pairs of knots; knots one invariant confuses, another often separates. The table below compares four knots against several classical invariants:</p>
+      <table class="kl-table" style="width:100%;max-width:720px;margin:0 auto;border-collapse:collapse;">
+        <thead>
+          <tr style="border-bottom:2px solid #999;">
+            <th style="text-align:left;padding:6px 10px;">Knot</th>
+            <th style="padding:6px 10px;">\\(c(K)\\)</th>
+            <th style="padding:6px 10px;">\\(\\Delta_K(t)\\)</th>
+            <th style="padding:6px 10px;">\\(V_K(q)\\) (schematic)</th>
+            <th style="padding:6px 10px;">\\(\\sigma(K)\\)</th>
+          </tr>
+        </thead>
+        <tbody style="line-height:1.6;">
+          <tr style="border-bottom:1px solid #ddd;">
+            <td style="padding:6px 10px;">\\(3_1\\) (trefoil, right-handed)</td>
+            <td style="text-align:center;">3</td>
+            <td style="text-align:center;">\\(t - 1 + t^{-1}\\)</td>
+            <td style="text-align:center;">\\(-q^{-4} + q^{-3} + q^{-1}\\)</td>
+            <td style="text-align:center;">\\(-2\\)</td>
+          </tr>
+          <tr style="border-bottom:1px solid #ddd;">
+            <td style="padding:6px 10px;">\\(\\overline{3_1}\\) (trefoil, mirror)</td>
+            <td style="text-align:center;">3</td>
+            <td style="text-align:center;">\\(t - 1 + t^{-1}\\)</td>
+            <td style="text-align:center;">\\(-q^{4} + q^{3} + q\\)</td>
+            <td style="text-align:center;">\\(+2\\)</td>
+          </tr>
+          <tr style="border-bottom:1px solid #ddd;">
+            <td style="padding:6px 10px;">\\(4_1\\) (figure-eight)</td>
+            <td style="text-align:center;">4</td>
+            <td style="text-align:center;">\\(-t + 3 - t^{-1}\\)</td>
+            <td style="text-align:center;">\\(q^{-2} - q^{-1} + 1 - q + q^{2}\\)</td>
+            <td style="text-align:center;">\\(0\\)</td>
+          </tr>
+          <tr style="border-bottom:1px solid #ddd;">
+            <td style="padding:6px 10px;">Conway knot \\(11n34\\)</td>
+            <td style="text-align:center;">11</td>
+            <td style="text-align:center;">\\(1\\)</td>
+            <td style="text-align:center;">non-trivial, \\(\\ne V_{11n42}\\)</td>
+            <td style="text-align:center;">\\(0\\)</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 10px;">Kinoshita&ndash;Terasaka \\(11n42\\)</td>
+            <td style="text-align:center;">11</td>
+            <td style="text-align:center;">\\(1\\)</td>
+            <td style="text-align:center;">non-trivial, \\(\\ne V_{11n34}\\)</td>
+            <td style="text-align:center;">\\(0\\)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px;">Several morals jump out:</p>
+      <ul>
+        <li><strong>Alexander misses chirality.</strong> The right-handed trefoil and its mirror have identical \\(\\Delta_K(t)\\), yet they are distinct knots &mdash; Jones (\\(V_K\\)) and signature (\\(\\sigma\\)) see the chirality; Alexander cannot.</li>
+        <li><strong>Alexander cannot separate Conway from Kinoshita&ndash;Terasaka.</strong> Both have \\(\\Delta_K(t) = 1\\), and both have signature \\(0\\) &mdash; these classical invariants are powerless. Jones sees a difference, and more decisively the Rasmussen \\(s\\)-invariant and knot Floer homology \\(\\widehat{HFK}\\) distinguish them; \\(11n42\\) is smoothly slice while \\(11n34\\) is not (Piccirillo 2020, using these finer invariants).</li>
+        <li><strong>Signature is a chirality detector.</strong> \\(\\sigma(\\overline{K}) = -\\sigma(K)\\), so \\(\\sigma = 0\\) is forced on any amphichiral knot such as \\(4_1\\); and \\(\\sigma(3_1) \\ne \\sigma(\\overline{3_1})\\) detects that the trefoil is chiral.</li>
+      </ul>
+      <p>The lesson: each invariant is a projection that collapses some distinctions. Modern knot theory uses a tower of them &mdash; polynomial, homological, concordance-theoretic &mdash; with strictly increasing distinguishing power.</p>
     </div>
 
     <div class="expo-panel">

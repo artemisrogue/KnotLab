@@ -956,6 +956,23 @@
           line: { color: COLORS[i], width: 5 },
           hoverinfo: 'none'
         });
+        // Orientation arrows at t \u2248 0.3 and t \u2248 0.7 along each strand
+        if (params.orientation && strand.length > 4) {
+          const fracs = [0.3, 0.7];
+          const xs = [], ys = [], zs = [], us = [], vs = [], ws = [];
+          fracs.forEach(fr => {
+            const idx = Math.min(strand.length - 2, Math.max(1, Math.floor(fr * (strand.length - 1))));
+            const p0 = strand[idx], p1 = strand[idx + 1];
+            xs.push(p0[0]); ys.push(p0[1]); zs.push(p0[2]);
+            us.push(p1[0] - p0[0]); vs.push(p1[1] - p0[1]); ws.push(p1[2] - p0[2]);
+          });
+          traces.push({
+            type: 'cone', x: xs, y: ys, z: zs, u: us, v: vs, w: ws,
+            sizemode: 'absolute', sizeref: 0.18, anchor: 'tail',
+            colorscale: [[0, COLORS[i]], [1, COLORS[i]]], showscale: false,
+            hoverinfo: 'none'
+          });
+        }
       });
       Plotly.newPlot(divId, traces, build3DLayout(title), { responsive: true });
     }
@@ -1013,7 +1030,7 @@
   window.renderFramedKnots = function(containerEl) {
     // State
     let state = { k: 0, n: 0, mode: 'discrete', hideTube: false, mirror: false,
-                  orientation: false, subTab: 'cylinder' };
+                  orientation: true, subTab: 'cylinder' };
 
     const SUB_TABS = [
       { id: 'cylinder', label: 'Cylinder' },

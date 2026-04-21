@@ -68,6 +68,7 @@ JS_FILES = [
     "modules/gauss-linking.js",
     "modules/polynomial-invariants.js",
     "modules/homological-invariants.js",
+    "modules/number-theory.js",
     "modules/miscellaneous.js",
     "modules/appendix.js",
     "modules/review-tool.js",

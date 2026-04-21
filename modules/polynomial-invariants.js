@@ -861,7 +861,45 @@
         '</div>' +
 
         '<div class="expo-panel">' +
-          '<h3>6. Super-Lie reinterpretation: \\(\\Delta_K\\) from \\(U_q(\\mathfrak{gl}(1|1))\\)</h3>' +
+          '<h3>6. Super Lie algebras &mdash; primer</h3>' +
+          '<p>The quantum group that produces the Alexander polynomial is not an ordinary Lie algebra but a ' +
+          '<strong>super Lie algebra</strong>. Here is a quick self-contained reminder.</p>' +
+          '<p>A <strong>super Lie algebra</strong> (or <em>Lie superalgebra</em>) is a ' +
+          '\\(\\mathbb{Z}/2\\)-graded vector space ' +
+          '\\(\\mathfrak{g} = \\mathfrak{g}_{\\bar 0} \\oplus \\mathfrak{g}_{\\bar 1}\\) ' +
+          'equipped with a bilinear bracket \\([\\,\\cdot\\,,\\,\\cdot\\,]\\colon \\mathfrak{g}\\otimes\\mathfrak{g} \\to \\mathfrak{g}\\) ' +
+          'that respects the grading &mdash; ' +
+          '\\([\\mathfrak{g}_{\\alpha}, \\mathfrak{g}_{\\beta}] \\subseteq \\mathfrak{g}_{\\alpha+\\beta}\\) &mdash; and satisfies the ' +
+          'two graded axioms. Write \\(|x| \\in \\{\\bar 0, \\bar 1\\}\\) for the parity of a homogeneous element.</p>' +
+          '<ul>' +
+            '<li><strong>Super-antisymmetry:</strong> \\([x,y] = -(-1)^{|x||y|}\\,[y,x].\\)</li>' +
+            '<li><strong>Super-Jacobi identity:</strong></li>' +
+          '</ul>' +
+          '<div class="formula-box">' +
+            '$$(-1)^{|x||z|}\\,[x,[y,z]] \\;+\\; (-1)^{|y||x|}\\,[y,[z,x]] \\;+\\; (-1)^{|z||y|}\\,[z,[x,y]] \\;=\\; 0.$$' +
+          '</div>' +
+          '<p>Setting all parities to \\(\\bar 0\\) recovers ordinary Lie algebras. When one of \\(x, y\\) is ' +
+          'odd (parity \\(\\bar 1\\)), the sign flips &mdash; e.g. on two odd elements the bracket ' +
+          'becomes symmetric: \\([x,y] = [y,x]\\), so the bracket on \\(\\mathfrak{g}_{\\bar 1}\\) behaves like ' +
+          'an anticommutator.</p>' +
+          '<p>A <strong>representation</strong> (or module) of \\(\\mathfrak{g}\\) is a ' +
+          '\\(\\mathbb{Z}/2\\)-graded vector space \\(V = V_{\\bar 0} \\oplus V_{\\bar 1}\\) together with a ' +
+          'bracket-preserving action \\(\\mathfrak{g} \\otimes V \\to V\\) that respects the grading: ' +
+          '\\(\\mathfrak{g}_{\\alpha}\\cdot V_{\\beta} \\subseteq V_{\\alpha+\\beta}\\). Morphisms are ' +
+          'parity-preserving linear maps intertwining the action.</p>' +
+          '<p>The basic example for knot theory is ' +
+          '<strong>\\(\\mathfrak{gl}(1|1)\\)</strong>, the super Lie algebra of ' +
+          '\\(2\\times 2\\) matrices graded by putting the diagonal in \\(\\mathfrak{g}_{\\bar 0}\\) and the ' +
+          'off-diagonal entries in \\(\\mathfrak{g}_{\\bar 1}\\). Its quantum deformation ' +
+          '\\(U_q(\\mathfrak{gl}(1|1))\\) is a Hopf superalgebra whose standard \\((1|1)\\)-dimensional ' +
+          'representation has an R-matrix whose Reshetikhin&ndash;Turaev trace on a braid closure computes ' +
+          'the <strong>Alexander polynomial</strong>. The super structure is essential: an ordinary Lie ' +
+          'algebra R-matrix can never produce \\(\\Delta_K\\) because the relevant tensor category must be ' +
+          '&ldquo;non-semisimple,&rdquo; a feature only visible in the super setting.</p>' +
+        '</div>' +
+
+        '<div class="expo-panel">' +
+          '<h3>7. Super-Lie reinterpretation: \\(\\Delta_K\\) from \\(U_q(\\mathfrak{gl}(1|1))\\)</h3>' +
           '<p>The Alexander polynomial looks nothing like the Jones polynomial at first glance, yet both ' +
           'are Reshetikhin&ndash;Turaev invariants. The quantum group that produces \\(\\Delta_K\\) is the ' +
           'super-algebra \\(U_q(\\mathfrak{gl}(1|1))\\). Its standard \\(2|1\\)-dimensional representation ' +
@@ -1053,6 +1091,51 @@
           'that road alongside the three others, and shows how each produces a braid-group representation ' +
           'whose Markov trace is \\(V_K(q)\\).</p>' +
 
+          '<p><strong>Five roads at a glance.</strong> Each box below expands one road in detail; first a quick-reference list showing what goes in, which algebra carries the braid-group action, and what comes out.</p>' +
+          '<ol style="padding-left:22px;line-height:1.55">' +
+            '<li style="margin-bottom:10px">' +
+              '<h4 style="margin:0 0 4px 0">Road 1 &mdash; Kauffman bracket (diagrammatic)</h4>' +
+              '<ul style="margin:0;padding-left:20px">' +
+                '<li><strong>Input:</strong> an oriented link diagram \\(D\\).</li>' +
+                '<li><strong>Algebra/object:</strong> the planar skein module; local rewrite \\(\\langle D\\rangle\\) summed over states.</li>' +
+                '<li><strong>Output:</strong> \\((-A)^{-3w(D)}\\langle D\\rangle\\) with \\(A = q^{-1/4}\\) yields \\(V_K(q)\\).</li>' +
+              '</ul>' +
+            '</li>' +
+            '<li style="margin-bottom:10px">' +
+              '<h4 style="margin:0 0 4px 0">Road 2 &mdash; Temperley&ndash;Lieb algebra</h4>' +
+              '<ul style="margin:0;padding-left:20px">' +
+                '<li><strong>Input:</strong> a braid word \\(\\beta \\in B_n\\) whose closure is \\(K\\).</li>' +
+                '<li><strong>Algebra/object:</strong> \\(TL_n(\\delta)\\) with cup-cap generators \\(e_i\\); Kauffman map \\(\\sigma_i \\mapsto A + A^{-1}e_i\\).</li>' +
+                '<li><strong>Output:</strong> the planar Markov trace of the image in \\(TL_n\\), normalised, is \\(V_K(q)\\).</li>' +
+              '</ul>' +
+            '</li>' +
+            '<li style="margin-bottom:10px">' +
+              '<h4 style="margin:0 0 4px 0">Road 3 &mdash; Iwahori&ndash;Hecke algebra</h4>' +
+              '<ul style="margin:0;padding-left:20px">' +
+                '<li><strong>Input:</strong> same braid word \\(\\beta\\), now viewed in \\(\\mathbb{C}[B_n]\\).</li>' +
+                '<li><strong>Algebra/object:</strong> \\(H_n(q) = \\mathbb{C}[B_n]/\\langle (T_i-q)(T_i+1)\\rangle\\); a one-parameter deformation of \\(\\mathbb{C}[S_n]\\).</li>' +
+                '<li><strong>Output:</strong> the Ocneanu trace \\(\\mathrm{tr}_z\\) at a specific \\(z(q)\\) gives \\(V_K(q)\\); free \\(z\\) gives HOMFLY-PT.</li>' +
+              '</ul>' +
+            '</li>' +
+            '<li style="margin-bottom:10px">' +
+              '<h4 style="margin:0 0 4px 0">Road 4 &mdash; Subfactors and type \\(\\mathrm{II}_1\\) factors</h4>' +
+              '<ul style="margin:0;padding-left:20px">' +
+                '<li><strong>Input:</strong> an inclusion \\(N \\subset M\\) of \\(\\mathrm{II}_1\\) factors with index \\([M:N] = \\delta^{2}\\).</li>' +
+                '<li><strong>Algebra/object:</strong> basic-construction tower \\(N \\subset M \\subset M_1 \\subset \\cdots\\); Jones projections \\(e_k\\) satisfy TL.</li>' +
+                '<li><strong>Output:</strong> the canonical tracial state restricted to the TL subalgebra is Markov; braid closures give \\(V_K(q)\\).</li>' +
+              '</ul>' +
+            '</li>' +
+            '<li style="margin-bottom:10px">' +
+              '<h4 style="margin:0 0 4px 0">Road 5 &mdash; R-matrices from quantum \\(\\mathfrak{sl}_2\\)</h4>' +
+              '<ul style="margin:0;padding-left:20px">' +
+                '<li><strong>Input:</strong> braid word \\(\\beta\\) acting on \\(V^{\\otimes n}\\) with \\(V\\) the 2-dim irrep of \\(U_q(\\mathfrak{sl}_2)\\).</li>' +
+                '<li><strong>Algebra/object:</strong> the universal R-matrix solves YBE; \\(B_n \\to \\mathrm{End}(V^{\\otimes n})\\) lands inside \\(TL_n\\).</li>' +
+                '<li><strong>Output:</strong> the quantum trace (Reshetikhin&ndash;Turaev) of the image is \\(V_K(q)\\).</li>' +
+              '</ul>' +
+            '</li>' +
+          '</ol>' +
+          '<p>All five roads produce the <em>same</em> polynomial: the underlying braid-group representation factors through (a completion of) \\(TL_n\\), and the Markov/quantum/canonical trace is unique up to normalization. The collapsibles below develop each road in full.</p>' +
+
           '<details class="kl-example"><summary><strong>Road 1.</strong> Kauffman bracket (diagrammatic) &mdash; review</summary>' +
             '<p>This road was developed in detail in sections 2&ndash;3 above. The state sum</p>' +
             '<div class="formula-box">' +
@@ -1080,22 +1163,112 @@
             'closed loop to a scalar factor \\(\\delta\\). A general basis element is any non-crossing ' +
             'pairing of the \\(2n\\) boundary points; the dimension of \\(TL_n\\) is the Catalan number \\(C_n\\).</p>' +
             '<div class="formula-box" style="display:flex;justify-content:center;">' +
-              '<svg width="280" height="100" viewBox="0 0 280 100" aria-label="e_2 in TL_4">' +
+              '<svg width="280" height="110" viewBox="0 0 280 110" aria-label="e_2 in TL_4">' +
                 '<g stroke="#1f3a5f" stroke-width="3" fill="none" stroke-linecap="round">' +
-                  '<line x1="30"  y1="10" x2="30"  y2="90"/>' +
-                  '<path d="M90,10 Q90,45 150,45 Q150,45 150,45 Q150,45 150,45" />' +
-                  '<path d="M90,10 Q90,40 120,40 Q150,40 150,10"/>' +
-                  '<path d="M90,90 Q90,60 120,60 Q150,60 150,90"/>' +
-                  '<line x1="210" y1="10" x2="210" y2="90"/>' +
+                  '<line x1="30"  y1="15" x2="30"  y2="85"/>' +
+                  '<path d="M90,15 Q90,50 150,50 Q150,50 150,50"/>' +
+                  '<path d="M90,15 C90,40 150,40 150,15"/>' +
+                  '<path d="M90,85 C90,60 150,60 150,85"/>' +
+                  '<line x1="210" y1="15" x2="210" y2="85"/>' +
                 '</g>' +
                 '<g fill="#1f3a5f">' +
-                  '<circle cx="30"  cy="10" r="3"/><circle cx="90"  cy="10" r="3"/>' +
-                  '<circle cx="150" cy="10" r="3"/><circle cx="210" cy="10" r="3"/>' +
-                  '<circle cx="30"  cy="90" r="3"/><circle cx="90"  cy="90" r="3"/>' +
-                  '<circle cx="150" cy="90" r="3"/><circle cx="210" cy="90" r="3"/>' +
+                  '<circle cx="30"  cy="15" r="3"/><circle cx="90"  cy="15" r="3"/>' +
+                  '<circle cx="150" cy="15" r="3"/><circle cx="210" cy="15" r="3"/>' +
+                  '<circle cx="30"  cy="85" r="3"/><circle cx="90"  cy="85" r="3"/>' +
+                  '<circle cx="150" cy="85" r="3"/><circle cx="210" cy="85" r="3"/>' +
                 '</g>' +
-                '<text x="140" y="98" fill="#555" font-size="11" text-anchor="middle">e_2 \u2208 TL_4</text>' +
+                '<text x="140" y="105" fill="#555" font-size="11" text-anchor="middle">e_2 \u2208 TL_4 (cup between 2,3 top; cap between 2,3 bottom; strands 1 and 4 vertical)</text>' +
               '</svg>' +
+            '</div>' +
+            '<p><strong>Diagrammatic calculus.</strong> The defining relations admit pictorial proofs:</p>' +
+            '<div class="formula-box" style="display:flex;justify-content:center;flex-wrap:wrap;gap:18px;">' +
+              '<figure style="margin:0;text-align:center;">' +
+                '<svg width="230" height="110" viewBox="0 0 230 110" aria-label="e_i squared equals delta e_i">' +
+                  '<g stroke="#1f3a5f" stroke-width="2.5" fill="none" stroke-linecap="round">' +
+                    '<path d="M30,10 C30,35 80,35 80,10"/>' +
+                    '<path d="M30,100 C30,75 80,75 80,100"/>' +
+                    '<path d="M30,55 C30,40 80,40 80,55"/>' +
+                    '<path d="M30,55 C30,70 80,70 80,55"/>' +
+                  '</g>' +
+                  '<text x="115" y="58" font-size="18" text-anchor="middle">=</text>' +
+                  '<text x="135" y="58" font-size="15" text-anchor="start">\u03B4 \u00B7</text>' +
+                  '<g stroke="#1f3a5f" stroke-width="2.5" fill="none" stroke-linecap="round" transform="translate(165,0)">' +
+                    '<path d="M10,10 C10,45 55,45 55,10"/>' +
+                    '<path d="M10,100 C10,65 55,65 55,100"/>' +
+                  '</g>' +
+                '</svg>' +
+                '<figcaption style="font-size:12px;color:#555">(a) \\(e_i^{2} = \\delta\\, e_i\\): stacking two copies traps a closed loop, worth \\(\\delta\\).</figcaption>' +
+              '</figure>' +
+              '<figure style="margin:0;text-align:center;">' +
+                '<svg width="260" height="110" viewBox="0 0 260 110" aria-label="far commutation">' +
+                  '<g stroke="#1f3a5f" stroke-width="2.5" fill="none" stroke-linecap="round">' +
+                    '<path d="M20,10 C20,30 55,30 55,10"/>' +
+                    '<path d="M20,100 C20,80 55,80 55,100"/>' +
+                    '<line x1="75"  y1="10" x2="75"  y2="100"/>' +
+                    '<path d="M95,55 C95,40 130,40 130,55"/>' +
+                    '<path d="M95,55 C95,70 130,70 130,55"/>' +
+                    '<line x1="95"  y1="10" x2="95"  y2="55"/>' +
+                    '<line x1="130" y1="10" x2="130" y2="55"/>' +
+                    '<line x1="95"  y1="55" x2="95"  y2="100"/>' +
+                    '<line x1="130" y1="55" x2="130" y2="100"/>' +
+                  '</g>' +
+                  '<text x="160" y="58" font-size="18" text-anchor="middle">=</text>' +
+                  '<g stroke="#1f3a5f" stroke-width="2.5" fill="none" stroke-linecap="round" transform="translate(180,0)">' +
+                    '<path d="M0,10 C0,30 35,30 35,10"/>' +
+                    '<path d="M0,100 C0,80 35,80 35,100"/>' +
+                    '<line x1="55" y1="10" x2="55" y2="100"/>' +
+                    '<path d="M70,10 C70,30 70,30 70,10"/>' +
+                  '</g>' +
+                '</svg>' +
+                '<figcaption style="font-size:12px;color:#555">(b) \\(e_i e_j = e_j e_i\\) for \\(|i-j|\\ge 2\\): the cups/caps are disjoint, so order of stacking is irrelevant.</figcaption>' +
+              '</figure>' +
+              '<figure style="margin:0;text-align:center;">' +
+                '<svg width="260" height="110" viewBox="0 0 260 110" aria-label="e_i e_{i+1} e_i = e_i">' +
+                  '<g stroke="#1f3a5f" stroke-width="2.5" fill="none" stroke-linecap="round">' +
+                    '<path d="M15,10 C15,28 45,28 45,10"/>' +
+                    '<path d="M75,10 C75,28 105,28 105,10"/>' +
+                    '<path d="M45,55 C45,43 75,43 75,55"/>' +
+                    '<path d="M45,55 C45,67 75,67 75,55"/>' +
+                    '<path d="M15,100 C15,82 45,82 45,100"/>' +
+                    '<path d="M75,100 C75,82 105,82 105,100"/>' +
+                    '<line x1="15" y1="28" x2="15" y2="100"/>' +
+                    '<line x1="105" y1="28" x2="105" y2="100"/>' +
+                    '<path d="M45,28 C45,40 45,45 45,55"/>' +
+                    '<path d="M75,28 C75,40 75,45 75,55"/>' +
+                    '<path d="M45,67 C45,75 45,80 45,82"/>' +
+                    '<path d="M75,67 C75,75 75,80 75,82"/>' +
+                  '</g>' +
+                  '<text x="140" y="58" font-size="18" text-anchor="middle">=</text>' +
+                  '<g stroke="#1f3a5f" stroke-width="2.5" fill="none" stroke-linecap="round" transform="translate(160,0)">' +
+                    '<path d="M15,10 C15,45 55,45 55,10"/>' +
+                    '<path d="M15,100 C15,65 55,65 55,100"/>' +
+                    '<line x1="80" y1="10" x2="80" y2="100"/>' +
+                  '</g>' +
+                '</svg>' +
+                '<figcaption style="font-size:12px;color:#555">(c) \\(e_i e_{i+1} e_i = e_i\\): the middle \\(e_{i+1}\\) pinches between two \\(e_i\\) cups, collapsing to a single \\(e_i\\) with no extra loop.</figcaption>' +
+              '</figure>' +
+              '<figure style="margin:0;text-align:center;">' +
+                '<svg width="260" height="110" viewBox="0 0 260 110" aria-label="bracket skein">' +
+                  '<g stroke="#1f3a5f" stroke-width="2.5" fill="none" stroke-linecap="round">' +
+                    '<path d="M15,10 L55,100"/>' +
+                    '<path d="M55,10 L40,43"/>' +
+                    '<path d="M30,67 L15,100"/>' +
+                  '</g>' +
+                  '<text x="80" y="58" font-size="18" text-anchor="middle">=</text>' +
+                  '<text x="100" y="58" font-size="15" text-anchor="start">A\u00B7</text>' +
+                  '<g stroke="#1f3a5f" stroke-width="2.5" fill="none" stroke-linecap="round" transform="translate(120,0)">' +
+                    '<line x1="10" y1="10" x2="10" y2="100"/>' +
+                    '<line x1="45" y1="10" x2="45" y2="100"/>' +
+                  '</g>' +
+                  '<text x="185" y="58" font-size="18" text-anchor="middle">+</text>' +
+                  '<text x="200" y="58" font-size="15" text-anchor="start">A\u207B\u00B9\u00B7</text>' +
+                  '<g stroke="#1f3a5f" stroke-width="2.5" fill="none" stroke-linecap="round" transform="translate(225,0)">' +
+                    '<path d="M5,10 C5,35 30,35 30,10"/>' +
+                    '<path d="M5,100 C5,75 30,75 30,100"/>' +
+                  '</g>' +
+                '</svg>' +
+                '<figcaption style="font-size:12px;color:#555">(d) Bracket skein: a crossing equals \\(A\\cdot\\mathrm{id} + A^{-1}\\cdot e_i\\); iterating over all crossings is the Kauffman state sum.</figcaption>' +
+              '</figure>' +
             '</div>' +
             '<p>The <strong>Kauffman map</strong> \\(B_n \\to TL_n(\\delta)\\) sends the braid generator</p>' +
             '<div class="formula-box">' +
@@ -1234,142 +1407,63 @@
         '</div>' +
 
         '<div class="expo-panel">' +
-          '<h3>Beyond Jones: TL &sub; Hecke &sub; BMW and the full polynomial zoo</h3>' +
-          '<p>Each of the four roads above factored through an algebra whose braid generator satisfied ' +
-          'a <em>quadratic</em> eigenvalue relation. Widen the relation to a cubic and a whole new ' +
-          'two-variable invariant &mdash; the Kauffman polynomial \\(F\\) &mdash; falls out. The right ' +
-          'organizing picture is the tower</p>' +
-          '<div class="formula-box">$$TL_n(\\delta) \\;\\subset\\; H_n(q) \\;\\subset\\; BMW_n(r, q),$$</div>' +
-          '<p>of <strong>skein algebras</strong> of increasing rank, each with its own Markov trace, ' +
-          'each producing a polynomial invariant as the trace of a braid closure.</p>' +
+          '<h3>Representations of \\(\\mathfrak{sl}_2\\) and its quantum deformation</h3>' +
+          '<p>All five roads converge on the representation theory of ' +
+          '\\(\\mathfrak{sl}_2\\) and its quantum deformation \\(U_q(\\mathfrak{sl}_2)\\). Here is a compact ' +
+          'summary of what that theory looks like.</p>' +
 
-          '<details class="kl-proof" open>' +
-            '<summary><strong>1. From rank to two-variable skein.</strong> One more eigenvalue = one more variable.</summary>' +
-            '<p>Write the image of the braid generator in each quotient and its eigenvalue spectrum:</p>' +
-            '<ul>' +
-              '<li><strong>Temperley&ndash;Lieb \\(TL_n(\\delta)\\).</strong> Generators \\(e_i\\) (cup-cap idempotents) ' +
-              'satisfy \\(e_i^2 = \\delta\\, e_i\\), \\(e_i e_{i\\pm 1} e_i = e_i\\), \\([e_i, e_j] = 0\\) for ' +
-              '\\(|i-j|\\ge 2\\). After normalization \\(e_i/\\delta\\) is a projector: the algebra has ' +
-              '<em>rank one</em> in the sense that each \\(e_i\\) has a single non-trivial eigenvalue.</li>' +
-              '<li><strong>Hecke algebra \\(H_n(q)\\).</strong> Generators \\(T_i\\) satisfy ' +
-              '\\((T_i - q)(T_i + 1) = 0\\) &mdash; a <em>rank-two</em> quadratic with eigenvalues ' +
-              '\\(\\{q, -1\\}\\). This is the \\(q\\)-deformation of the symmetric-group algebra \\(\\mathbb{C}[S_n]\\).</li>' +
-              '<li><strong><span class="kl-term" title="Birman-Wenzl-Murakami algebra BMW_n(r,q): a rank-3 diagram algebra on n strands with invertible braid generators G_i and tangle idempotents E_i; the Markov trace on BMW produces the Kauffman 2-variable polynomial F.">BMW algebra</span> \\(BMW_n(r, q)\\).</strong> Generators ' +
-              '\\(G_i\\) (invertible braid-type) and \\(E_i\\) (tangle / cup-cap idempotent). The cubic ' +
-              '\\((G_i - r)(G_i + r^{-1})(G_i - q^{-1}) = 0\\) has <em>rank three</em>, eigenvalues ' +
-              '\\(\\{r, -r^{-1}, q^{-1}\\}\\). Each new eigenvalue is a new parameter in the invariant: ' +
-              'rank&nbsp;2 gives the one-variable Jones, rank&nbsp;2 plus a framing gives HOMFLY ' +
-              '(2 variables), rank&nbsp;3 gives the 2-variable <span class="kl-term" title="Kauffman F polynomial F_K(a,z): 2-variable regular-isotopy invariant of unoriented links; specializes to Jones at (a,z) = (−q^{−3}, q+q^{−1}); equals the Markov trace on the BMW algebra.">Kauffman F polynomial</span>.</li>' +
-            '</ul>' +
-            '<p><em>Slogan.</em> One more eigenvalue in the braid generator &larr;&rarr; one more variable ' +
-            'in the polynomial &larr;&rarr; a larger centralizer in a richer quantum group.</p>' +
-          '</details>' +
-
-          '<details class="kl-proof">' +
-            '<summary><strong>2. BMW relations explicitly.</strong> Cubic braid + tangle idempotents.</summary>' +
-            '<p>In the \\((r, q)\\) parametrization (\\(r\\) tracks the framing / <span class="kl-term" title="Regular isotopy: equivalence of link diagrams generated only by Reidemeister II and III moves; R I introduces a framing-dependent factor. Invariants of regular isotopy give framed-link invariants.">regular isotopy</span> ' +
-            'anomaly, \\(q\\) is the Hecke-like deformation parameter), BMW\\(_n(r,q)\\) is generated by ' +
-            'invertible \\(G_1, \\ldots, G_{n-1}\\) and idempotents \\(E_1, \\ldots, E_{n-1}\\) subject to:</p>' +
-            '<div class="formula-box">' +
-              '$$G_i G_{i+1} G_i = G_{i+1} G_i G_{i+1}, \\qquad G_i G_j = G_j G_i \\;\\; (|i-j|\\ge 2),$$' +
-            '</div>' +
-            '<div class="formula-box">' +
-              '$$G_i E_i = E_i G_i = r^{-1} E_i, \\qquad E_i G_{i\\pm 1} E_i = r\\, E_i,$$' +
-            '</div>' +
-            '<div class="formula-box">' +
-              '$$(G_i - r)(G_i + r^{-1})(G_i - q^{-1}) = 0 \\quad\\text{(cubic),}$$' +
-            '</div>' +
-            '<div class="formula-box">' +
-              '$$E_i^2 = x\\, E_i, \\qquad x = 1 + \\frac{r - r^{-1}}{q - q^{-1}}.$$' +
-            '</div>' +
-            '<p>The relation \\(G_i - G_i^{-1} = (q - q^{-1})(1 - E_i)\\) (equivalent to the cubic above when ' +
-            'combined with \\(G_i E_i = r^{-1} E_i\\)) is the form the skein relation takes on the braid ' +
-            'generator. Killing \\(E_i = 0\\) collapses BMW to Hecke; keeping \\(E_i\\) is what generates the ' +
-            'second polynomial variable.</p>' +
-          '</details>' +
-
-          '<details class="kl-proof">' +
-            '<summary><strong>3. Kauffman F as the BMW Markov trace.</strong></summary>' +
-            '<p>Just as the Ocneanu trace on \\(H_n(q)\\) produces HOMFLY and the planar trace on ' +
-            '\\(TL_n(\\delta)\\) produces Jones, the <strong>Markov trace on BMW</strong> produces the ' +
-            'Kauffman \\(F\\) polynomial. Schematically,</p>' +
-            '<div class="formula-box">' +
-              '$$F_K(a, z) \\;=\\; a^{-w(\\hat\\beta)}\\,\\mathrm{tr}_{\\mathrm{BMW}}(\\beta), \\qquad ' +
-              '\\hat\\beta = K,$$' +
-            '</div>' +
-            '<p>with \\((a, z)\\) a change of variables from \\((r, q)\\). BMW thus sits between the unoriented ' +
-            'Kauffman-bracket world (regular isotopy, two variables) and the oriented HOMFLY world. ' +
-            'Specializations:</p>' +
-            '<ul>' +
-              '<li><strong>BMW &rarr; Hecke</strong> when the tangle idempotents \\(E_i\\) act trivially ' +
-              '(\\(E_i = 0\\)); the trace becomes Ocneanu, the polynomial becomes HOMFLY.</li>' +
-              '<li><strong>HOMFLY &rarr; Jones</strong> at \\((a, z) = (q^2,\\; q - q^{-1})\\).</li>' +
-              '<li><strong>Kauffman \\(F\\) &rarr; Jones</strong> at \\((a, z) = (-q^{-3},\\; q + q^{-1})\\).</li>' +
-              '<li><strong>Full 2-variable Kauffman bracket</strong> (unoriented, regular-isotopy) is the ' +
-              'BMW Markov trace before the writhe correction.</li>' +
-            '</ul>' +
-          '</details>' +
-
-          '<details class="kl-proof">' +
-            '<summary><strong>4. Birman&ndash;Wenzl&ndash;Murakami: the historical route.</strong></summary>' +
-            '<p>Birman&ndash;Wenzl (1989) and J.&nbsp;Murakami (1987) independently constructed the algebra; ' +
-            '&ldquo;BMW&rdquo; credits all three. The motivating question was: what is the deformation of ' +
-            'the <span class="kl-term" title="Brauer algebra Br_n(δ): the diagram algebra on n strands spanned by (n,n)-tangles without crossings (only cups and caps), with a scalar δ assigned to each closed loop. Classical (Brauer 1937) centralizer of the orthogonal group O(N) on V⊗n.">Brauer algebra</span> Br\\(_n(\\delta)\\) &mdash; the diagram algebra of ' +
-            '(un)oriented tangles with cups and caps, closing loops to \\(\\delta\\) &mdash; that produces an ' +
-            'invertible braid generator and a two-variable invariant? BMW is the answer. Setting ' +
-            '\\(q \\to 1\\) recovers Brauer; setting \\(E_i = 0\\) recovers Hecke; both are non-trivial degenerations.</p>' +
-          '</details>' +
-
-          '<details class="kl-proof">' +
-            '<summary><strong>5. Categorical home: Schur&ndash;Weyl for the BCD series.</strong></summary>' +
-            '<p>Reshetikhin&ndash;Turaev: Hecke \\(H_n(q)\\) is the centralizer of \\(U_q(\\mathfrak{sl}_N)\\) ' +
-            'acting on \\(V^{\\otimes n}\\) for \\(V\\) the fundamental (defining) representation &mdash; this ' +
-            'is the \\(q\\)-deformation of classical Schur&ndash;Weyl duality. The analogous statement for ' +
-            'BMW (Wenzl 1990): BMW\\(_n(r, q)\\) is the centralizer of the ' +
-            '<span class="kl-term" title="Orthogonal quantum group U_q(so_N): the q-deformation of U(𝔰𝔬_N). Its fundamental representation on V = ℂ^N admits a BMW centralizer action on V⊗n.">orthogonal quantum group</span> ' +
-            '\\(U_q(\\mathfrak{so}_N)\\) and of the ' +
-            '<span class="kl-term" title="Symplectic quantum group U_q(sp_{2n}): the q-deformation of U(𝔰𝔭_{2n}). Its defining representation V = ℂ^{2n} carries a BMW centralizer action on V⊗n.">symplectic quantum group</span> ' +
-            '\\(U_q(\\mathfrak{sp}_{2m})\\) on \\(V^{\\otimes n}\\) for their defining representations. ' +
-            'This is why Kauffman \\(F\\) generalizes HOMFLY across the <em>BCD</em> quantum-group series ' +
-            '(types \\(B_r, C_r, D_r\\)) whereas HOMFLY is type-\\(A\\) only.</p>' +
-          '</details>' +
-
-          '<details class="kl-proof">' +
-            '<summary><strong>6. Categorification: what is known and what is open.</strong></summary>' +
-            '<p>HOMFLY is categorified by triply-graded Khovanov&ndash;Rozansky homology \\(\\mathrm{HHH}(K)\\) ' +
-            '(Khovanov 2007 via <span class="kl-term" title="Soergel bimodules: a monoidal category of graded bimodules over a polynomial ring, categorifying the Hecke algebra; the Rouquier complex of a braid lives in its homotopy category, and its Hochschild homology recovers triply-graded HOMFLY homology HHH.">Soergel bimodules</span>, Khovanov&ndash;Rozansky 2008). ' +
-            'Specialization differentials \\(d_N : \\mathrm{HHH} \\to \\mathrm{KR}_N\\) produce the ' +
-            '\\(\\mathfrak{sl}(N)\\) homologies; see the KR sub-tab.</p>' +
-            '<p>By contrast, <strong>categorification of Kauffman \\(F\\) is open in general.</strong> Partial ' +
-            'progress exists: Ehrig&ndash;Stroppel (type-\\(D\\) webs and foams), Queffelec and ' +
-            'Queffelec&ndash;Rose (annular and \\(\\mathfrak{sl}(N)\\) foam categorifications), and ' +
-            'Sartori&ndash;Tubbenhauer (diagrammatic type-\\(B\\) and type-\\(D\\) Soergel bimodules) build ' +
-            'categorical BMW-type structures; a clean &ldquo;HHH-for-Kauffman&rdquo; on all links is ' +
-            'conjectural. Philosophically, the type-\\(B\\)/\\(D\\) Soergel machinery should play the role ' +
-            'that type-\\(A\\) Soergel bimodules play for HOMFLY.</p>' +
-          '</details>' +
-
-          '<h4 style="margin-top:18px">Summary: the skein-algebra zoo</h4>' +
-          '<div class="formula-box" style="font-size:0.95em;overflow-x:auto">' +
-            '<table style="border-collapse:collapse;margin:0 auto;">' +
-              '<thead><tr style="border-bottom:1.5px solid #1f3a5f">' +
-                '<th style="padding:6px 12px;text-align:left">Algebra</th>' +
-                '<th style="padding:6px 12px;text-align:left">Eigenvalues of braid gen.</th>' +
-                '<th style="padding:6px 12px;text-align:left">Markov trace &rarr; polynomial</th>' +
-                '<th style="padding:6px 12px;text-align:left">Categorification</th>' +
-              '</tr></thead>' +
-              '<tbody>' +
-                '<tr><td style="padding:4px 12px">\\(TL_n(\\delta)\\)</td><td style="padding:4px 12px">\\(\\{\\delta\\}\\) (rank 1)</td><td style="padding:4px 12px">bracket &rarr; Jones \\(V_K(q)\\)</td><td style="padding:4px 12px">Khovanov homology</td></tr>' +
-                '<tr><td style="padding:4px 12px">\\(H_n(q)\\)</td><td style="padding:4px 12px">\\(\\{q,\\,-1\\}\\) (rank 2)</td><td style="padding:4px 12px">Ocneanu &rarr; HOMFLY \\(P_K(a,z)\\)</td><td style="padding:4px 12px">triply-graded HHH</td></tr>' +
-                '<tr><td style="padding:4px 12px">\\(BMW_n(r,q)\\)</td><td style="padding:4px 12px">\\(\\{r,\\,-r^{-1},\\,q^{-1}\\}\\) (rank 3)</td><td style="padding:4px 12px">Kauffman &rarr; \\(F_K(a,z)\\)</td><td style="padding:4px 12px">open (partial)</td></tr>' +
-                '<tr><td style="padding:4px 12px">Brauer\\(_n(\\delta)\\)</td><td style="padding:4px 12px">\\(q \\to 1\\) limit of BMW</td><td style="padding:4px 12px">classical Brauer / orthogonal</td><td style="padding:4px 12px">open</td></tr>' +
-              '</tbody>' +
-            '</table>' +
+          '<p><strong>Classical \\(\\mathfrak{sl}_2\\).</strong> The Lie algebra \\(\\mathfrak{sl}_2(\\mathbb{C})\\) is ' +
+          'spanned by \\(E, F, H\\) with relations</p>' +
+          '<div class="formula-box">' +
+            '$$[H, E] = 2E, \\qquad [H, F] = -2F, \\qquad [E, F] = H.$$' +
           '</div>' +
-          '<p style="margin-top:10px">Cross-ref: see the <em>Others</em> sub-tab for the explicit skein ' +
-          'relations of the Kauffman \\(F\\) polynomial, and the KR sub-tab of Homological Invariants for ' +
-          'the categorification story on the HOMFLY / sl(N) side.</p>' +
+          '<p>Every finite-dimensional complex representation is semisimple and decomposes into irreducibles ' +
+          '\\(V_n\\) of dimension \\(n+1\\), indexed by the highest weight \\(n \\in \\mathbb{Z}_{\\geq 0}\\). ' +
+          'A basis of \\(V_n\\) is \\(\\{v_0, v_1, \\ldots, v_n\\}\\) with \\(H v_k = (n - 2k)\\,v_k\\), ' +
+          '\\(E v_k = k(n - k + 1)\\,v_{k-1}\\), and \\(F v_k = v_{k+1}\\). The two-dimensional ' +
+          '<strong>fundamental</strong> representation \\(V_1\\) is the one that governs the Jones polynomial.</p>' +
+
+          '<p><strong>Clebsch&ndash;Gordan decomposition.</strong> The tensor product of two irreducibles ' +
+          'decomposes cleanly:</p>' +
+          '<div class="formula-box">' +
+            '$$V_m \\otimes V_n \\;\\cong\\; V_{m+n} \\,\\oplus\\, V_{m+n-2} \\,\\oplus\\, \\cdots \\,\\oplus\\, V_{|m-n|}.$$' +
+          '</div>' +
+          '<p>In particular \\(V_1 \\otimes V_1 \\cong V_2 \\oplus V_0\\) &mdash; a symmetric (triplet) ' +
+          'part plus an antisymmetric (singlet) part. This two-summand decomposition is the algebraic ' +
+          'origin of the <em>Kauffman bracket</em> skein: the two smoothings of a crossing correspond to ' +
+          'the two irreducible summands in \\(V_1^{\\otimes 2}\\).</p>' +
+
+          '<p><strong>Quantum deformation \\(U_q(\\mathfrak{sl}_2)\\).</strong> Replace ' +
+          '\\(H\\) by an invertible grouplike \\(K = q^H\\) and the \\([E,F] = H\\) relation by its ' +
+          '\\(q\\)-analogue:</p>' +
+          '<div class="formula-box">' +
+            '$$K E K^{-1} = q^{2} E, \\qquad K F K^{-1} = q^{-2} F, \\qquad [E, F] = \\frac{K - K^{-1}}{q - q^{-1}}.$$' +
+          '</div>' +
+          '<p>For generic \\(q\\) the representation theory mirrors the classical case: there is one ' +
+          'irreducible \\(V_n^q\\) of each dimension \\(n+1\\), and Clebsch&ndash;Gordan has the same ' +
+          'shape. What is new is that \\(U_q(\\mathfrak{sl}_2)\\) is <em>quasi-triangular</em>: it carries ' +
+          'a universal <strong>R-matrix</strong> \\(\\mathcal{R} \\in U_q(\\mathfrak{sl}_2) \\hat\\otimes U_q(\\mathfrak{sl}_2)\\) ' +
+          'satisfying the quantum Yang&ndash;Baxter equation</p>' +
+          '<div class="formula-box">' +
+            '$$\\mathcal{R}_{12}\\,\\mathcal{R}_{13}\\,\\mathcal{R}_{23} \\;=\\; \\mathcal{R}_{23}\\,\\mathcal{R}_{13}\\,\\mathcal{R}_{12}.$$' +
+          '</div>' +
+          '<p>On the two-dimensional fundamental \\(V_1^q\\), the R-matrix is an explicit ' +
+          '\\(4 \\times 4\\) matrix. Feeding \\(\\mathcal{R}\\) to each crossing of a braid ' +
+          '\\(\\beta \\in B_n\\) produces a representation ' +
+          '\\(\\rho\\colon B_n \\to \\mathrm{End}\\!\\left((V_1^q)^{\\otimes n}\\right)\\); the ' +
+          'Yang&ndash;Baxter equation is precisely Reidemeister III. Taking the <em>quantum trace</em> ' +
+          '(a Markov-invariant categorical trace) of \\(\\rho(\\beta)\\) on the closure ' +
+          '\\(\\widehat\\beta = K\\) and normalizing by the writhe yields</p>' +
+          '<div class="formula-box">' +
+            '$$V_K(q) \\;=\\; \\mathrm{tr}_q\\bigl(\\rho(\\beta)\\bigr) \\;/\\; (\\text{writhe factor}).$$' +
+          '</div>' +
+          '<p>Substituting \\(V_n^q\\) for \\(V_1^q\\) gives the <strong>colored Jones polynomial</strong> ' +
+          '\\(J_n(K; q)\\) &mdash; the same Reshetikhin&ndash;Turaev machine, indexed by the highest ' +
+          'weight. The colored family is dense with information: its asymptotics encode the hyperbolic ' +
+          'volume of \\(S^3 \\setminus K\\) (Kashaev&rsquo;s volume conjecture), and its \\(q \\to 1\\) ' +
+          'limit recovers classical \\(SU(2)\\) Chern&ndash;Simons data.</p>' +
         '</div>';
+
 
       mathRender(el);
 
@@ -1971,6 +2065,144 @@
             '</div>' +
             '<div class="kl-readout" id="pi-quantum-readout"></div>' +
           '</div>' +
+        '</div>' +
+
+        '<div class="expo-panel">' +
+          '<h3>Beyond Jones: TL &sub; Hecke &sub; BMW and the full polynomial zoo</h3>' +
+          '<p>Each of the four roads above factored through an algebra whose braid generator satisfied ' +
+          'a <em>quadratic</em> eigenvalue relation. Widen the relation to a cubic and a whole new ' +
+          'two-variable invariant &mdash; the Kauffman polynomial \\(F\\) &mdash; falls out. The right ' +
+          'organizing picture is the tower</p>' +
+          '<div class="formula-box">$$TL_n(\\delta) \\;\\subset\\; H_n(q) \\;\\subset\\; BMW_n(r, q),$$</div>' +
+          '<p>of <strong>skein algebras</strong> of increasing rank, each with its own Markov trace, ' +
+          'each producing a polynomial invariant as the trace of a braid closure.</p>' +
+
+          '<details class="kl-proof" open>' +
+            '<summary><strong>1. From rank to two-variable skein.</strong> One more eigenvalue = one more variable.</summary>' +
+            '<p>Write the image of the braid generator in each quotient and its eigenvalue spectrum:</p>' +
+            '<ul>' +
+              '<li><strong>Temperley&ndash;Lieb \\(TL_n(\\delta)\\).</strong> Generators \\(e_i\\) (cup-cap idempotents) ' +
+              'satisfy \\(e_i^2 = \\delta\\, e_i\\), \\(e_i e_{i\\pm 1} e_i = e_i\\), \\([e_i, e_j] = 0\\) for ' +
+              '\\(|i-j|\\ge 2\\). After normalization \\(e_i/\\delta\\) is a projector: the algebra has ' +
+              '<em>rank one</em> in the sense that each \\(e_i\\) has a single non-trivial eigenvalue.</li>' +
+              '<li><strong>Hecke algebra \\(H_n(q)\\).</strong> Generators \\(T_i\\) satisfy ' +
+              '\\((T_i - q)(T_i + 1) = 0\\) &mdash; a <em>rank-two</em> quadratic with eigenvalues ' +
+              '\\(\\{q, -1\\}\\). This is the \\(q\\)-deformation of the symmetric-group algebra \\(\\mathbb{C}[S_n]\\).</li>' +
+              '<li><strong><span class="kl-term" title="Birman-Wenzl-Murakami algebra BMW_n(r,q): a rank-3 diagram algebra on n strands with invertible braid generators G_i and tangle idempotents E_i; the Markov trace on BMW produces the Kauffman 2-variable polynomial F.">BMW algebra</span> \\(BMW_n(r, q)\\).</strong> Generators ' +
+              '\\(G_i\\) (invertible braid-type) and \\(E_i\\) (tangle / cup-cap idempotent). The cubic ' +
+              '\\((G_i - r)(G_i + r^{-1})(G_i - q^{-1}) = 0\\) has <em>rank three</em>, eigenvalues ' +
+              '\\(\\{r, -r^{-1}, q^{-1}\\}\\). Each new eigenvalue is a new parameter in the invariant: ' +
+              'rank&nbsp;2 gives the one-variable Jones, rank&nbsp;2 plus a framing gives HOMFLY ' +
+              '(2 variables), rank&nbsp;3 gives the 2-variable <span class="kl-term" title="Kauffman F polynomial F_K(a,z): 2-variable regular-isotopy invariant of unoriented links; specializes to Jones at (a,z) = (−q^{−3}, q+q^{−1}); equals the Markov trace on the BMW algebra.">Kauffman F polynomial</span>.</li>' +
+            '</ul>' +
+            '<p><em>Slogan.</em> One more eigenvalue in the braid generator &larr;&rarr; one more variable ' +
+            'in the polynomial &larr;&rarr; a larger centralizer in a richer quantum group.</p>' +
+          '</details>' +
+
+          '<details class="kl-proof">' +
+            '<summary><strong>2. BMW relations explicitly.</strong> Cubic braid + tangle idempotents.</summary>' +
+            '<p>In the \\((r, q)\\) parametrization (\\(r\\) tracks the framing / <span class="kl-term" title="Regular isotopy: equivalence of link diagrams generated only by Reidemeister II and III moves; R I introduces a framing-dependent factor. Invariants of regular isotopy give framed-link invariants.">regular isotopy</span> ' +
+            'anomaly, \\(q\\) is the Hecke-like deformation parameter), BMW\\(_n(r,q)\\) is generated by ' +
+            'invertible \\(G_1, \\ldots, G_{n-1}\\) and idempotents \\(E_1, \\ldots, E_{n-1}\\) subject to:</p>' +
+            '<div class="formula-box">' +
+              '$$G_i G_{i+1} G_i = G_{i+1} G_i G_{i+1}, \\qquad G_i G_j = G_j G_i \\;\\; (|i-j|\\ge 2),$$' +
+            '</div>' +
+            '<div class="formula-box">' +
+              '$$G_i E_i = E_i G_i = r^{-1} E_i, \\qquad E_i G_{i\\pm 1} E_i = r\\, E_i,$$' +
+            '</div>' +
+            '<div class="formula-box">' +
+              '$$(G_i - r)(G_i + r^{-1})(G_i - q^{-1}) = 0 \\quad\\text{(cubic),}$$' +
+            '</div>' +
+            '<div class="formula-box">' +
+              '$$E_i^2 = x\\, E_i, \\qquad x = 1 + \\frac{r - r^{-1}}{q - q^{-1}}.$$' +
+            '</div>' +
+            '<p>The relation \\(G_i - G_i^{-1} = (q - q^{-1})(1 - E_i)\\) (equivalent to the cubic above when ' +
+            'combined with \\(G_i E_i = r^{-1} E_i\\)) is the form the skein relation takes on the braid ' +
+            'generator. Killing \\(E_i = 0\\) collapses BMW to Hecke; keeping \\(E_i\\) is what generates the ' +
+            'second polynomial variable.</p>' +
+          '</details>' +
+
+          '<details class="kl-proof">' +
+            '<summary><strong>3. Kauffman F as the BMW Markov trace.</strong></summary>' +
+            '<p>Just as the Ocneanu trace on \\(H_n(q)\\) produces HOMFLY and the planar trace on ' +
+            '\\(TL_n(\\delta)\\) produces Jones, the <strong>Markov trace on BMW</strong> produces the ' +
+            'Kauffman \\(F\\) polynomial. Schematically,</p>' +
+            '<div class="formula-box">' +
+              '$$F_K(a, z) \\;=\\; a^{-w(\\hat\\beta)}\\,\\mathrm{tr}_{\\mathrm{BMW}}(\\beta), \\qquad ' +
+              '\\hat\\beta = K,$$' +
+            '</div>' +
+            '<p>with \\((a, z)\\) a change of variables from \\((r, q)\\). BMW thus sits between the unoriented ' +
+            'Kauffman-bracket world (regular isotopy, two variables) and the oriented HOMFLY world. ' +
+            'Specializations:</p>' +
+            '<ul>' +
+              '<li><strong>BMW &rarr; Hecke</strong> when the tangle idempotents \\(E_i\\) act trivially ' +
+              '(\\(E_i = 0\\)); the trace becomes Ocneanu, the polynomial becomes HOMFLY.</li>' +
+              '<li><strong>HOMFLY &rarr; Jones</strong> at \\((a, z) = (q^2,\\; q - q^{-1})\\).</li>' +
+              '<li><strong>Kauffman \\(F\\) &rarr; Jones</strong> at \\((a, z) = (-q^{-3},\\; q + q^{-1})\\).</li>' +
+              '<li><strong>Full 2-variable Kauffman bracket</strong> (unoriented, regular-isotopy) is the ' +
+              'BMW Markov trace before the writhe correction.</li>' +
+            '</ul>' +
+          '</details>' +
+
+          '<details class="kl-proof">' +
+            '<summary><strong>4. Birman&ndash;Wenzl&ndash;Murakami: the historical route.</strong></summary>' +
+            '<p>Birman&ndash;Wenzl (1989) and J.&nbsp;Murakami (1987) independently constructed the algebra; ' +
+            '&ldquo;BMW&rdquo; credits all three. The motivating question was: what is the deformation of ' +
+            'the <span class="kl-term" title="Brauer algebra Br_n(δ): the diagram algebra on n strands spanned by (n,n)-tangles without crossings (only cups and caps), with a scalar δ assigned to each closed loop. Classical (Brauer 1937) centralizer of the orthogonal group O(N) on V⊗n.">Brauer algebra</span> Br\\(_n(\\delta)\\) &mdash; the diagram algebra of ' +
+            '(un)oriented tangles with cups and caps, closing loops to \\(\\delta\\) &mdash; that produces an ' +
+            'invertible braid generator and a two-variable invariant? BMW is the answer. Setting ' +
+            '\\(q \\to 1\\) recovers Brauer; setting \\(E_i = 0\\) recovers Hecke; both are non-trivial degenerations.</p>' +
+          '</details>' +
+
+          '<details class="kl-proof">' +
+            '<summary><strong>5. Categorical home: Schur&ndash;Weyl for the BCD series.</strong></summary>' +
+            '<p>Reshetikhin&ndash;Turaev: Hecke \\(H_n(q)\\) is the centralizer of \\(U_q(\\mathfrak{sl}_N)\\) ' +
+            'acting on \\(V^{\\otimes n}\\) for \\(V\\) the fundamental (defining) representation &mdash; this ' +
+            'is the \\(q\\)-deformation of classical Schur&ndash;Weyl duality. The analogous statement for ' +
+            'BMW (Wenzl 1990): BMW\\(_n(r, q)\\) is the centralizer of the ' +
+            '<span class="kl-term" title="Orthogonal quantum group U_q(so_N): the q-deformation of U(𝔰𝔬_N). Its fundamental representation on V = ℂ^N admits a BMW centralizer action on V⊗n.">orthogonal quantum group</span> ' +
+            '\\(U_q(\\mathfrak{so}_N)\\) and of the ' +
+            '<span class="kl-term" title="Symplectic quantum group U_q(sp_{2n}): the q-deformation of U(𝔰𝔭_{2n}). Its defining representation V = ℂ^{2n} carries a BMW centralizer action on V⊗n.">symplectic quantum group</span> ' +
+            '\\(U_q(\\mathfrak{sp}_{2m})\\) on \\(V^{\\otimes n}\\) for their defining representations. ' +
+            'This is why Kauffman \\(F\\) generalizes HOMFLY across the <em>BCD</em> quantum-group series ' +
+            '(types \\(B_r, C_r, D_r\\)) whereas HOMFLY is type-\\(A\\) only.</p>' +
+          '</details>' +
+
+          '<details class="kl-proof">' +
+            '<summary><strong>6. Categorification: what is known and what is open.</strong></summary>' +
+            '<p>HOMFLY is categorified by triply-graded Khovanov&ndash;Rozansky homology \\(\\mathrm{HHH}(K)\\) ' +
+            '(Khovanov 2007 via <span class="kl-term" title="Soergel bimodules: a monoidal category of graded bimodules over a polynomial ring, categorifying the Hecke algebra; the Rouquier complex of a braid lives in its homotopy category, and its Hochschild homology recovers triply-graded HOMFLY homology HHH.">Soergel bimodules</span>, Khovanov&ndash;Rozansky 2008). ' +
+            'Specialization differentials \\(d_N : \\mathrm{HHH} \\to \\mathrm{KR}_N\\) produce the ' +
+            '\\(\\mathfrak{sl}(N)\\) homologies; see the KR sub-tab.</p>' +
+            '<p>By contrast, <strong>categorification of Kauffman \\(F\\) is open in general.</strong> Partial ' +
+            'progress exists: Ehrig&ndash;Stroppel (type-\\(D\\) webs and foams), Queffelec and ' +
+            'Queffelec&ndash;Rose (annular and \\(\\mathfrak{sl}(N)\\) foam categorifications), and ' +
+            'Sartori&ndash;Tubbenhauer (diagrammatic type-\\(B\\) and type-\\(D\\) Soergel bimodules) build ' +
+            'categorical BMW-type structures; a clean &ldquo;HHH-for-Kauffman&rdquo; on all links is ' +
+            'conjectural. Philosophically, the type-\\(B\\)/\\(D\\) Soergel machinery should play the role ' +
+            'that type-\\(A\\) Soergel bimodules play for HOMFLY.</p>' +
+          '</details>' +
+
+          '<h4 style="margin-top:18px">Summary: the skein-algebra zoo</h4>' +
+          '<div class="formula-box" style="font-size:0.95em;overflow-x:auto">' +
+            '<table style="border-collapse:collapse;margin:0 auto;">' +
+              '<thead><tr style="border-bottom:1.5px solid #1f3a5f">' +
+                '<th style="padding:6px 12px;text-align:left">Algebra</th>' +
+                '<th style="padding:6px 12px;text-align:left">Eigenvalues of braid gen.</th>' +
+                '<th style="padding:6px 12px;text-align:left">Markov trace &rarr; polynomial</th>' +
+                '<th style="padding:6px 12px;text-align:left">Categorification</th>' +
+              '</tr></thead>' +
+              '<tbody>' +
+                '<tr><td style="padding:4px 12px">\\(TL_n(\\delta)\\)</td><td style="padding:4px 12px">\\(\\{\\delta\\}\\) (rank 1)</td><td style="padding:4px 12px">bracket &rarr; Jones \\(V_K(q)\\)</td><td style="padding:4px 12px">Khovanov homology</td></tr>' +
+                '<tr><td style="padding:4px 12px">\\(H_n(q)\\)</td><td style="padding:4px 12px">\\(\\{q,\\,-1\\}\\) (rank 2)</td><td style="padding:4px 12px">Ocneanu &rarr; HOMFLY \\(P_K(a,z)\\)</td><td style="padding:4px 12px">triply-graded HHH</td></tr>' +
+                '<tr><td style="padding:4px 12px">\\(BMW_n(r,q)\\)</td><td style="padding:4px 12px">\\(\\{r,\\,-r^{-1},\\,q^{-1}\\}\\) (rank 3)</td><td style="padding:4px 12px">Kauffman &rarr; \\(F_K(a,z)\\)</td><td style="padding:4px 12px">open (partial)</td></tr>' +
+                '<tr><td style="padding:4px 12px">Brauer\\(_n(\\delta)\\)</td><td style="padding:4px 12px">\\(q \\to 1\\) limit of BMW</td><td style="padding:4px 12px">classical Brauer / orthogonal</td><td style="padding:4px 12px">open</td></tr>' +
+              '</tbody>' +
+            '</table>' +
+          '</div>' +
+          '<p style="margin-top:10px">Cross-ref: see the <em>Others</em> sub-tab for the explicit skein ' +
+          'relations of the Kauffman \\(F\\) polynomial, and the KR sub-tab of Homological Invariants for ' +
+          'the categorification story on the HOMFLY / sl(N) side.</p>' +
         '</div>';
 
       mathRender(el);
