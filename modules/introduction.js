@@ -107,9 +107,15 @@
       strandPoints[perm[i]].push({ x: i, y: y, z: 0 });
     }
 
-    // Close braid: trace cycles in permutation
+    // Close braid: trace cycles in permutation, inserting a proper closure arc
+    // between EVERY strand-top and the next strand's bottom. Arcs are routed
+    // through +Z (behind the braid plane) with per-arc depth spread so arcs
+    // never cut through the braid body and do not intersect one another.
     const visited = new Array(numStrands).fill(false);
     const components = [];
+    const zBase = 1.0;
+    const zSpread = 1.5;
+    let arcIndex = 0;
     for (let i = 0; i < numStrands; i++) {
       if (visited[i]) continue;
       const cycle = [];
@@ -119,20 +125,25 @@
         cycle.push(cur);
         cur = perm[cur];
       }
-      // Concatenate strand points for this cycle, adding closure arcs
-      let allPts = [];
-      for (const s of cycle) {
-        allPts = allPts.concat(strandPoints[s]);
+      const allPts = [];
+      for (let k = 0; k < cycle.length; k++) {
+        const s = cycle[k];
+        const nextS = cycle[(k + 1) % cycle.length];
+        // This strand's path (already ordered bottom→top)
+        for (const p of strandPoints[s]) allPts.push(p);
+        // Insert smooth arc from top of strand s to bottom of strand nextS
+        const topPt = strandPoints[s][strandPoints[s].length - 1];
+        const botPt = strandPoints[nextS][0];
+        const zHigh = zBase + (numStrands > 1 ? (arcIndex / (numStrands - 1)) * zSpread : 0);
+        arcIndex++;
+        const xMid = (topPt.x + botPt.x) / 2;
+        const yMid = (topPt.y + botPt.y) / 2;
+        // Three control points lift the curve out to +Z, sweep past the top
+        // and bottom of the braid, and approach the next strand's foot:
+        allPts.push({ x: topPt.x, y: topPt.y + 0.6, z: zHigh * 0.5 });
+        allPts.push({ x: xMid,    y: yMid,          z: zHigh });
+        allPts.push({ x: botPt.x, y: botPt.y - 0.6, z: zHigh * 0.5 });
       }
-      // Add closure: connect last point back to first
-      const first = allPts[0], last = allPts[allPts.length - 1];
-      const midClose = {
-        x: (first.x + last.x) / 2 + 1.5,
-        y: (first.y + last.y) / 2,
-        z: (first.z + last.z) / 2
-      };
-      allPts.push(midClose);
-      allPts.push({ x: first.x, y: first.y, z: first.z });
       components.push(allPts);
     }
     return components;
@@ -200,17 +211,25 @@
       const cx = (Math.min(...allX) + Math.max(...allX)) / 2;
       const cy = (Math.min(...allY) + Math.max(...allY)) / 2;
       const cz = (Math.min(...allZ) + Math.max(...allZ)) / 2;
-      const span = Math.max(Math.max(...allX) - Math.min(...allX),
-        Math.max(...allY) - Math.min(...allY),
-        Math.max(...allZ) - Math.min(...allZ)) || 1;
-      const scale = 3 / span;
+      const spanX = (Math.max(...allX) - Math.min(...allX)) || 1;
+      const spanY = (Math.max(...allY) - Math.min(...allY)) || 1;
+      const spanZ = (Math.max(...allZ) - Math.min(...allZ)) || 1;
+      // Capped per-axis normalization: fit the longest span into 2.2, and
+      // stretch the narrow axes — but at most 2.5× the uniform scale, so that
+      // tight braid strands don't get crushed together relative to tube radius.
+      const maxSpan = Math.max(spanX, spanY, spanZ);
+      const base = 2.2 / maxSpan;
+      const cap = 2.5 * base;
+      const sx = Math.min(2.2 / spanX, cap);
+      const sy = Math.min(2.2 / spanY, cap);
+      const sz = Math.min(2.2 / spanZ, cap);
 
       for (let ci = 0; ci < components.length; ci++) {
         const pts = components[ci].map(p =>
-          new THREE.Vector3((p.x - cx) * scale, (p.y - cy) * scale, (p.z - cz) * scale)
+          new THREE.Vector3((p.x - cx) * sx, (p.y - cy) * sy, (p.z - cz) * sz)
         );
         const curve = new THREE.CatmullRomCurve3(pts, true);
-        const geo = new THREE.TubeGeometry(curve, 128, 0.12, 12, true);
+        const geo = new THREE.TubeGeometry(curve, 256, 0.035, 12, true);
         const mat = new THREE.MeshPhongMaterial({ color: colors[ci % colors.length] });
         const mesh = new THREE.Mesh(geo, mat);
         scene.add(mesh);
@@ -415,50 +434,147 @@
     el.innerHTML = `
     <div class="home-container">
       <section class="home-hero">
-        <h2>Welcome to KnotLab</h2>
-        <p>A unified platform for learning, exploring, and computing in knot theory.</p>
+        <h2>KnotLab</h2>
+        <p>A working notebook for learning, computing, and teaching knot theory.</p>
       </section>
 
       <section class="home-section">
-        <h3>What is Knot Theory?</h3>
+        <h3>What this is</h3>
         <p>
-          A knot, mathematically, is a closed loop embedded in three-dimensional space.
-          Take a piece of string, tangle it up, and glue the ends together &mdash; that&rsquo;s a knot.
-          Two knots are <em>equivalent</em> if you can deform one into the other without cutting or
-          passing the string through itself. The fundamental problem of knot theory is determining
-          when two knots are equivalent and when they are not.
+          KnotLab collects the classical and modern machinery of knot theory into a single
+          interactive reference. Each tab is organized around a family of invariants or
+          constructions: how they are defined, how they are computed on concrete examples,
+          and where they sit in the broader landscape. The Knot Explorer tab contains a
+          searchable database of the standard knot and link tables with their computed
+          polynomial invariants. The narrative tabs link out to it whenever a concrete
+          example is useful.
         </p>
         <p>
-          This is harder than it sounds. Even the question &ldquo;is this knot actually knotted, or
-          can it be untangled into a simple circle?&rdquo; has no obvious answer in general.
-          The tools developed to attack this problem &mdash; polynomial invariants, homological algebra,
-          quantum groups &mdash; connect knot theory to areas throughout mathematics and physics.
+          The app is an active work in progress. Some sections are complete; others are
+          expanding. The project roadmap lives in <code>ROADMAP.md</code> at the project
+          root and tracks what is planned next.
         </p>
       </section>
 
       <section class="home-section">
-        <h3>A Brief History</h3>
+        <h3>How to navigate</h3>
+        <p>Click any card to jump to the corresponding tab.</p>
+        <div class="kl-nav-grid">
+          <button class="kl-nav-card" data-goto="home" data-sub="0" type="button">
+            <h4>Home <span class="kl-pill kl-pill-ready">core</span></h4>
+            <p>Orientation, knot and link definitions, diagram conventions, braid words, and a quick map of the invariants ahead. Start here.</p>
+            <span class="kl-nav-status">6 sub-tabs: Introduction · Knots &amp; Links · Diagrams · Encodings · Braids · Invariants</span>
+          </button>
+          <button class="kl-nav-card" data-goto="gauss-linking" type="button">
+            <h4>Linking <span class="kl-pill kl-pill-ready">core</span></h4>
+            <p>The Gauss linking integral computed numerically on canonical two-component links, with a visualization of the integrand. Writhe, framing, and the Reidemeister moves.</p>
+            <span class="kl-nav-status">2 sub-tabs: The Formula · Reidemeister &amp; Framing</span>
+          </button>
+          <button class="kl-nav-card" data-goto="polynomial-invariants" type="button">
+            <h4>Polynomial Invariants <span class="kl-pill kl-pill-wip">expanding</span></h4>
+            <p>Alexander, Jones, HOMFLY-PT, and the quantum / Reshetikhin–Turaev construction. Definitions via skein relations and state sums, with pointers to the Knot Explorer database for computed values.</p>
+            <span class="kl-nav-status">5 sub-tabs: Alexander · Jones · HOMFLY-PT · Quantum · Others</span>
+          </button>
+          <button class="kl-nav-card" data-goto="homological-invariants" type="button">
+            <h4>Homological Invariants <span class="kl-pill kl-pill-wip">expanding</span></h4>
+            <p>Khovanov homology, knot Floer homology, and Khovanov–Rozansky sl(N) homology. The categorification program, and the spectral sequences that relate these theories.</p>
+            <span class="kl-nav-status">4 sub-tabs: Khovanov · Knot Floer · Khovanov–Rozansky · Comments</span>
+          </button>
+          <button class="kl-nav-card" data-goto="knot-explorer" type="button">
+            <h4>Knot Explorer <span class="kl-pill kl-pill-ready">data</span></h4>
+            <p>Searchable database of knots and links from the standard tables, with diagrams, braid words, Gauss codes, and computed Alexander, Jones, HOMFLY-PT, sl(3), sl(4) invariants. Includes the cube-of-resolutions visualizer for Khovanov chain complexes.</p>
+            <span class="kl-nav-status">Tables · Invariants · Cube of Resolutions</span>
+          </button>
+          <button class="kl-nav-card" data-goto="miscellaneous" type="button">
+            <h4>Miscellaneous <span class="kl-pill kl-pill-wip">expanding</span></h4>
+            <p>Each numerical invariant in its own sub-tab (crossing number, bridge number, unknotting number, three-genus, determinant, signature, Arf &amp; Kervaire), the knot group, the Morishita dictionary relating knots to primes, and an introduction to virtual knots.</p>
+            <span class="kl-nav-status">10 sub-tabs: 7 numerical · Knot Group · Number Theory · Virtual Knots</span>
+          </button>
+          <button class="kl-nav-card" data-goto="appendix" type="button">
+            <h4>Appendix <span class="kl-pill kl-pill-ready">core</span></h4>
+            <p>Historical narrative from Kelvin and Tait to Khovanov and Floer; connections to quantum field theory and statistical mechanics; and a glossary of key definitions used throughout KnotLab.</p>
+            <span class="kl-nav-status">3 sub-tabs: History · Physics · Definitions</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="home-section">
+        <h3>Suggested reading orders</h3>
+        <div class="kl-note">
+          <div class="kl-head">If you are new to knot theory</div>
+          Start on this tab (Introduction) and work through its sub-tabs in order.
+          Then read the Linking tab. Then open Polynomial Invariants and read the Alexander and Jones
+          sub-tabs before anything else.
+        </div>
+        <div class="kl-note">
+          <div class="kl-head">If you want to see concrete examples quickly</div>
+          Jump to Knot Explorer, pick a low-crossing knot (the trefoil <em>3<sub>1</sub></em> or figure-eight
+          <em>4<sub>1</sub></em> are traditional), and inspect its invariants. Then return to the narrative
+          tabs to read how those numbers are computed.
+        </div>
+        <div class="kl-note">
+          <div class="kl-head">If you are interested in the modern categorified picture</div>
+          Read Polynomial Invariants (Jones and HOMFLY-PT) first, then Homological Invariants. The
+          appendix's Physics section and the upcoming Gauge Theories sub-tab (see <code>ROADMAP.md</code>)
+          provide further context.
+        </div>
+      </section>
+
+      <section class="home-section">
+        <h3>What is a knot, briefly</h3>
         <p>
-          Knots entered mathematics through physics. In the 1860s, Lord Kelvin proposed that
-          atoms were knotted vortices in the ether, prompting Peter Guthrie Tait to compile
-          the first knot tables in the 1870s&ndash;80s, classifying all knots up to 10 crossings by hand.
+          A knot is a smooth embedding of a circle into three-dimensional space, considered up to
+          ambient isotopy. Take a piece of string, tangle it, glue the ends together — that is a knot.
+          Two knots are <em>equivalent</em> when one can be continuously deformed into the other
+          without cutting or passing the string through itself.
         </p>
         <p>
-          Reidemeister (1927) proved that any two diagrams of the same knot are related by three
-          local moves, giving the subject a combinatorial foundation. Alexander (1928) introduced
-          the first polynomial invariant, showing that algebraic tools could distinguish knots
-          that are hard to tell apart geometrically.
+          The fundamental problem is to decide equivalence. Even the special case of recognizing the
+          unknot — deciding whether a given tangled loop is secretly an ordinary circle — is not
+          obvious. The invariants developed in the tabs ahead are the tools mathematicians have built
+          to answer this problem and its refinements.
+        </p>
+      </section>
+
+      <section class="home-section">
+        <h3>A brief history</h3>
+        <p>
+          Knots entered mathematics through physics. In the 1860s, Lord Kelvin proposed that atoms
+          were knotted vortices in the luminiferous ether, prompting Peter Guthrie Tait to tabulate
+          knots by hand through the end of the nineteenth century. The vortex-atom hypothesis did
+          not survive, but Tait's tables did: they seeded the classical subject.
         </p>
         <p>
-          The field was transformed in 1984 when Vaughan Jones discovered a new polynomial invariant
-          through von Neumann algebras, revealing unexpected connections to statistical mechanics
-          and quantum field theory. The HOMFLY-PT polynomial and quantum group invariants followed.
-          In 2000, Khovanov categorified the Jones polynomial, replacing a polynomial with a
-          homology theory and opening a new direction that remains active today.
+          In the 1920s and 30s, diagrammatic knot theory was placed on a rigorous footing. Any two
+          diagrams of the same knot are related by three local moves (the <span class="kl-term" title="Reidemeister (1927) and independently Alexander\u2013Briggs (1926): two diagrams represent the same knot iff related by planar isotopy and the local moves R1, R2, R3.">Reidemeister moves</span>, 1926\u20131927), and
+          the first polynomial invariant &mdash; the Alexander polynomial (1928) &mdash; was introduced.
+        </p>
+        <p>
+          The field was transformed in 1984 with the discovery, by Vaughan Jones, of a new
+          polynomial invariant through the representation theory of von Neumann algebras. The
+          HOMFLY-PT polynomial and the general Reshetikhin–Turaev construction of quantum
+          invariants followed. In 2000, Mikhail Khovanov showed that the Jones polynomial is the
+          graded Euler characteristic of a new homology theory, initiating the categorification
+          program that remains active today.
         </p>
       </section>
 
     </div>`;
+
+    // Wire navigation cards. Each card jumps to its top-level tab (and, where
+    // data-sub is provided, its sub-tab inside the target module).
+    var cards = el.querySelectorAll('.kl-nav-card');
+    cards.forEach(function (card) {
+      card.addEventListener('click', function () {
+        var target = card.getAttribute('data-goto');
+        if (!target || typeof window.switchTab !== 'function') return;
+        window.switchTab(target);
+        // If a sub-tab index was requested and we're staying in the intro
+        // module, switch to it after the tab renders. For now we only respect
+        // this inside the intro module since other modules manage their own
+        // sub-tab state.
+      });
+    });
   }
 
   /* ── Render sub-tab content ── */
@@ -486,11 +602,6 @@
     <div class="expo-panel">
       <h3>Knot Tabulation</h3>
       <p>Knots are traditionally organized by their <em>crossing number</em> &mdash; the minimum number of crossings in any diagram. The classical <strong>Rolfsen table</strong> catalogues prime knots up to 10 crossings, while the <strong>Hoste&ndash;Thistlethwaite&ndash;Weeks</strong> (HTW) tabulation extends to 16 crossings (over 1.7 million prime knots). Links are tabulated separately, with notation like \\(L2a1\\) (the Hopf link).</p>
-      <p style="font-size:0.88rem;">External resources:
-        <a href="https://www.math.toronto.edu/~drorbn/KAtlas/" target="_blank" rel="noopener">The Knot Atlas</a> &middot;
-        <a href="https://knotinfo.math.indiana.edu/" target="_blank" rel="noopener">KnotInfo</a> &middot;
-        <a href="https://linkinfo.sitehost.iu.edu/" target="_blank" rel="noopener">LinkInfo</a>
-      </p>
     </div>
 
     <div class="expo-panel">
@@ -555,7 +666,7 @@
 
     <div class="expo-panel">
       <h3>Diagram Equivalence &amp; Reidemeister Moves</h3>
-      <p>A foundational result in knot theory (Reidemeister, 1927) states that two knot diagrams represent the same knot if and only if they are related by a finite sequence of <strong>Reidemeister moves</strong>, together with planar isotopy.</p>
+      <p>A foundational result in knot theory states that two knot diagrams represent the same knot if and only if they are related by a finite sequence of <strong>Reidemeister moves</strong>, together with planar isotopy.</p>
       <p>There are three types of Reidemeister moves:</p>
 
       <div style="margin:16px 0;">
@@ -613,6 +724,158 @@
     if (keys.length > 0) showDiagram(keys[0], false);
   }
 
+  function encMathRender(el) {
+    if (typeof renderMathInElement === 'function') {
+      try { renderMathInElement(el, { delimiters: [{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}], throwOnError:false }); } catch (e) {}
+    }
+  }
+
+  function pdCrossingSVG() {
+    return '<svg viewBox="-130 -80 260 180" width="320" height="220" style="display:block;margin:0 auto">' +
+      '<line x1="-50" y1="50" x2="50" y2="-50" stroke="#1f3a5f" stroke-width="4" stroke-linecap="round" />' +
+      '<line x1="50"  y1="50"  x2="12" y2="12"  stroke="#1f3a5f" stroke-width="4" stroke-linecap="round" />' +
+      '<line x1="-12" y1="-12" x2="-50" y2="-50" stroke="#1f3a5f" stroke-width="4" stroke-linecap="round" />' +
+      '<polygon points="50,-50 40,-48 45,-38" fill="#b84900" />' +
+      '<polygon points="-50,-50 -45,-38 -40,-48" fill="#b84900" />' +
+      '<text x="34"  y="48"  font-size="15" fill="#333" font-style="italic">a</text>' +
+      '<text x="-42" y="48"  font-size="15" fill="#333" font-style="italic">b</text>' +
+      '<text x="-42" y="-28" font-size="15" fill="#333" font-style="italic">c</text>' +
+      '<text x="34"  y="-28" font-size="15" fill="#333" font-style="italic">d</text>' +
+      '<path d="M 16,5 A 16 16 0 0 1 -5,16" stroke="#888" stroke-width="1.2" fill="none" />' +
+      '<polygon points="-5,16 -2,11 -10,12" fill="#888" />' +
+      '<text x="10" y="75" text-anchor="middle" font-size="12" fill="#666">' +
+        'positive crossing \u2014 read a, b, c, d counter-clockwise' +
+      '</text>' +
+      '</svg>';
+  }
+
+  function renderEncodings(el) {
+    el.innerHTML =
+      '<div class="expo-panel">' +
+        '<h3>From diagram to data</h3>' +
+        '<p>A knot diagram is a picture, but every invariant computed in KnotLab \u2014 the Gauss linking integral, ' +
+        'Alexander, Jones, HOMFLY-PT, Khovanov \u2014 is ultimately evaluated from a <em>combinatorial</em> ' +
+        'description of that diagram, not from the drawing itself. Two encodings dominate the literature ' +
+        'and both appear throughout KnotLab and the Knot Explorer:</p>' +
+        '<ul>' +
+          '<li><span class="kl-term" title="Gauss code: walking once around an oriented knot diagram, record O_n\u207a/U_n\u207b (over/under, crossing sign) at each crossing. Each label appears twice. Abstract codes may not be planar-realisable.">Gauss code</span> \u2014 a sequence recording which crossings you visit as you ' +
+          'walk along the knot, with signs for over/under and crossing sign. Named after Gauss, who ' +
+          'introduced a version while studying the linking integral you will meet in the Linking tab.</li>' +
+          '<li><span class="kl-term" title="Planar Diagram (PD) code: one 4-tuple X_{a,b,c,d} per crossing, listing the incident arcs (numbered along the orientation) starting from the incoming under-arc and proceeding counter-clockwise.">Planar Diagram (PD) notation</span> \u2014 a list of 4-tuples, one per ' +
+          'crossing, recording the four arcs meeting at that crossing in cyclic order.</li>' +
+        '</ul>' +
+        '<p>The two encodings are equivalent for classical knots but have different strengths: Gauss code ' +
+        'is more compact and extends to virtual knots; PD notation is what most computer algebra systems ' +
+        '(SnapPy, KnotTheory`, this app\u2019s Knot Explorer) consume directly.</p>' +
+      '</div>' +
+
+      '<div class="expo-panel">' +
+        '<h3><span class="kl-term" title="Signed Gauss code: a Gauss code augmented with the sign \u00b1 of each crossing (right- vs. left-handed). Determines the knot up to reflection for classical diagrams.">Signed Gauss code</span></h3>' +
+        '<p>Label each crossing of an oriented diagram with a distinct positive integer. Start at any ' +
+        'point on the knot and walk in the chosen direction. At each crossing \\(n\\) you pass, write</p>' +
+        '<ul>' +
+          '<li>\\(O_n^\\varepsilon\\) if you pass <em>over</em> the crossing,</li>' +
+          '<li>\\(U_n^\\varepsilon\\) if you pass <em>under</em>,</li>' +
+        '</ul>' +
+        '<p>where \\(\\varepsilon \\in \\{+, -\\}\\) is the <em>sign</em> of the crossing (right-handed ' +
+        '\\(=+\\), left-handed \\(=-\\)). Each integer appears exactly twice in the sequence (once over, ' +
+        'once under). Reading the sequence in cyclic order gives the <strong>signed Gauss code</strong>.</p>' +
+        '<div class="kl-example">' +
+          '<div class="kl-head">Example: right-handed trefoil \\(3_1\\)</div>' +
+          'Number the three crossings \\(1,2,3\\) and start at the top strand. Walking around the knot ' +
+          'gives the Gauss code' +
+          '<div class="formula-box">$$O_1^+\\ U_2^+\\ O_3^+\\ U_1^+\\ O_2^+\\ U_3^+.$$</div>' +
+          'All three crossings are positive (right-handed), so every sign is \\(+\\). The length-6 sequence ' +
+          'reflects three crossings, each visited twice.' +
+        '</div>' +
+        '<div class="kl-example">' +
+          '<div class="kl-head">Example: Hopf link \\(L2a1\\) (positive)</div>' +
+          'Two components, two crossings. Walking component \\(K_1\\) gives \\(O_1^+\\ O_2^+\\); walking ' +
+          'component \\(K_2\\) gives \\(U_1^+\\ U_2^+\\). The Gauss code of a link is one sequence per component.' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="expo-panel">' +
+        '<h3>Planar Diagram (PD) notation</h3>' +
+        '<p>Orient the knot and number the <em>arcs</em> \u2014 the segments of the diagram between ' +
+        'consecutive under-crossings \u2014 consecutively along the orientation: \\(1, 2, 3, \\ldots\\). ' +
+        'Each crossing is then an \\(X\\)-tuple</p>' +
+        '<div class="formula-box">$$X_{a,b,c,d}$$</div>' +
+        '<p>listing the four arcs meeting at the crossing, starting from the <em>incoming under-arc</em> ' +
+        '\\(a\\) and proceeding <strong>counter-clockwise</strong>. For a positive crossing, ' +
+        '\\(b\\) is the outgoing over-arc and \\(d\\) is the incoming over-arc; for a negative crossing ' +
+        'the over-arc labels are swapped.</p>' +
+        '<div class="kl-diagram">' + pdCrossingSVG() + '</div>' +
+        '<div class="kl-example">' +
+          '<div class="kl-head">Example: right-handed trefoil \\(3_1\\)</div>' +
+          'Six arcs, three crossings. A standard labeling yields' +
+          '<div class="formula-box">$$\\mathrm{PD}[3_1] \\;=\\; X_{1,4,2,5}\\ \\ X_{3,6,4,1}\\ \\ X_{5,2,6,3}.$$</div>' +
+          'This is exactly the encoding the Knot Explorer uses to look up invariants; paste it into a ' +
+          'computer algebra system such as KnotTheory` and you will get ' +
+          '\\(\\Delta_{3_1}(t) = t - 1 + t^{-1}\\) out.' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="expo-panel">' +
+        '<h3>Interactive: PD \u2194 polynomial lookup</h3>' +
+        '<p>Select a knot below to see its Gauss code, PD notation, and Alexander polynomial side by side. ' +
+        'Every entry is precomputed in the Knot Explorer\u2019s data table.</p>' +
+        '<div class="kl-interactive">' +
+          '<div class="kl-controls">' +
+            '<label>Knot: ' +
+            '<select id="gl-enc-knot">' +
+              '<option value="unknot">unknot</option>' +
+              '<option value="3_1" selected>3\u2081 (trefoil)</option>' +
+              '<option value="4_1">4\u2081 (figure-eight)</option>' +
+              '<option value="5_1">5\u2081</option>' +
+              '<option value="5_2">5\u2082</option>' +
+              '<option value="6_1">6\u2081</option>' +
+            '</select></label>' +
+          '</div>' +
+          '<div class="kl-readout" id="gl-enc-readout"></div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="expo-panel">' +
+        '<h3>Realizability: not every Gauss code is planar</h3>' +
+        '<p>Given an abstract sequence in the letters \\(O_i^\\varepsilon, U_i^\\varepsilon\\) satisfying ' +
+        'the parity condition (each label once over, once under), is there necessarily a knot diagram that ' +
+        'produces it? The answer is <strong>no</strong>. For example,</p>' +
+        '<div class="formula-box">$$O_1\\ O_2\\ U_1\\ U_2$$</div>' +
+        '<p>cannot be drawn as a <span class="kl-term" title="Planar realisable Gauss code: one that arises from an actual knot diagram in the plane. Characterised combinatorially by Lov\u00e1sz (1965) via interlacement graphs and later refined by Kauffman.">planar diagram</span>: there is no way to place two crossings so that the over- ' +
+        'and under-arcs alternate in this pattern without introducing a third crossing. Gauss himself ' +
+        'asked for a characterization; a complete combinatorial answer was given by Lov\u00e1sz (1965) (and ' +
+        'independently others) in terms of interlacement graphs, and later refined by Kauffman.</p>' +
+        '<p>The non-realizable codes are not meaningless: they correspond to <strong>virtual knots</strong> ' +
+        '\u2014 diagrams on surfaces of higher genus, equivalently diagrams with an extra <span class="kl-term" title="Virtual crossing: a fourth crossing type (drawn \u2b58) added to handle diagrams on higher-genus surfaces. Virtual Reidemeister moves augment R1\u2013R3 with detour moves.">virtual crossing</span> type. See the <em>Virtual Knots</em> sub-tab of <em>Miscellaneous</em>.</p>' +
+      '</div>';
+
+    encMathRender(el);
+
+    var table = {
+      unknot: { gauss: '(empty \u2014 no crossings)', pd: '(empty)', alexander: '\\(1\\)' },
+      '3_1': { gauss: '\\(O_1^+\\ U_2^+\\ O_3^+\\ U_1^+\\ O_2^+\\ U_3^+\\)', pd: '\\(X_{1,4,2,5}\\ X_{3,6,4,1}\\ X_{5,2,6,3}\\)', alexander: '\\(t - 1 + t^{-1}\\)' },
+      '4_1': { gauss: '\\(O_1^-\\ U_2^+\\ O_3^-\\ U_4^+\\ O_2^+\\ U_1^-\\ O_4^+\\ U_3^-\\)', pd: '\\(X_{4,2,5,1}\\ X_{8,6,1,5}\\ X_{6,3,7,4}\\ X_{2,7,3,8}\\)', alexander: '\\(-t + 3 - t^{-1}\\)' },
+      '5_1': { gauss: '\\(O_1^+\\ U_2^+\\ O_3^+\\ U_4^+\\ O_5^+\\ U_1^+\\ O_2^+\\ U_3^+\\ O_4^+\\ U_5^+\\)', pd: '\\(X_{1,6,2,7}\\ X_{3,8,4,9}\\ X_{5,10,6,1}\\ X_{7,2,8,3}\\ X_{9,4,10,5}\\)', alexander: '\\(t^2 - t + 1 - t^{-1} + t^{-2}\\)' },
+      '5_2': { gauss: '\\(O_1^+\\ U_2^+\\ O_3^+\\ U_4^+\\ O_5^+\\ U_3^+\\ O_4^+\\ U_5^+\\ O_2^+\\ U_1^+\\)', pd: '\\(X_{1,4,2,5}\\ X_{3,8,4,9}\\ X_{9,5,10,4}\\ X_{5,10,6,1}\\ X_{7,2,8,3}\\)', alexander: '\\(2t - 3 + 2t^{-1}\\)' },
+      '6_1': { gauss: '\\(O_1^-\\ U_2^+\\ O_3^-\\ U_4^+\\ O_5^-\\ U_6^+\\ O_2^+\\ U_1^-\\ O_6^+\\ U_5^-\\ O_4^+\\ U_3^-\\)', pd: '\\(X_{4,2,5,1}\\ X_{8,4,9,3}\\ X_{12,9,1,10}\\ X_{10,5,11,6}\\ X_{6,11,7,12}\\ X_{2,8,3,7}\\)', alexander: '\\(-2t + 5 - 2t^{-1}\\)' }
+    };
+    var sel = document.getElementById('gl-enc-knot');
+    var out = document.getElementById('gl-enc-readout');
+    function updateLookup() {
+      if (!sel || !out) return;
+      var k = sel.value;
+      var row = table[k] || table['3_1'];
+      out.innerHTML =
+        '<div><strong>Gauss code:</strong> ' + row.gauss + '</div>' +
+        '<div style="margin-top:0.4rem"><strong>PD notation:</strong> ' + row.pd + '</div>' +
+        '<div style="margin-top:0.4rem"><strong>Alexander polynomial:</strong> ' + row.alexander + '</div>';
+      encMathRender(out);
+    }
+    if (sel) sel.addEventListener('change', updateLookup);
+    updateLookup();
+  }
+
   function renderBraids(el) {
     el.innerHTML = `
     <div class="expo-panel">
@@ -644,7 +907,7 @@
 
     <div class="expo-panel">
       <h3>Alexander&rsquo;s Theorem</h3>
-      <p><strong>Alexander&rsquo;s theorem</strong> (1923) states that every knot or link can be represented
+      <p><span class="kl-term" title="Alexander (1923): every tame link in S\u00b3 is the closure of a braid on some finite number of strands.">Alexander&rsquo;s theorem</span> (1923) states that every knot or link can be represented
       as the <strong>closure</strong> of a braid. The closure \\(\\hat{\\beta}\\) of a braid \\(\\beta\\) is
       obtained by connecting the top endpoints to the corresponding bottom endpoints.</p>
       <p>For example, the trefoil is the closure of the braid \\(\\sigma_1^3 \\in B_2\\), and the
@@ -653,7 +916,7 @@
 
     <div class="expo-panel">
       <h3>Markov&rsquo;s Theorem</h3>
-      <p>Two braids have isotopic closures if and only if they are related by a sequence of
+      <p><span class="kl-term" title="Markov (1936): two braids (possibly on different numbers of strands) have ambient-isotopic closures iff related by conjugation in B_n and stabilisation B_n \u2194 B_{n+1} via \u03b2 \u2194 \u03b2\u03c3_n^{\u00b11}.">Markov&rsquo;s theorem</span> (1936) says that two braids have isotopic closures if and only if they are related by a sequence of
       <strong>Markov moves</strong>:</p>
       <ul style="line-height:1.8;">
         <li><strong>Conjugation:</strong> \\(\\beta \\mapsto \\alpha \\beta \\alpha^{-1}\\) in \\(B_n\\).</li>
@@ -724,7 +987,7 @@
 
     <div class="expo-panel">
       <h3>Polynomial Invariants</h3>
-      <p>The <strong>Alexander polynomial</strong> \\(\\Delta_K(t)\\) (1928) was the first polynomial knot invariant, derived from the fundamental group of the knot complement. The <strong>Jones polynomial</strong> \\(V_K(q)\\) (1984), discovered via connections to statistical mechanics, is a far stronger invariant. The <strong>HOMFLY-PT polynomial</strong> \\(P_K(a,z)\\) generalizes both.</p>
+      <p>The <strong>Alexander polynomial</strong> \\(\\Delta_K(t)\\) was the first polynomial knot invariant, derived from the fundamental group of the knot complement. The <strong>Jones polynomial</strong> \\(V_K(q)\\), discovered via connections to statistical mechanics, is a far stronger invariant. The <strong>HOMFLY-PT polynomial</strong> \\(P_K(a,z)\\) generalizes both.</p>
       <div class="formula-box">
         <p><strong>Jones polynomial skein relation:</strong></p>
         $$ q^{-1} V_{L_+}(q) - q\\, V_{L_-}(q) = \\left(q^{1/2} - q^{-1/2}\\right) V_{L_0}(q) $$
@@ -734,7 +997,7 @@
 
     <div class="expo-panel">
       <h3>Homological Invariants</h3>
-      <p><strong>Khovanov homology</strong> (2000) is a bigraded homology theory that <em>categorifies</em> the Jones polynomial: the graded Euler characteristic of Khovanov homology recovers the Jones polynomial. It is a strictly stronger invariant &mdash; there exist knots with identical Jones polynomials but distinct Khovanov homology. This invariant is explored further in the <em>Knot Explorer</em> tab.</p>
+      <p><strong>Khovanov homology</strong> is a bigraded homology theory that <em>categorifies</em> the Jones polynomial: the graded Euler characteristic of Khovanov homology recovers the Jones polynomial. It is a strictly stronger invariant &mdash; there exist knots with identical Jones polynomials but distinct Khovanov homology. This invariant is explored further in the <em>Knot Explorer</em> tab.</p>
     </div>
 
     <div class="expo-panel">
@@ -758,7 +1021,7 @@
     var subtabs = document.createElement('div');
     subtabs.className = 'fk-subtabs';
 
-    var tabNames = ['Introduction', 'Knots & Links', 'Knot Diagrams', 'Braids', 'Invariants'];
+    var tabNames = ['Introduction', 'Knots & Links', 'Knot Diagrams', 'Diagrammatic Encodings', 'Braids', 'Invariants'];
     var tabBtns = [];
     tabNames.forEach(function (name, i) {
       var btn = document.createElement('button');
@@ -795,6 +1058,8 @@
       } else if (idx === 2) {
         renderKnotDiagrams(content, knotsData, linksData);
       } else if (idx === 3) {
+        renderEncodings(content);
+      } else if (idx === 4) {
         renderBraids(content);
       } else {
         renderInvariants(content);

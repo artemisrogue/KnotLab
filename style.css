@@ -340,6 +340,17 @@ header p { font-size: 0.9rem; opacity: 0.85; }
   text-align: center;
 }
 
+.expo-panel ul, .expo-panel ol {
+  max-width: 72ch;
+  margin: 0.65rem auto;
+  padding-left: 1.5rem;
+  line-height: 1.6;
+  text-align: left;
+}
+.expo-panel ul li, .expo-panel ol li {
+  margin: 0.2rem 0;
+}
+
 .formula-box {
   background: #f0f7ff;
   border: 1px solid #c8ddf0;
@@ -353,18 +364,18 @@ header p { font-size: 0.9rem; opacity: 0.85; }
 /* ── Gauss compute layout ── */
 .gl-compute-layout {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: stretch;
   gap: 1.5rem;
+}
+@media (max-width: 900px) {
+  .gl-compute-layout { flex-direction: column; align-items: center; }
 }
 
 .gl-controls-panel {
-  min-width: 240px;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
+  flex: 0 0 280px;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   flex-direction: column;
   gap: 0.5rem;
 }
@@ -733,3 +744,190 @@ body.admin-revert-pick * { cursor: crosshair !important; }
 #admin-eq-modal .eq-snips-list { column-count: 2; column-gap: 12px; }
 .eq-snip-groupwrap { break-inside: avoid; -webkit-column-break-inside: avoid; }
 .eq-snip-groupbody .eq-snip-item { break-inside: avoid; }
+
+.expo-panel table.dict-table { max-width: 72ch; margin: 0.8rem auto; border-collapse: collapse; width: 100%; }
+.expo-panel table.dict-table th, .expo-panel table.dict-table td { border: 1px solid #d0d7de; padding: 0.45rem 0.7rem; text-align: left; vertical-align: top; }
+.expo-panel table.dict-table thead th { background: #f4f6f8; font-weight: 600; }
+.expo-panel table.dict-table tbody tr:nth-child(even) { background: #fafbfc; }
+.expo-panel p.caption { max-width: 72ch; margin: 0.4rem auto; font-size: 0.9em; color: #556; text-align: center; }
+
+.gl-four-col { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+.gl-four-col .gl-col { background: #fff; border: 1px solid #dde3ea; border-radius: 8px; padding: 0.9rem; display: flex; flex-direction: column; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.gl-four-col .gl-col h3 { margin-top: 0; font-size: 1.05rem; }
+.gl-four-col .gl-col .formula-box { font-size: 0.82rem; padding: 0.4rem 0.5rem; overflow-x: auto; }
+.gl-four-col .gl-col p { font-size: 0.88rem; line-height: 1.5; }
+.gl-four-col .gl-col .gl-col-compute { margin-top: auto; padding-top: 0.6rem; border-top: 1px dashed #e2e6ec; }
+.gl-four-col .gl-col .gl-col-compute label { display: block; margin-top: 0.35rem; font-size: 0.85rem; }
+.gl-four-col .gl-col .gl-col-compute select,
+.gl-four-col .gl-col .gl-col-compute input[type=range] { width: 100%; box-sizing: border-box; }
+.gl-four-col .gl-col .gl-col-compute button { margin-top: 0.6rem; width: 100%; }
+@media (max-width: 1100px) { .gl-four-col { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .gl-four-col { grid-template-columns: 1fr; } }
+
+.gl-unified { margin-top: 1rem; }
+.gl-unified-controls { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; margin: 0.5rem 0 1rem; }
+.gl-unified-controls > div { flex: 1 1 180px; }
+.gl-unified-controls label { display: block; font-size: 0.9rem; margin-bottom: 0.2rem; }
+.gl-unified-controls select, .gl-unified-controls input[type=range] { width: 100%; box-sizing: border-box; }
+.gl-unified-plots { margin-top: 0.5rem; }
+.gl-unified-plots .gl-col { padding: 0.65rem; }
+
+/* Two-column expo panels to use horizontal space better */
+.expo-panel.expo-2col p { column-count: 2; column-gap: 2rem; max-width: none; text-align: left; }
+@media (max-width: 900px) { .expo-panel.expo-2col p { column-count: 1; } }
+
+/* Collected Reidemeister-moves section */
+.fk-rmv-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 1100px) { .fk-rmv-row { grid-template-columns: 1fr; } }
+.fk-rmv-cell { background: #fafafa; border: 1px solid #e2e2e2; border-radius: 8px; padding: 0.6rem; }
+.fk-rmv-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.fk-rmv-pair > div { height: 280px; }
+.fk-rmv-anim { height: 320px; margin-top: 0.5rem; }
+.fk-rmv-caption { text-align: center; color: #555; font-size: 0.85rem; margin-top: 0.3rem; }
+
+/* Three-column CWF grid (Wr / Tw / CWF) */
+.gl-three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+@media (max-width: 1000px) { .gl-three-col { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px)  { .gl-three-col { grid-template-columns: 1fr; } }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Pedagogical utility classes (kl-*) — proofs, examples, practice, notes.
+   Use inside any module. Keep the palette here muted; content should carry
+   the visual weight, not the boxes.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+.kl-head {
+  font-weight: 700; letter-spacing: 0.01em; margin: 0 0 0.4rem 0;
+  font-size: 1.02rem; color: #222;
+}
+
+/* Proof — collapsible, amber left rule */
+.kl-proof {
+  background: #f7f3ea; border-left: 4px solid #b58b00;
+  border-radius: 4px; padding: 0.6rem 0.9rem; margin: 0.8rem 0;
+}
+.kl-proof > summary {
+  cursor: pointer; font-weight: 600; color: #5a4300;
+  list-style: none; outline: none;
+}
+.kl-proof > summary::-webkit-details-marker { display: none; }
+.kl-proof > summary::before { content: "▸ "; color: #8a6a00; margin-right: 0.2rem; }
+.kl-proof[open] > summary::before { content: "▾ "; }
+.kl-proof > summary:hover { color: #3a2a00; }
+.kl-proof > *:not(summary) { margin-top: 0.5rem; }
+
+/* Example — blue left rule, always visible */
+.kl-example {
+  background: #eef6fb; border-left: 4px solid #2171b5;
+  border-radius: 4px; padding: 0.6rem 0.9rem; margin: 0.8rem 0;
+}
+.kl-example .kl-head { color: #0d3d61; }
+
+/* Practice — collapsible, green left rule; solution hidden until clicked */
+.kl-practice {
+  background: #f4fbf3; border-left: 4px solid #3a9a3a;
+  border-radius: 4px; padding: 0.6rem 0.9rem; margin: 0.8rem 0;
+}
+.kl-practice > summary {
+  cursor: pointer; font-weight: 600; color: #1f5a1f;
+  list-style: none; outline: none;
+}
+.kl-practice > summary::-webkit-details-marker { display: none; }
+.kl-practice > summary::before { content: "▸ "; color: #3a9a3a; margin-right: 0.2rem; }
+.kl-practice[open] > summary::before { content: "▾ "; }
+.kl-practice > .kl-solution {
+  margin-top: 0.6rem; padding-top: 0.4rem;
+  border-top: 1px dashed #c6e0c3;
+}
+.kl-practice > .kl-solution::before {
+  content: "Solution. "; font-weight: 700; color: #1f5a1f;
+}
+
+/* Note / aside — neutral gray, lighter weight */
+.kl-note {
+  background: #f5f5f5; border-left: 3px solid #bbb;
+  border-radius: 4px; padding: 0.5rem 0.8rem; margin: 0.7rem 0;
+  color: #333; font-size: 0.96em;
+}
+.kl-note .kl-head { color: #444; font-size: 0.95rem; }
+
+/* Diagram wrapper — centers SVG / canvas, adds a caption row */
+.kl-diagram {
+  margin: 1rem 0; text-align: center;
+}
+.kl-diagram svg, .kl-diagram canvas { max-width: 100%; height: auto; }
+.kl-diagram-caption {
+  margin-top: 0.35rem; color: #555; font-size: 0.88rem;
+  font-style: italic;
+}
+
+/* Interactive widget frame */
+.kl-interactive {
+  background: #fff; border: 1px solid #c9dceb;
+  border-radius: 6px; padding: 0.8rem; margin: 1rem 0;
+}
+.kl-interactive .kl-controls {
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center;
+  margin-bottom: 0.6rem; font-size: 0.95rem;
+}
+.kl-interactive .kl-controls label {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+}
+.kl-interactive .kl-readout {
+  font-family: 'Consolas', 'Menlo', monospace; font-size: 0.95rem;
+  padding: 0.3rem 0.5rem; background: #f3f7fb; border-radius: 3px;
+  display: inline-block; margin-top: 0.4rem;
+}
+
+/* Navigation cards on the Home landing (one per top-level tab) */
+.kl-nav-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.9rem; margin: 1rem 0 1.5rem 0;
+}
+.kl-nav-card {
+  background: #fff; border: 1px solid #d9d9d9; border-radius: 8px;
+  padding: 0.8rem 1rem; cursor: pointer;
+  transition: border-color 0.12s, transform 0.12s, box-shadow 0.12s;
+  text-align: left;
+}
+.kl-nav-card:hover {
+  border-color: #2171b5; transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(33, 113, 181, 0.10);
+}
+.kl-nav-card h4 {
+  margin: 0 0 0.3rem 0; color: #0d3d61; font-size: 1.05rem;
+}
+.kl-nav-card p {
+  margin: 0; color: #444; font-size: 0.92rem; line-height: 1.45;
+}
+.kl-nav-card .kl-nav-status {
+  display: inline-block; margin-top: 0.45rem;
+  font-size: 0.78rem; color: #777; font-style: italic;
+}
+
+/* Status pill — for marking sections as stub / wip / complete inline */
+.kl-pill {
+  display: inline-block; padding: 0.05rem 0.5rem;
+  font-size: 0.75rem; border-radius: 10px; margin-left: 0.35rem;
+  vertical-align: middle;
+}
+.kl-pill-wip    { background: #fff4d6; color: #7a5a00; border: 1px solid #ead99b; }
+.kl-pill-stub   { background: #f1f1f1; color: #555;    border: 1px solid #d4d4d4; }
+.kl-pill-ready  { background: #e4f3e1; color: #1f5a1f; border: 1px solid #b7dab3; }
+
+/* ─────────────────────────────────────────────────────────────────────
+   Glossary-style inline tooltips.
+   Usage:   <span class="kl-term" title="definition text">technical term</span>
+   The dotted underline signals that hovering reveals a short definition.
+   Uses the native browser title attribute, so the tooltip is accessible
+   (screen readers read it) and works everywhere without JS.
+   ───────────────────────────────────────────────────────────────────── */
+.kl-term {
+  border-bottom: 1px dotted #888;
+  cursor: help;
+  text-decoration: none;
+}
+.kl-term:hover {
+  background: #fffbe6;
+  border-bottom-color: #b08a00;
+}

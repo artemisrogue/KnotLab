@@ -1,0 +1,107 @@
+Concrete Plan of Action
+Sequenced so that the app becomes professor-presentable at the end of Phase 1, with Phases 2 and 3 deepening it.
+
+==================================================
+STATUS UPDATE — April 2026
+==================================================
+
+Completed items from Phase 1:
+  P1.3 ✅ Seifert Surfaces sub-tab — done. Three-panel SVG walkthrough in
+        the renamed "Seifert Surfaces & the Alexander Polynomial" sub-tab,
+        with corrected orientation arrows and skein-relation panel.
+  P1.4 ✅ Gauss code / PD notation — done. Moved to Home tab between
+        Knot Diagrams and Braids.
+  P1.9 ✅ Smoke-test script — smoke_test.py present in repo root.
+
+Additional work done April 2026 (not in original plan):
+  • Polynomial Invariants: every sub-tab expanded to full pedagogical
+    depth (Jones/HOMFLY/Quantum/Others each get 5–6 panels + interactive
+    tables).
+  • Miscellaneous rebuilt: 10 sub-tabs with numerical invariants split
+    out pedagogically, Arf extended through Kervaire (Hill–Hopkins–Ravenel).
+  • Number Theory moved from Appendix → Miscellaneous with full row-
+    by-row Morishita-dictionary exposition.
+  • Tooltip system (.kl-term in style.css) applied systematically across
+    all modules for graduate-level terms not inline-defined.
+  • Kauffman-bracket KaTeX fix (inline SVG replaces unsupported \raisebox
+    /\includegraphics).
+
+Still open in Phase 1:
+  P1.1 Home landing rewrite
+  P1.2 Unified pedagogical CSS (.calc-proof etc. port)
+  P1.5 Knot-explorer nav consistency
+  P1.6 Cache-buster automation
+  P1.7 Dead code audit (framed-knots.js, review-tool.js)
+  P1.8 References bootstrap
+
+==================================================
+ORIGINAL PLAN (retained for reference)
+==================================================
+
+
+Phase 1 — Present-ready (≈ 1 week of focused work)
+Goal: the app holds up to a 30-minute walkthrough by a professor. Fix visible rough edges, add the two biggest content wins, and tighten the pitch.
+
+P1.1 — Home landing rewrite. (half day)
+Rewrite the first screen of introduction.js into a "what this app is, what's in it, how to navigate" page. Short, with screenshot-like inline diagrams pointing at each tab. This is what the professor sees first.
+
+P1.2 — Unified pedagogical CSS. (2 hours)
+Port .calc-proof / .calc-example / .calc-practice / .calc-interactive / .calc-diagram boxes from Calc1's style.css into KnotLab's. All future content uses them. Retrofit a handful of existing assertions (e.g., Reidemeister-invariance of Kauffman bracket) into collapsible proofs.
+
+P1.3 — Seifert Surfaces sub-tab. (1–2 days) — Roadmap #8
+The single biggest demo win. Add a sub-tab to polynomial-invariants.js:
+
+SVG step-through of Seifert's algorithm on the trefoil
+Three.js rendering of the trefoil's genus-1 surface using existing tube infrastructure
+Connect to genus and Alexander polynomial degree
+P1.4 — Gauss code / PD notation sub-tab. (1 day) — Roadmap #1
+Answers "where does all this data come from?" Add modules/introduction.js sub-tab with PD definition, SVG walkthroughs on trefoil / figure-8 / Hopf, and a small widget that translates PD → braid → polynomial lookup (reusing knot-explorer data).
+
+P1.5 — Knot-explorer nav consistency. (half day)
+Either (a) wrap the iframe in the main tab's container so the main tabbar stays visible, or (b) add a breadcrumb "← Back to KnotLab" inside the iframe. Option (a) is cleaner.
+
+P1.6 — Cache-buster automation. (1 hour)
+Add one line to serve.py: inject a timestamp query param into every <script src="modules/…"> at serve time, instead of manual ?v=N. No more stale assets during a live demo.
+
+P1.7 — Dead code audit. (1 hour)
+
+Verify framed-knots.js wiring. If unwired, either add a "Framing" sub-tab or archive.
+Decide fate of review-tool.js / review.json. Leave it in admin mode only or remove.
+P1.8 — References bootstrap. (half day)
+Populate references.json with the 30–40 canonical entries that your content already implicitly cites (Rolfsen, Jones 1985, Kauffman 1987, Khovanov 2000, Ozsváth–Szabó, Rasmussen, Kronheimer–Mrowka, Morishita, etc.). Teach the app a cite:{key} convention that renders footnote links. Add a References page.
+
+P1.9 — Smoke-test script. (1 hour)
+Tiny script that starts serve.py, curls every module route, greps for "error" in rendered content, reports. Run before any demo.
+
+Phase 2 — Depth (2–3 weeks)
+Now that Phase 1 makes the app look solid, build the content that will actually hold a specialist's attention.
+
+P2.1 — Alexander module + super-Lie — Roadmap #5. New sub-tab. Fox calculus worked example, super-Lie U_q(gl(1|1)) dictionary table.
+
+P2.2 — Yang–Baxter & R-matrices — Roadmap #7. New sub-tab in polynomial-invariants, with an interactive R-matrix/YBE verifier.
+
+P2.3 — Jones via four roads — Roadmap #2. Expand Jones sub-tab with Kauffman / TL / Hecke / subfactors as parallel derivations.
+
+P2.4 — Worked Khovanov computation. Pick the trefoil. Show the cube of resolutions, the chain groups, the differentials, compute the homology. This plugs the biggest pedagogical hole in the current homological-invariants.js.
+
+P2.5 — Spectral sequences sub-tab — Roadmap #6. Lee, Bar-Natan, Szabó, KR-sl(N), instanton.
+
+Phase 3 — Build-out (ongoing)
+P3.1 — Knot Types top-level tab — Roadmap #9. Six sub-tabs (torus / satellite / hyperbolic / alternating / fibered / volume conjecture). Each gets a canonical example + 3D render.
+
+P3.2 — RT quantum invariants sub-tab — Roadmap #3. Full ribbon-category treatment, categorification status table.
+
+P3.3 — sl(N) / Khovanov–Rozansky deepening — Roadmap #4. Matrix factorization construction with small example.
+
+P3.4 — Gauge theories sub-tab — Roadmap #13. Chern–Simons → Jones; instanton and monopole Floer; KLT equivalence.
+
+P3.5 — Virtual knots expansion — Roadmap #12. Fill the iframe placeholder; add f-polynomial and surface-diagram connection.
+
+P3.6 — Higher-dimensional knots — Roadmap #11. New sub-tab in miscellaneous.
+
+P3.7 — Large-file refactor. Split gauss-linking.js, framed-knots.js, and knot-explorer/index.html into topic-scoped sub-files once their content stabilizes.
+
+My recommendation for what to do next
+Start with Phase 1.1 through 1.3 in that order. By the end of P1.3 the app has a new landing page, pedagogical CSS, and a visible Seifert-surfaces demo — those three alone will change what a professor sees in the first five minutes. Everything else in Phase 1 is polish around that.
+
+When you're ready, tell me which item to start on and I'll pick up there. If you'd rather pivot — e.g., you want a different Phase 1 mix, or you want to re-order priorities in ROADMAP.md — tell me and I'll update the doc and the plan together.

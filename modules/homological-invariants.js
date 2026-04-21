@@ -50,7 +50,7 @@
         <div class="expo-panel">\
           <h3>Origins &amp; Definition</h3>\
           <p>Introduced by <strong>Mikhail Khovanov in 2000</strong>, Khovanov homology is a\
-          <em>categorification</em> of the Jones polynomial. Rather than assigning a polynomial\
+          <em>categorification</em> of the <span class="kl-term" title="Jones polynomial V_K(q) ∈ ℤ[q^{±1/2}]: Laurent polynomial invariant (Jones 1984) defined via the Temperley–Lieb/Hecke algebra or the Kauffman bracket skein relation. Distinguishes infinitely many knot pairs but not all.">Jones polynomial</span>. Rather than assigning a polynomial\
           to a knot, it assigns a bigraded chain complex whose homology groups\
           \\(\\mathrm{Kh}^{i,j}(K)\\) are themselves knot invariants.</p>\
           <p>The construction starts from an oriented knot diagram. At each crossing <code>X[a,b,c,d]</code>\
@@ -77,14 +77,14 @@
         </div>\
         <div class="expo-panel">\
           <h3>The Rasmussen \\(s\\)-Invariant</h3>\
-          <p>Rasmussen (2004) extracted a concordance invariant \\(s(K)\\) from the Lee spectral\
-          sequence on Khovanov homology. This invariant provides a lower bound for the\
-          <em>slice genus</em> (smooth 4-ball genus):</p>\
+          <p>The <span class="kl-term" title="Rasmussen s-invariant (Rasmussen 2004): even integer from the Lee spectral sequence collapse page on Khovanov homology; concordance homomorphism with |s(K)| ≤ 2g₄(K). Equals 2τ for many classes but not all.">Rasmussen \\(s\\)-invariant</span> is a concordance invariant \\(s(K)\\) extracted\
+          from the <span class="kl-term" title="Lee spectral sequence (Lee 2005): deformation of the Khovanov differential by adding a term dual to 1, collapsing to a 2-dimensional space per component. The filtration grading on the surviving generators defines the Rasmussen s-invariant.">Lee spectral sequence</span> on Khovanov homology. This invariant provides a\
+          lower bound for the <em>slice genus</em> (smooth 4-ball genus):</p>\
           <div class="formula-box">\
             $$\\frac{|s(K)|}{2} \\;\\leq\\; g_4(K)$$\
           </div>\
-          <p>Using \\(s\\), Rasmussen gave a purely combinatorial proof of the <strong>Milnor conjecture</strong>\
-          on the slice genus of torus knots, originally proved by Kronheimer&ndash;Mrowka using gauge theory.</p>\
+          <p>The \\(s\\)-invariant gives a purely combinatorial proof of the <span class="kl-term" title="Milnor conjecture: g₄(T_{p,q}) = (p−1)(q−1)/2 for the (p,q)-torus knot. Proved by Kronheimer–Mrowka (1993) using gauge theory; reproved combinatorially by Rasmussen (2004) via the s-invariant.">Milnor conjecture</span>\
+          on the slice genus of <span class="kl-term" title="Torus knot T(p,q): lies on a standard torus in S³, wrapping p and q times; fibered, Seifert genus (p−1)(q−1)/2.">torus knot</span>s, originally proved by Kronheimer&ndash;Mrowka (1993) via gauge theory.</p>\
           <p><em>Explore Khovanov homology computations for 500+ knots in the Knot Explorer tab.</em></p>\
         </div>';
       mathRender(el);
@@ -101,7 +101,7 @@
           symmetric products of Heegaard surfaces.</p>\
           <p>To a knot \\(K \\subset S^3\\), the theory associates a bigraded abelian group\
           \\(\\widehat{\\mathrm{HFK}}(K)\\) whose graded Euler characteristic recovers the\
-          <strong>Alexander polynomial</strong>:</p>\
+          <span class="kl-term" title="Alexander polynomial Δ_K(t) ∈ ℤ[t,t⁻¹]: first polynomial knot invariant (Alexander 1928); det(tV−Vᵀ) up to units, symmetric under t ↔ t⁻¹, with Δ_K(1)=±1.">Alexander polynomial</span>:</p>\
           <div class="formula-box">\
             $$\\Delta_K(t) \\;=\\; \\sum_{j} \\chi\\!\\bigl(\\widehat{\\mathrm{HFK}}^{\\,*,j}(K)\\bigr)\\, t^{\\,j}$$\
           </div>\
@@ -109,16 +109,16 @@
         <div class="expo-panel">\
           <h3>Genus Detection &amp; Fibered Knots</h3>\
           <p>One of the deepest results about knot Floer homology is that it <strong>detects the\
-          Seifert genus</strong> of a knot (Ozsv&aacute;th&ndash;Szab&oacute;):</p>\
+          <span class="kl-term" title="Seifert genus g(K): the minimum genus over all Seifert surfaces (orientable surfaces in S³ with boundary K). Additive under connected sum; zero iff K is the unknot.">Seifert genus</span></strong> of a knot (Ozsv&aacute;th&ndash;Szab&oacute;):</p>\
           <div class="formula-box">\
             $$g(K) \\;=\\; \\max\\!\\bigl\\{\\, j \\;:\\; \\widehat{\\mathrm{HFK}}^{\\,*,j}(K) \\neq 0 \\,\\bigr\\}$$\
           </div>\
-          <p>Furthermore, knot Floer homology <strong>detects fibered knots</strong>: \\(K\\) is fibered if and\
+          <p>Furthermore, knot Floer homology <strong>detects <span class="kl-term" title="Fibered knot: the complement S³∖K fibers over S¹; the fiber is a minimal-genus Seifert surface, and the monodromy of the fibration determines the knot.">fibered knots</span></strong>: \\(K\\) is fibered if and\
           only if \\(\\widehat{\\mathrm{HFK}}(K, g(K)) \\cong \\mathbb{Z}\\). This is a remarkable structural\
           result with no analogue for classical polynomial invariants.</p>\
         </div>\
         <div class="expo-panel">\
-          <h3>The \\(\\tau\\) Invariant</h3>\
+          <h3>The <span class="kl-term" title="Ozsváth–Szabó τ invariant (2003): integer concordance homomorphism from the Alexander filtration on CFK̂(K); |τ(K)| ≤ g₄(K), with equality for positive knots and torus knots.">\\(\\tau\\)</span> Invariant</h3>\
           <p>The invariant \\(\\tau(K)\\), extracted from a filtration on \\(\\widehat{\\mathrm{HFK}}\\),\
           defines a <strong>concordance homomorphism</strong>:</p>\
           <div class="formula-box">\
@@ -136,7 +136,7 @@
       el.innerHTML = '\
         <div class="expo-panel">\
           <h3>The \\(\\mathfrak{sl}(N)\\) Generalization</h3>\
-          <p>Introduced by Khovanov and Rozansky (2004&ndash;2008), this family of homology theories\
+          <p>This family of homology theories, due to Khovanov and Rozansky,\
           generalizes Khovanov homology to the \\(\\mathfrak{sl}(N)\\) setting. For each \\(N \\geq 2\\),\
           one obtains a triply-graded homology theory \\(\\mathrm{HKR}_N(K)\\) whose graded Euler\
           characteristic recovers the \\(\\mathfrak{sl}(N)\\) quantum polynomial.</p>\
@@ -187,16 +187,15 @@
         </div>\
         <div class="expo-panel">\
           <h3>Open Questions &amp; Connections</h3>\
-          <p><strong>Unknot detection:</strong> Does Khovanov homology detect the unknot? Kronheimer&ndash;Mrowka\
-          (2011) proved that it does, using a spectral sequence from Khovanov homology to the\
-          instanton Floer homology of the branched double cover. Whether a purely combinatorial\
-          proof exists remains open.</p>\
+          <p><strong>Unknot detection:</strong> Khovanov homology is known to detect the unknot,\
+          via a spectral sequence from Khovanov homology to the instanton Floer homology of\
+          the branched double cover. Whether a purely combinatorial proof exists remains open.</p>\
           <p><strong>Functoriality:</strong> Khovanov homology is expected to define a functor from a cobordism\
-          category of knots to graded vector spaces. Significant progress has been made (Jacobsson,\
-          Bar-Natan, Clark&ndash;Morrison&ndash;Walker), though subtleties around sign conventions persist.</p>\
+          category of knots to graded vector spaces. Significant progress has been made, though\
+          subtleties around sign conventions persist.</p>\
           <p><strong>Spectral sequences</strong> provide bridges between different theories &mdash; for instance,\
-          from Khovanov homology to knot Floer homology (Ozsv&aacute;th&ndash;Szab&oacute;), and from\
-          Khovanov&ndash;Rozansky to Khovanov via specialization.</p>\
+          from Khovanov homology to knot Floer homology, and from Khovanov&ndash;Rozansky to\
+          Khovanov via specialization.</p>\
         </div>\
         <div class="expo-panel">\
           <h3>Future Directions</h3>\
