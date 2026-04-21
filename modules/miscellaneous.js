@@ -336,9 +336,9 @@
           '(Kauffman&ndash;Robertello). So \\(\\mathrm{Arf}\\) is the <em>complete</em> pass-equivalence invariant.</li>' +
           '<li><strong>Concordance homomorphism.</strong> \\(\\mathrm{Arf}\\) is a homomorphism from the ' +
           'knot concordance group \\(\\mathcal{C}\\) to \\(\\mathbb{Z}/2\\), additive under connected sum.</li>' +
-          '<li><strong>Relation to Jones.</strong> \\(V_K(i) = (-1)^{\\mathrm{Arf}(K)} \\cdot \\sqrt{2}^{\\,?}\\) ' +
-          '&mdash; up to normalization, the value of the Jones polynomial at \\(q = i\\) is determined by the ' +
-          'Arf invariant (Jones, Murasugi).</li>' +
+          '<li><strong>Relation to Jones.</strong> For a knot \\(K\\), \\(V_K(i) = (-1)^{\\mathrm{Arf}(K)}\\); ' +
+          'more generally \\(|V_L(i)|^{2} = 2^{\\dim H_1(\\Sigma_2(L);\\, \\mathbb{F}_2)}\\) for an oriented link \\(L\\) ' +
+          '(Jones, Murasugi).</li>' +
         '</ul>' +
       '</div>' +
       '<div class="expo-panel">' +

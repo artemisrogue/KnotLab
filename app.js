@@ -1472,21 +1472,29 @@
       }
     }
 
-    // Lazy-load knot explorer iframe and hide its header.
+    // Lazy-load knot explorer iframe; hide its header AND its own tab-bar so the
+    // KnotLab top-level tab-bar remains the single source of navigation (avoids
+    // the professor-demo confusion of seeing two tab-bars stacked).
     if (tabId === 'knot-explorer') {
       var frame = document.getElementById('frame-knot-explorer');
       if (frame) {
         if (frame.src === 'about:blank' && frame.dataset.src) {
           frame.src = frame.dataset.src;
         }
+        var attempts = 0;
         var hideCheck = setInterval(function () {
+          attempts++;
           try {
             var doc = frame.contentDocument;
-            if (doc && doc.querySelector('header')) {
-              doc.querySelector('header').style.display = 'none';
-              clearInterval(hideCheck);
+            if (doc) {
+              var hdr = doc.querySelector('header');
+              if (hdr) hdr.style.display = 'none';
+              var tb = doc.querySelector('.tab-bar');
+              if (tb) tb.style.display = 'none';
+              if (hdr) { clearInterval(hideCheck); }
             }
           } catch (e) { clearInterval(hideCheck); }
+          if (attempts > 30) clearInterval(hideCheck); // give up after ~6s
         }, 200);
       }
     }
@@ -1503,7 +1511,15 @@
   }
 
   window.addEventListener('hashchange', loadFromHash);
-  if (window.location.hash) loadFromHash();
+  if (window.location.hash) loadFromHash(); else switchTab('home');
+
+  // Listen for navigation messages from the knot-explorer iframe.
+  window.addEventListener('message', function (ev) {
+    var d = ev && ev.data;
+    if (d && d.type === 'knotlab:nav' && typeof d.target === 'string') {
+      if (document.getElementById('tab-' + d.target)) switchTab(d.target);
+    }
+  });
 
   // ── Keybind: Ctrl+Shift+E toggles admin mode ──
   window.addEventListener('keydown', function (ev) {

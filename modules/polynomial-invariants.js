@@ -173,8 +173,8 @@
           '</div>' +
           '<p>Compare the Jones skein \\(q^{-1}V_{L_+} - q\\,V_{L_-} = (q^{1/2} - q^{-1/2})V_{L_0}\\): the ' +
           'Alexander relation is its ungraded cousin, recovered from HOMFLY-PT at \\(a = 1\\).</p>' +
-          '<div class="kl-example">' +
-            '<div class="kl-head">Worked example: \\(\\Delta_{3_1}(t)\\) from the skein</div>' +
+          '<details class="kl-example">' +
+            '<summary>Worked example: \\(\\Delta(3_1)\\) from the skein relation</summary>' +
             '<p>Pick any crossing of the standard trefoil diagram \\(L = 3_1\\) and treat it as \\(L_+\\). ' +
             'Flipping it gives \\(L_- = \\) unknot. Smoothing it gives \\(L_0 = \\) Hopf link (two circles ' +
             'linked once). So the skein relation yields</p>' +
@@ -185,7 +185,7 @@
             '<div class="formula-box">$$\\Delta_{3_1}(t) \\;=\\; 1 + (t^{1/2} - t^{-1/2})^2 \\;=\\; t - 1 + t^{-1}. \\checkmark$$</div>' +
             '<p>This matches the Seifert-matrix computation above &mdash; now obtained without ever drawing a ' +
             'Seifert surface.</p>' +
-          '</div>' +
+          '</details>' +
           '<p><strong>Conway\u2019s renormalization.</strong> Substituting \\(z = t^{1/2} - t^{-1/2}\\) clears ' +
           'the square roots and produces the <em><span class="kl-term" title="The Alexander polynomial rewritten in z = t^{1/2} − t^{-1/2}: a genuine polynomial ∇_K(z) ∈ ℤ[z] with skein ∇(L₊) − ∇(L₋) = z∇(L₀).">Conway polynomial</span></em> \\(\\nabla_K(z) \\in \\mathbb{Z}[z]\\), ' +
           'which satisfies</p>' +
@@ -195,7 +195,7 @@
         '</div>' +
 
         '<div class="expo-panel">' +
-          '<h3>7. What the polynomial sees (and what it doesn\u2019t)</h3>' +
+          '<h3>8. What the polynomial sees (and what it doesn\u2019t)</h3>' +
           '<ul>' +
             '<li><strong>Symmetry.</strong> \\(\\Delta_K(t) = \\Delta_K(t^{-1})\\), always.</li>' +
             '<li><strong>Determinant.</strong> \\(\\Delta_K(-1) = \\pm\\det(K)\\).</li>' +
@@ -355,10 +355,14 @@
         return '<g transform="translate(280,40)">' +
           '<circle cx="' + cx + '" cy="' + cy + '" r="58" stroke="#1f3a5f" stroke-width="3" fill="none" />' +
           '<circle cx="' + cx + '" cy="' + cy + '" r="28" stroke="#1f3a5f" stroke-width="3" fill="none" />' +
-          // CCW orientation arrows on both circles (right side, pointing down)
+          // Orientation arrows — tangent to each circle at 3 o'clock, pointing UP
+          // (CCW on screen: matches the braid closure's overall orientation after
+          // oriented smoothing). Upward triangle at (x=R, y=75): apex above, base below.
           '<g fill="#b84900" stroke="#b84900">' +
-            '<polygon points="58,75 52,69 52,81" transform="translate(0,0)" />' +
-            '<polygon points="28,75 23,70 23,80" transform="translate(0,0)" />' +
+            // Outer circle r=58, at (58,75): apex (58,67), base (52,79)-(64,79)
+            '<polygon points="58,67 52,79 64,79" />' +
+            // Inner circle r=28, at (28,75): apex (28,67), base (23,79)-(33,79)
+            '<polygon points="28,67 23,79 33,79" />' +
           '</g>' +
           // Three dots marking former crossing locations (between the circles)
           '<g fill="#888">' +
@@ -428,8 +432,17 @@
                         '" ry="' + r_out + '" fill="#cfe3f5" stroke="#1f3a5f" stroke-width="2" />';
         var innerDisk = '<ellipse cx="' + cxIn + '" cy="' + cyIn + '" rx="' + R_in +
                         '" ry="' + r_in + '" fill="#e6f1fb" stroke="#1f3a5f" stroke-width="2" />';
+        // Orientation arrows on each disk rim, CCW on screen, matching Panel 2.
+        // Outer disk at (cxOut,cyOut)=(0,120), rx=58 ry=15: right rim point (58,120),
+        //   tangent up on screen → upward triangle apex (58,112) base (52,124)-(64,124).
+        // Inner disk at (cxIn,cyIn)=(0,35), rx=28 ry=7: right rim point (28,35),
+        //   tangent up → upward triangle apex (28,28) base (23,40)-(33,40).
+        var diskArrows = '<g fill="#b84900" stroke="#b84900">' +
+          '<polygon points="58,112 52,124 64,124" />' +
+          '<polygon points="28,28 23,40 33,40" />' +
+        '</g>';
         return '<g transform="translate(490,40)">' +
-          outerDisk + bandsSvg + innerDisk +
+          outerDisk + bandsSvg + innerDisk + diskArrows +
           '<text x="0" y="180" text-anchor="middle" font-size="13" fill="#333">(3) disks + 3 half-twisted bands</text>' +
         '</g>';
       }
@@ -774,16 +787,21 @@
           '<div class="formula-box">' +
             '$$V_K(q) \\;=\\; \\bigl(-A\\bigr)^{-3w(D)}\\,\\langle D\\rangle \\bigg|_{A \\,=\\, q^{-1/4}}.$$' +
           '</div>' +
+          '<details class="kl-proof"><summary>Why \\(\\langle\\cdot\\rangle\\) is invariant under R2 and R3</summary>' +
+            '<p>Apply the Kauffman skein to both crossings of an R2 tangle. Expanding the four resolutions and using \\(d = -A^2 - A^{-2}\\) for any closed circle that appears, one checks directly that the \\(\\langle\\!\\asymp\\!\\rangle\\) coefficient collapses to \\(A\\cdot A + A^{-1}\\cdot A^{-1}\\cdot d + (\\text{loop terms}) = 0\\) and the \\(\\langle\\!)(\\!\\rangle\\) coefficient collapses to \\(1\\). (Concretely: the relation \\(d\\cdot A^2 + A^4 = -1\\) combined with its \\(A\\leftrightarrow A^{-1}\\) partner forces the cancellation.) Hence \\(\\langle\\cdot\\rangle\\) is R2-invariant. ' +
+            'R3-invariance then follows by Kauffman\u2019s short argument: apply R2 to slide one strand across the other two inside the R3 triangle, and the three resulting diagrams have equal brackets by the R2 identity just proved.</p>' +
+          '</details>' +
         '</div>' +
 
         '<div class="expo-panel">' +
           '<h3>3. Worked example: the right-handed trefoil \\(3_1\\)</h3>' +
           '<p>The standard three-crossing diagram of the trefoil has writhe \\(w = 3\\) and ' +
-          '\\(2^3 = 8\\) states. Writing \\(d = -A^2 - A^{-2}\\) for the loop factor, the state sum works out to</p>' +
+          '\\(2^3 = 8\\) states. Writing \\(d = -A^2 - A^{-2}\\) for the loop factor and summing ' +
+          '\\(A^{a(s)-b(s)} d^{|s|-1}\\) over all smoothings yields</p>' +
           '<div class="formula-box">' +
-            '$$\\langle 3_1\\rangle \\;=\\; A^3 d^2 + 3A\\,d + 3A^{-1} + A^{-3}d = A^{-7} - A^{-3} - A^5.$$' +
+            '$$\\langle 3_1\\rangle \\;=\\; -A^{5} - A^{-3} + A^{-7}.$$' +
           '</div>' +
-          '<p>Dividing by \\((-A)^{9}\\) and substituting \\(A = q^{-1/4}\\):</p>' +
+          '<p>Dividing by \\((-A)^{3w} = (-A)^{9}\\) and substituting \\(A = q^{-1/4}\\):</p>' +
           '<div class="formula-box">' +
             '$$V_{3_1}(q) \\;=\\; -q^{-4} + q^{-3} + q^{-1}.$$' +
           '</div>' +
@@ -865,7 +883,7 @@
         '3_1m': { v: '\\(-q^{4} + q^{3} + q\\)',                                 a: '\\(t - 1 + t^{-1}\\)', note: 'mirror; note \\(V\\) swaps \\(q \\leftrightarrow q^{-1}\\)' },
         '4_1':  { v: '\\(q^{-2} - q^{-1} + 1 - q + q^{2}\\)',                    a: '\\(-t + 3 - t^{-1}\\)', note: 'palindromic; amphichiral' },
         '5_1':  { v: '\\(-q^{-7} + q^{-6} - q^{-5} + q^{-4} + q^{-2}\\)',        a: '\\(t^2 - t + 1 - t^{-1} + t^{-2}\\)', note: '(2,5)-torus knot' },
-        '5_2':  { v: '\\(-q^{-6} + 2q^{-5} - 2q^{-4} + 2q^{-3} - q^{-2} + q^{-1}\\)', a: '\\(2t - 3 + 2t^{-1}\\)', note: 'chiral' },
+        '5_2':  { v: '\\(-q^{-6} + q^{-5} - q^{-4} + 2q^{-3} - q^{-2} + q^{-1}\\)', a: '\\(2t - 3 + 2t^{-1}\\)', note: 'chiral' },
         '6_1':  { v: '\\(q^{-4} - q^{-3} + q^{-2} - 2q^{-1} + 2 - q + q^{2}\\)', a: '\\(-2t + 5 - 2t^{-1}\\)', note: 'slice; \\(\\Delta(-1) = 9\\)' },
         '6_2':  { v: '\\(q^{-5} - 2q^{-4} + 2q^{-3} - 2q^{-2} + 2q^{-1} - 1 + q\\)', a: '\\(-t^2 + 3t - 3 + 3t^{-1} - t^{-2}\\)', note: '' },
         '6_3':  { v: '\\(-q^{-3} + 2q^{-2} - 2q^{-1} + 3 - 2q + 2q^{2} - q^{3}\\)', a: '\\(t^2 - 3t + 5 - 3t^{-1} + t^{-2}\\)', note: 'palindromic; amphichiral' },
@@ -996,10 +1014,10 @@
         '3_1':  { p: '\\(-a^{4} + a^{2} z^{2} + 2 a^{2}\\)',                         d: '\\(t - 1 + t^{-1}\\)', j: '\\(-q^{-4} + q^{-3} + q^{-1}\\)' },
         '4_1':  { p: '\\(a^{-2} - 1 + a^{2} - z^{2}\\)',                             d: '\\(-t + 3 - t^{-1}\\)', j: '\\(q^{-2} - q^{-1} + 1 - q + q^{2}\\)' },
         '5_1':  { p: '\\(a^{4} z^{4} + (4 a^{4} - a^{6}) z^{2} + 3 a^{4} - 2 a^{6}\\)', d: '\\(t^{2} - t + 1 - t^{-1} + t^{-2}\\)', j: '\\(-q^{-7} + q^{-6} - q^{-5} + q^{-4} + q^{-2}\\)' },
-        '5_2':  { p: '\\(a^{2} z^{2} + 2 a^{2} + a^{4} z^{2} + a^{4} - a^{6}\\)',     d: '\\(2t - 3 + 2 t^{-1}\\)', j: '\\(-q^{-6} + 2q^{-5} - 2q^{-4} + 2q^{-3} - q^{-2} + q^{-1}\\)' },
-        '6_1':  { p: '\\(a^{-2} z^{2} + a^{-2} - 1 + a^{2} z^{2} + a^{2} - z^{2}\\)', d: '\\(-2t + 5 - 2 t^{-1}\\)', j: '\\(q^{-4} - q^{-3} + q^{-2} - 2q^{-1} + 2 - q + q^{2}\\)' },
-        '6_2':  { p: '\\(a^{-2} z^{2} + a^{-2} - a^{2} + a^{2} z^{2} + a^{2} z^{4} + a^{4}\\)', d: '\\(-t^{2} + 3t - 3 + 3t^{-1} - t^{-2}\\)', j: '\\(q^{-5} - 2q^{-4} + 2q^{-3} - 2q^{-2} + 2q^{-1} - 1 + q\\)' },
-        '6_3':  { p: '\\(-a^{-2} + a^{-2}z^{2} + 2 - a^{2} - z^{2} + a^{2}z^{2} - z^{4}\\)', d: '\\(t^{2} - 3t + 5 - 3t^{-1} + t^{-2}\\)', j: '\\(-q^{-3} + 2q^{-2} - 2q^{-1} + 3 - 2q + 2q^{2} - q^{3}\\)' }
+        '5_2':  { p: '\\(a^{2} + a^{4} - a^{6} + (a^{2} + a^{4})z^{2}\\)',            d: '\\(2t - 3 + 2 t^{-1}\\)', j: '\\(-q^{-6} + q^{-5} - q^{-4} + 2q^{-3} - q^{-2} + q^{-1}\\)' },
+        '6_1':  { p: '\\(2 a^{-2} - 3 - 5 z^{2} - z^{4} + 2 a^{2} + 3 a^{2} z^{2} + a^{2} z^{4}\\)', d: '\\(-2t + 5 - 2 t^{-1}\\)', j: '\\(q^{-4} - q^{-3} + q^{-2} - 2q^{-1} + 2 - q + q^{2}\\)' },
+        '6_2':  { p: '\\(2 + z^{2} - 2 a^{2} - 3 a^{2} z^{2} - a^{2} z^{4} + a^{4} + a^{4} z^{2}\\)', d: '\\(-t^{2} + 3t - 3 + 3t^{-1} - t^{-2}\\)', j: '\\(q^{-5} - 2q^{-4} + 2q^{-3} - 2q^{-2} + 2q^{-1} - 1 + q\\)' },
+        '6_3':  { p: '\\(-a^{-2} - a^{-2} z^{2} + 3 + 3 z^{2} + z^{4} - a^{2} - a^{2} z^{2}\\)', d: '\\(t^{2} - 3t + 5 - 3t^{-1} + t^{-2}\\)', j: '\\(-q^{-3} + 2q^{-2} - 2q^{-1} + 3 - 2q + 2q^{2} - q^{3}\\)' }
       };
       var hSel = document.getElementById('pi-homfly-knot');
       var hOut = document.getElementById('pi-homfly-readout');
@@ -1106,8 +1124,12 @@
 
         '<div class="expo-panel">' +
           '<h3>6. Interactive: colored Jones of the trefoil</h3>' +
-          '<p>The colored Jones polynomials of \\(3_1\\) have the closed form ' +
-          '\\(J_n(3_1;q) = \\sum_{k=0}^{n-1} q^{k(n-1)} \\prod_{j=1}^{k}(1 - q^{j-n}).\\) The first few:</p>' +
+          '<p>The colored Jones polynomials of \\(3_1\\) have Habiro\'s cyclotomic closed form ' +
+          '\\(J_n(3_1;q) = \\sum_{k=0}^{n-1} q^{k(n-1)} \\prod_{j=1}^{k}(1 - q^{j-n}).\\) ' +
+          '<em>(Habiro expansion: valid as an identity in the cyclotomic completion ' +
+          '\\(\\widehat{\\mathbb{Z}[q]} = \\varprojlim_n \\mathbb{Z}[q]/((q;q)_n)\\), and on the nose at roots of unity. ' +
+          'For generic Laurent-polynomial use one should expand each inner product first; the normalized table below ' +
+          'lists the Laurent polynomials in \\(q\\).)</em> The first few:</p>' +
           '<div class="kl-interactive">' +
             '<div class="kl-controls">' +
               '<label>Color \\(n\\): ' +
@@ -1131,8 +1153,8 @@
         '1': '\\(-q^{-4} + q^{-3} + q^{-1}\\)',
         '2': '\\(-q^{-12} + q^{-11} - q^{-9} + q^{-8} + q^{-6} - q^{-5} + q^{-4} + q^{-2}\\)',
         '3': '\\(-q^{-24} + q^{-23} - q^{-21} + q^{-20} - q^{-19} + q^{-18} - q^{-16} + q^{-15} + q^{-13} - q^{-12} + q^{-11} + q^{-10} - q^{-9} + q^{-8} + q^{-6} + q^{-3}\\)',
-        '4': '\\(J_4(3_1; q) \\text{ has 32 terms; leading: } -q^{-40} + q^{-39} + \\cdots + q^{-6}\\)',
-        '5': '\\(J_5(3_1; q) \\text{ is a degree-\\(5N-4\\) Laurent polynomial with \\(\\approx\\) 60 terms}\\)'
+        '4': '\\(J_4(3_1; q)\\) has 32 terms; leading \\(-q^{-40} + q^{-39} + \\cdots + q^{-6}\\)',
+        '5': '\\(J_5(3_1; q)\\) is a degree-\\((5N-4)\\) Laurent polynomial with \\(\\approx 60\\) terms'
       };
       var qsel = document.getElementById('pi-quantum-n');
       var qout = document.getElementById('pi-quantum-readout');

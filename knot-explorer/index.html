@@ -435,6 +435,29 @@ footer {
 </head>
 <body>
 
+<!-- Embedded-mode back-link: shown only when this page is inside KnotLab's iframe.
+     Placed outside <header> because KnotLab hides the header when embedded. -->
+<div id="kl-back-bar" style="display:none;background:#eef4fb;border-bottom:1px solid #cfe3f5;padding:0.35rem 1rem;font-size:0.85rem">
+  <a href="#" id="kl-back-link" style="color:#1a365d;text-decoration:none">&larr; Back to KnotLab Home</a>
+</div>
+<script>
+(function(){
+  try {
+    if (window.self !== window.top) {
+      var bar = document.getElementById('kl-back-bar');
+      if (bar) {
+        bar.style.display = '';
+        var a = document.getElementById('kl-back-link');
+        if (a) a.addEventListener('click', function (e) {
+          e.preventDefault();
+          window.parent.postMessage({ type: 'knotlab:nav', target: 'home' }, '*');
+        });
+      }
+    }
+  } catch (e) { /* cross-origin — stay standalone */ }
+})();
+</script>
+
 <header>
   <div>
     <h1>Knot &amp; Link Explorer</h1>
@@ -547,7 +570,7 @@ footer {
 <div id="cobordism-overlay" onclick="if(event.target===this)closeCobordismOverlay()"></div>
 
 <footer>
-  Knot &amp; Link Explorer &mdash; Data from the Knot Atlas (katlas.org) Take Home Database.
+  Knot &amp; Link Explorer.
   Domain coloring: hue = arg, lightness &prop; |f|. Mirror polynomials: \(P(q) \to P(q^{-1})\).
 </footer>
 
@@ -3102,9 +3125,9 @@ const COB_SPLIT_COLOR = 0xef9a9a;
 const COB_BOUNDARY_COLOR = 0xb0b0b0;
 function cobSaddleColor(type) { return type === 'merge' ? COB_MERGE_COLOR : COB_SPLIT_COLOR; }
 function cobIdentityColor(i) {
-  const hue = 200 + ((i * 19) % 40) - 20;   // 180°..220°
-  const sat = 70  + ((i * 13) % 20);        // 70..90
-  const lum = 68  + ((i * 7)  % 14) - 7;    // 61..75
+  const hue = 205 + ((i * 11) % 12) - 6;    // 199°..211° (tight light-blue band)
+  const sat = 65  + ((i * 7)  % 10);        // 65..75
+  const lum = 72  + ((i * 5)  % 6)  - 3;    // 69..75
   const h = hue / 360, s = sat / 100, l = lum / 100;
   const c = (1 - Math.abs(2 * l - 1)) * s;
   const x = c * (1 - Math.abs(((h * 6) % 2) - 1));
@@ -3117,6 +3140,54 @@ function cobIdentityColor(i) {
   else if (hp < 5) [r, g, b] = [x, 0, c];
   else             [r, g, b] = [c, 0, x];
   return (Math.round((r + m) * 255) << 16) | (Math.round((g + m) * 255) << 8) | Math.round((b + m) * 255);
+}
+
+function _cobSignedArea(poly) {
+  let a = 0;
+  for (let i = 0; i < poly.length; i++) { const j = (i + 1) % poly.length; a += poly[i].x * poly[j].y - poly[j].x * poly[i].y; }
+  return a / 2;
+}
+function _cobPointInPoly(pt, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const xi = poly[i].x, yi = poly[i].y, xj = poly[j].x, yj = poly[j].y;
+    if (((yi > pt.y) !== (yj > pt.y)) && (pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+function _cobInsetPath(path, amount) {
+  if (amount === 0 || path.length < 3) return path;
+  const ccw = _cobSignedArea(path) > 0;
+  const rot = ccw ? 1 : -1;
+  const out = [], n = path.length;
+  for (let i = 0; i < n; i++) {
+    const prev = path[(i - 1 + n) % n], next = path[(i + 1) % n];
+    const tx = next.x - prev.x, ty = next.y - prev.y;
+    const tlen = Math.sqrt(tx * tx + ty * ty) || 1;
+    out.push({ x: path[i].x + (-ty / tlen * rot) * amount, y: path[i].y + (tx / tlen * rot) * amount });
+  }
+  return out;
+}
+function _cobApplyNestingInset(circles, span) {
+  const areas = circles.map(c => Math.abs(_cobSignedArea(c)));
+  const n = circles.length;
+  const depth = new Array(n).fill(0);
+  const parent = new Array(n).fill(-1);
+  for (let i = 0; i < n; i++) {
+    const pt = circles[i][0];
+    let bestJ = -1, bestArea = Infinity;
+    for (let j = 0; j < n; j++) {
+      if (i === j || areas[j] <= areas[i]) continue;
+      if (!_cobPointInPoly(pt, circles[j])) continue;
+      if (areas[j] < bestArea) { bestArea = areas[j]; bestJ = j; }
+    }
+    parent[i] = bestJ;
+  }
+  function d(i) { if (depth[i] || parent[i] === -1) return depth[i]; depth[i] = d(parent[i]) + 1; return depth[i]; }
+  for (let i = 0; i < n; i++) d(i);
+  const unit = Math.max(0.8, span * 0.04);
+  for (let i = 0; i < circles.length; i++) if (depth[i] > 0) circles[i] = _cobInsetPath(circles[i], depth[i] * unit);
+  return circles;
 }
 
 function _renderCompositeCobordism(diagram, path, vertices, n, knotName, variant) {
@@ -3163,10 +3234,13 @@ function _renderCompositeCobordism(diagram, path, vertices, n, knotName, variant
     return pts;
   }
 
-  // Smooth all circles
+  // Smooth all circles, then apply nesting inset per layer to prevent
+  // nested tubes from overlapping with their parents' tubes.
   for (const layer of layers) {
     for (let i = 0; i < layer.srcCircles.length; i++) layer.srcCircles[i] = smoothPath(layer.srcCircles[i]);
     for (let i = 0; i < layer.tgtCircles.length; i++) layer.tgtCircles[i] = smoothPath(layer.tgtCircles[i]);
+    _cobApplyNestingInset(layer.srcCircles, span);
+    _cobApplyNestingInset(layer.tgtCircles, span);
   }
 
   // Setup Three.js
@@ -3258,7 +3332,7 @@ function _renderCompositeCobordism(diagram, path, vertices, n, knotName, variant
       });
       points.push(points[0].clone()); // close the loop
       const curve = new THREE.CatmullRomCurve3(points, true);
-      const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.15, 8, true);
+      const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.08, 8, true);
       const mat = new THREE.MeshPhongMaterial({ color, transparent: opacity < 1, opacity, side: THREE.DoubleSide });
       return new THREE.Mesh(tubeGeo, mat);
     }
@@ -4246,7 +4320,7 @@ function _renderCobordism(diagram, srcBits, tgtBits, changedBit, vertices, n, kn
   }
 
   // Draw boundary circle as a thick tube ring
-  function drawBoundaryCircle(path, z, color, radius = 0.12) {
+  function drawBoundaryCircle(path, z, color, radius = 0.07) {
     const nPts = path.length;
     if (nPts < 2) return;
     const tubeSegs = 8; // cross-section segments for the tube

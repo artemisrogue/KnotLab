@@ -429,136 +429,94 @@
     return { getType: getType, getKey: function () { return select.value; } };
   }
 
-  /* ── Home / Introduction sub-tab ── */
+  /* ── Home / Introduction sub-tab (landing page) ── */
   function renderHome(el) {
     el.innerHTML = `
     <div class="home-container">
       <section class="home-hero">
         <h2>KnotLab</h2>
-        <p>A working notebook for learning, computing, and teaching knot theory.</p>
-      </section>
-
-      <section class="home-section">
-        <h3>What this is</h3>
         <p>
-          KnotLab collects the classical and modern machinery of knot theory into a single
-          interactive reference. Each tab is organized around a family of invariants or
-          constructions: how they are defined, how they are computed on concrete examples,
-          and where they sit in the broader landscape. The Knot Explorer tab contains a
-          searchable database of the standard knot and link tables with their computed
-          polynomial invariants. The narrative tabs link out to it whenever a concrete
-          example is useful.
+          A graduate-level interactive reference and teaching tool for knot theory &mdash;
+          from Reidemeister moves to Khovanov homology, with live computations, 3D renderings,
+          and a complete Rolfsen table of prime knots through 12 crossings.
         </p>
         <p>
-          The app is an active work in progress. Some sections are complete; others are
-          expanding. The project roadmap lives in <code>ROADMAP.md</code> at the project
-          root and tracks what is planned next.
+          Built for graduate students learning the subject, researchers assembling talks,
+          and professors who want working demonstrations at hand during lecture.
         </p>
       </section>
 
       <section class="home-section">
-        <h3>How to navigate</h3>
-        <p>Click any card to jump to the corresponding tab.</p>
+        <h3>Navigation map</h3>
+        <p>Seven top-level tabs. Click any card to jump directly.</p>
         <div class="kl-nav-grid">
-          <button class="kl-nav-card" data-goto="home" data-sub="0" type="button">
-            <h4>Home <span class="kl-pill kl-pill-ready">core</span></h4>
-            <p>Orientation, knot and link definitions, diagram conventions, braid words, and a quick map of the invariants ahead. Start here.</p>
-            <span class="kl-nav-status">6 sub-tabs: Introduction · Knots &amp; Links · Diagrams · Encodings · Braids · Invariants</span>
-          </button>
-          <button class="kl-nav-card" data-goto="gauss-linking" type="button">
-            <h4>Linking <span class="kl-pill kl-pill-ready">core</span></h4>
-            <p>The Gauss linking integral computed numerically on canonical two-component links, with a visualization of the integrand. Writhe, framing, and the Reidemeister moves.</p>
-            <span class="kl-nav-status">2 sub-tabs: The Formula · Reidemeister &amp; Framing</span>
-          </button>
-          <button class="kl-nav-card" data-goto="polynomial-invariants" type="button">
-            <h4>Polynomial Invariants <span class="kl-pill kl-pill-wip">expanding</span></h4>
-            <p>Alexander, Jones, HOMFLY-PT, and the quantum / Reshetikhin–Turaev construction. Definitions via skein relations and state sums, with pointers to the Knot Explorer database for computed values.</p>
-            <span class="kl-nav-status">5 sub-tabs: Alexander · Jones · HOMFLY-PT · Quantum · Others</span>
-          </button>
-          <button class="kl-nav-card" data-goto="homological-invariants" type="button">
-            <h4>Homological Invariants <span class="kl-pill kl-pill-wip">expanding</span></h4>
-            <p>Khovanov homology, knot Floer homology, and Khovanov–Rozansky sl(N) homology. The categorification program, and the spectral sequences that relate these theories.</p>
-            <span class="kl-nav-status">4 sub-tabs: Khovanov · Knot Floer · Khovanov–Rozansky · Comments</span>
+          <button class="kl-nav-card" data-goto="home" type="button">
+            <h4>Home <span class="kl-pill kl-pill-ready">you are here</span></h4>
+            <p>3D knot visualizer, Knots &amp; Links gallery, knot diagrams, diagrammatic encodings (Gauss codes, PD codes, DT), braid words and closures, and a Reidemeister-move explorer.</p>
+            <span class="kl-nav-status">6 sub-tabs: Overview &middot; Knots &amp; Links &middot; Diagrams &middot; Encodings &middot; Braids &middot; Invariants</span>
           </button>
           <button class="kl-nav-card" data-goto="knot-explorer" type="button">
             <h4>Knot Explorer <span class="kl-pill kl-pill-ready">data</span></h4>
-            <p>Searchable database of knots and links from the standard tables, with diagrams, braid words, Gauss codes, and computed Alexander, Jones, HOMFLY-PT, sl(3), sl(4) invariants. Includes the cube-of-resolutions visualizer for Khovanov chain complexes.</p>
-            <span class="kl-nav-status">Tables · Invariants · Cube of Resolutions</span>
+            <p>Searchable database of all prime knots up to 12 crossings, with diagrams, braid words, Gauss codes, and pre-computed polynomial and numerical invariants.</p>
+            <span class="kl-nav-status">Tables &middot; Invariant lookup &middot; Cube of Resolutions</span>
+          </button>
+          <button class="kl-nav-card" data-goto="polynomial-invariants" type="button">
+            <h4>Polynomial Invariants <span class="kl-pill kl-pill-wip">expanding</span></h4>
+            <p>Alexander, Jones, HOMFLY-PT, quantum / Reshetikhin&ndash;Turaev, Kauffman F, Vassiliev (finite-type), Conway, and colored Jones. Skein relations, state sums, and worked examples.</p>
+            <span class="kl-nav-status">Alexander &middot; Jones &middot; HOMFLY-PT &middot; Quantum &middot; Others</span>
+          </button>
+          <button class="kl-nav-card" data-goto="homological-invariants" type="button">
+            <h4>Homological Invariants <span class="kl-pill kl-pill-wip">expanding</span></h4>
+            <p>Khovanov homology, knot Floer homology, Khovanov&ndash;Rozansky sl(N), the categorification program, and the spectral sequences that connect these theories.</p>
+            <span class="kl-nav-status">Khovanov &middot; Knot Floer &middot; Khovanov&ndash;Rozansky &middot; Comments</span>
+          </button>
+          <button class="kl-nav-card" data-goto="gauss-linking" type="button">
+            <h4>Linking <span class="kl-pill kl-pill-ready">core</span></h4>
+            <p>The Gauss linking integral computed numerically on canonical links, writhe, framing (including blackboard framing), self-linking, and a primer on Kirby calculus.</p>
+            <span class="kl-nav-status">Linking integral &middot; Framing &middot; Reidemeister</span>
           </button>
           <button class="kl-nav-card" data-goto="miscellaneous" type="button">
             <h4>Miscellaneous <span class="kl-pill kl-pill-wip">expanding</span></h4>
-            <p>Each numerical invariant in its own sub-tab (crossing number, bridge number, unknotting number, three-genus, determinant, signature, Arf &amp; Kervaire), the knot group, the Morishita dictionary relating knots to primes, and an introduction to virtual knots.</p>
-            <span class="kl-nav-status">10 sub-tabs: 7 numerical · Knot Group · Number Theory · Virtual Knots</span>
+            <p>Numerical invariants (crossing, bridge, unknotting, genus, determinant, signature, Arf&ndash;Kervaire), the knot group, arithmetic topology via Morishita's knots&ndash;primes dictionary, and virtual knots.</p>
+            <span class="kl-nav-status">7 numerical &middot; Knot Group &middot; Arithmetic Topology &middot; Virtual Knots</span>
           </button>
           <button class="kl-nav-card" data-goto="appendix" type="button">
             <h4>Appendix <span class="kl-pill kl-pill-ready">core</span></h4>
-            <p>Historical narrative from Kelvin and Tait to Khovanov and Floer; connections to quantum field theory and statistical mechanics; and a glossary of key definitions used throughout KnotLab.</p>
-            <span class="kl-nav-status">3 sub-tabs: History · Physics · Definitions</span>
+            <p>Historical narrative from Kelvin and Tait through Jones, Witten, and Khovanov; physics connections (Chern&ndash;Simons, TQFT, DNA topology); and a glossary of definitions used throughout KnotLab.</p>
+            <span class="kl-nav-status">History &middot; Physics &middot; Definitions</span>
           </button>
         </div>
       </section>
 
       <section class="home-section">
-        <h3>Suggested reading orders</h3>
-        <div class="kl-note">
-          <div class="kl-head">If you are new to knot theory</div>
-          Start on this tab (Introduction) and work through its sub-tabs in order.
-          Then read the Linking tab. Then open Polynomial Invariants and read the Alexander and Jones
-          sub-tabs before anything else.
-        </div>
-        <div class="kl-note">
-          <div class="kl-head">If you want to see concrete examples quickly</div>
-          Jump to Knot Explorer, pick a low-crossing knot (the trefoil <em>3<sub>1</sub></em> or figure-eight
-          <em>4<sub>1</sub></em> are traditional), and inspect its invariants. Then return to the narrative
-          tabs to read how those numbers are computed.
-        </div>
-        <div class="kl-note">
-          <div class="kl-head">If you are interested in the modern categorified picture</div>
-          Read Polynomial Invariants (Jones and HOMFLY-PT) first, then Homological Invariants. The
-          appendix's Physics section and the upcoming Gauge Theories sub-tab (see <code>ROADMAP.md</code>)
-          provide further context.
+        <h3>Start here</h3>
+        <div class="kl-nav-grid">
+          <div class="expo-panel">
+            <h4>New to knot theory</h4>
+            <p>
+              Stay on <strong>Home</strong> and work through the sub-tabs in order: Knots &amp; Links,
+              then Knot Diagrams, then Encodings and Braids. The Reidemeister-move explorer and 3D
+              visualizer live here.
+            </p>
+          </div>
+          <div class="expo-panel">
+            <h4>Looking up a specific knot or invariant</h4>
+            <p>
+              Go straight to <strong>Knot Explorer</strong>. Search by name (e.g. <em>3<sub>1</sub></em>,
+              <em>4<sub>1</sub></em>, <em>8<sub>19</sub></em>) to see diagram, braid word, and every
+              computed invariant on one page.
+            </p>
+          </div>
+          <div class="expo-panel">
+            <h4>Advanced reading</h4>
+            <p>
+              For the modern categorified picture, read <strong>Polynomial Invariants</strong>
+              (Jones, HOMFLY-PT) first, then <strong>Homological Invariants</strong>. The Appendix's
+              Physics section provides the Chern&ndash;Simons / TQFT context.
+            </p>
+          </div>
         </div>
       </section>
-
-      <section class="home-section">
-        <h3>What is a knot, briefly</h3>
-        <p>
-          A knot is a smooth embedding of a circle into three-dimensional space, considered up to
-          ambient isotopy. Take a piece of string, tangle it, glue the ends together — that is a knot.
-          Two knots are <em>equivalent</em> when one can be continuously deformed into the other
-          without cutting or passing the string through itself.
-        </p>
-        <p>
-          The fundamental problem is to decide equivalence. Even the special case of recognizing the
-          unknot — deciding whether a given tangled loop is secretly an ordinary circle — is not
-          obvious. The invariants developed in the tabs ahead are the tools mathematicians have built
-          to answer this problem and its refinements.
-        </p>
-      </section>
-
-      <section class="home-section">
-        <h3>A brief history</h3>
-        <p>
-          Knots entered mathematics through physics. In the 1860s, Lord Kelvin proposed that atoms
-          were knotted vortices in the luminiferous ether, prompting Peter Guthrie Tait to tabulate
-          knots by hand through the end of the nineteenth century. The vortex-atom hypothesis did
-          not survive, but Tait's tables did: they seeded the classical subject.
-        </p>
-        <p>
-          In the 1920s and 30s, diagrammatic knot theory was placed on a rigorous footing. Any two
-          diagrams of the same knot are related by three local moves (the <span class="kl-term" title="Reidemeister (1927) and independently Alexander\u2013Briggs (1926): two diagrams represent the same knot iff related by planar isotopy and the local moves R1, R2, R3.">Reidemeister moves</span>, 1926\u20131927), and
-          the first polynomial invariant &mdash; the Alexander polynomial (1928) &mdash; was introduced.
-        </p>
-        <p>
-          The field was transformed in 1984 with the discovery, by Vaughan Jones, of a new
-          polynomial invariant through the representation theory of von Neumann algebras. The
-          HOMFLY-PT polynomial and the general Reshetikhin–Turaev construction of quantum
-          invariants followed. In 2000, Mikhail Khovanov showed that the Jones polynomial is the
-          graded Euler characteristic of a new homology theory, initiating the categorification
-          program that remains active today.
-        </p>
-      </section>
-
     </div>`;
 
     // Wire navigation cards. Each card jumps to its top-level tab (and, where
@@ -964,7 +922,7 @@
         <li><strong>Bridge number</strong> \\(b(K)\\): the minimum number of local maxima in any regular projection.</li>
         <li><strong>Three-genus</strong> \\(g(K)\\): the minimal genus of a Seifert surface bounded by \\(K\\).</li>
         <li><strong>Signature</strong> \\(\\sigma(K)\\): the signature of the symmetrized Seifert matrix.</li>
-        <li><strong>Determinant</strong> \\(\\det(K)\\): the absolute value of the determinant of the Seifert matrix (equivalently, \\(|\\Delta_K(-1)|\\)).</li>
+        <li><strong>Determinant</strong> \\(\\det(K)\\): \\(|\\det(V + V^{\\mathsf{T}})| = |\\Delta_K(-1)|\\), where \\(V\\) is any Seifert matrix.</li>
       </ul>
       <p>These invariants are computed and displayed in the <em>Knot Explorer</em> tab.</p>
     </div>
@@ -1021,7 +979,7 @@
     var subtabs = document.createElement('div');
     subtabs.className = 'fk-subtabs';
 
-    var tabNames = ['Introduction', 'Knots & Links', 'Knot Diagrams', 'Diagrammatic Encodings', 'Braids', 'Invariants'];
+    var tabNames = ['Overview', 'Knots & Links', 'Knot Diagrams', 'Diagrammatic Encodings', 'Braids', 'Invariants'];
     var tabBtns = [];
     tabNames.forEach(function (name, i) {
       var btn = document.createElement('button');

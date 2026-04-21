@@ -931,3 +931,118 @@ body.admin-revert-pick * { cursor: crosshair !important; }
   background: #fffbe6;
   border-bottom-color: #b08a00;
 }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Pedagogical collapsible boxes (native <details>/<summary>).
+   Usage:
+     <details class="kl-proof"><summary>…title…</summary><p>…</p></details>
+   Five accents: proof (indigo), example (green), practice (amber),
+   interactive (purple), diagram (slate).  These rules target
+   details.kl-* specifically so they coexist with the plain-div uses
+   of the same class names elsewhere in the stylesheet.
+   ═════════════════════════════════════════════════════════════════════════ */
+details.kl-proof,
+details.kl-example,
+details.kl-practice,
+details.kl-interactive,
+details.kl-diagram {
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  border-left-width: 4px;
+  border-left-style: solid;
+}
+details.kl-proof > summary,
+details.kl-example > summary,
+details.kl-practice > summary,
+details.kl-interactive > summary,
+details.kl-diagram > summary {
+  cursor: pointer;
+  font-weight: 600;
+  -webkit-user-select: none;
+  user-select: none;
+  list-style: disclosure-closed;
+  outline: none;
+}
+details.kl-proof[open] > summary,
+details.kl-example[open] > summary,
+details.kl-practice[open] > summary,
+details.kl-interactive[open] > summary,
+details.kl-diagram[open] > summary {
+  list-style: disclosure-open;
+}
+details.kl-proof[open] > *:not(summary),
+details.kl-example[open] > *:not(summary),
+details.kl-practice[open] > *:not(summary),
+details.kl-interactive[open] > *:not(summary),
+details.kl-diagram[open] > *:not(summary) {
+  margin-top: 0.5rem;
+}
+details.kl-proof[open] > summary,
+details.kl-example[open] > summary,
+details.kl-practice[open] > summary,
+details.kl-interactive[open] > summary,
+details.kl-diagram[open] > summary {
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid var(--border, #ddd);
+}
+
+/* Proof — indigo/blue */
+details.kl-proof {
+  background: #f4f6fb;
+  border-left-color: #4a5aa0;
+}
+details.kl-proof > summary { color: #2e3a6e; }
+details.kl-proof > summary::before {
+  content: "Proof. ";
+  font-weight: 700;
+  color: #4a5aa0;
+}
+
+/* Example — green */
+details.kl-example {
+  background: #f2f8f5;
+  border-left-color: #3a8060;
+}
+details.kl-example > summary { color: #24533d; }
+details.kl-example > summary::before {
+  content: "Example. ";
+  font-weight: 700;
+  color: #3a8060;
+}
+
+/* Practice / exercise — amber */
+details.kl-practice {
+  background: #fbf6ee;
+  border-left-color: #a07030;
+}
+details.kl-practice > summary { color: #6a4712; }
+details.kl-practice > summary::before {
+  content: "Exercise. ";
+  font-weight: 700;
+  color: #a07030;
+}
+
+/* Interactive widget — purple */
+details.kl-interactive {
+  background: #f7f4fb;
+  border-left-color: #7050a0;
+}
+details.kl-interactive > summary { color: #47326b; }
+details.kl-interactive > summary::before {
+  content: "Try it. ";
+  font-weight: 700;
+  color: #7050a0;
+}
+
+/* Diagram — slate/gray */
+details.kl-diagram {
+  background: #f5f7fb;
+  border-left-color: #506080;
+}
+details.kl-diagram > summary { color: #2f3a52; }
+details.kl-diagram > summary::before {
+  content: "Figure. ";
+  font-weight: 700;
+  color: #506080;
+}

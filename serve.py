@@ -2,6 +2,7 @@
 import http.server
 import json
 import os
+import re
 import tempfile
 
 PORT = 8780
@@ -9,6 +10,30 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 OVERRIDES_PATH = os.path.join(ROOT, "overrides.json")
 CONTENT_PATH = os.path.join(ROOT, "content.json")
 HISTORY_DIR = os.path.join(ROOT, "history")
+REFS_PATH = os.path.join(ROOT, "references.json")
+REVIEW_PATH = os.path.join(ROOT, "review.json")
+
+
+def _load_json(path, default):
+    if not os.path.exists(path):
+        return default
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return default
+
+
+def _save_json(path, data):
+    fd, tmp = tempfile.mkstemp(prefix="." + os.path.basename(path) + ".", dir=ROOT)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+        os.replace(tmp, path)
+    except Exception:
+        try: os.unlink(tmp)
+        except OSError: pass
+        raise
 
 
 def _load_overrides():
@@ -35,9 +60,63 @@ def _save_overrides(data):
         raise
 
 
+def _rewrite_index_with_cachebusters(html_bytes):
+    """Replace each <script src="modules/FOO.js?v=..."> and every other local
+    asset reference (style.css, app.js, etc.) with one stamped by the file's
+    current mtime — so that saving a module on disk automatically invalidates
+    the browser cache without needing to run bump_cache.py.
+
+    Only rewrites paths that resolve to an existing file under ROOT; leaves
+    CDN URLs and other external references untouched.
+    """
+    try:
+        text = html_bytes.decode("utf-8")
+    except UnicodeDecodeError:
+        return html_bytes
+
+    def _stamp(match):
+        prefix = match.group(1)  # opening: src=" or href="
+        path = match.group(2)    # local path (no leading slash)
+        # strip any existing ?v=...
+        bare = path.split("?", 1)[0]
+        abs_path = os.path.join(ROOT, bare.replace("/", os.sep))
+        if not os.path.isfile(abs_path):
+            return match.group(0)
+        mtime = int(os.path.getmtime(abs_path))
+        return f'{prefix}{bare}?v={mtime}"'
+
+    # Match attrs of the form (src|href)="<relative-path>..." where the path
+    # does NOT start with http, //, data:, or a #-anchor.
+    pattern = re.compile(r'((?:src|href)=")(?!https?:|//|data:|#)([^"\s]+)"')
+    new_text = pattern.sub(_stamp, text)
+    return new_text.encode("utf-8")
+
+
 class Handler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=ROOT, **kwargs)
+
+    def do_GET(self):
+        # Intercept requests for index.html (root or explicit) and rewrite local
+        # asset references to carry an mtime-based cache-buster query string.
+        path_only = self.path.split("?", 1)[0]
+        if path_only in ("/", "/index.html"):
+            idx_path = os.path.join(ROOT, "index.html")
+            if os.path.isfile(idx_path):
+                try:
+                    with open(idx_path, "rb") as f:
+                        body = f.read()
+                    body = _rewrite_index_with_cachebusters(body)
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/html; charset=utf-8")
+                    self.send_header("Content-Length", str(len(body)))
+                    self.send_header("Cache-Control", "no-store")
+                    self.end_headers()
+                    self.wfile.write(body)
+                    return
+                except Exception:
+                    pass
+        return super().do_GET()
 
     def _json(self, code, payload):
         body = json.dumps(payload).encode("utf-8")
@@ -301,6 +380,62 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         if self.path == "/admin/reset":
             # Wipe all overrides.
             _save_overrides({})
+            return self._json(200, {"ok": True})
+
+        if self.path == "/admin/reference":
+            length = int(self.headers.get("Content-Length", "0"))
+            try:
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                action = str(payload.get("action", "upsert"))
+                key = str(payload["key"]).strip()
+                if not key:
+                    raise ValueError("key required")
+            except Exception as e:
+                return self._json(400, {"ok": False, "error": str(e)})
+            data = _load_json(REFS_PATH, {"entries": []})
+            entries = data.setdefault("entries", [])
+            if action == "delete":
+                data["entries"] = [e for e in entries if e.get("key") != key]
+            else:
+                rec = {
+                    "key": key,
+                    "authors": str(payload.get("authors", "")),
+                    "title": str(payload.get("title", "")),
+                    "venue": str(payload.get("venue", "")),
+                    "year": str(payload.get("year", "")),
+                    "url": str(payload.get("url", "")),
+                    "note": str(payload.get("note", "")),
+                }
+                found = False
+                for i, e in enumerate(entries):
+                    if e.get("key") == key:
+                        entries[i] = rec; found = True; break
+                if not found:
+                    entries.append(rec)
+            _save_json(REFS_PATH, data)
+            return self._json(200, {"ok": True})
+
+        if self.path == "/admin/review":
+            length = int(self.headers.get("Content-Length", "0"))
+            try:
+                payload = json.loads(self.rfile.read(length).decode("utf-8"))
+                block_id = str(payload["id"]).strip()
+                if not block_id:
+                    raise ValueError("id required")
+            except Exception as e:
+                return self._json(400, {"ok": False, "error": str(e)})
+            data = _load_json(REVIEW_PATH, {"blocks": {}})
+            blocks = data.setdefault("blocks", {})
+            if payload.get("delete"):
+                blocks.pop(block_id, None)
+            else:
+                rec = blocks.get(block_id, {})
+                for k in ("status", "notes", "refs", "further"):
+                    if k in payload:
+                        rec[k] = payload[k]
+                rec["updated"] = __import__("datetime").datetime.now().isoformat(timespec="seconds")
+                blocks[block_id] = rec
+            _save_json(REVIEW_PATH, data)
             return self._json(200, {"ok": True})
 
         self._json(404, {"ok": False, "error": "not found"})

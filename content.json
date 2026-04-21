@@ -1,5 +1,7 @@
 {
   "home": {
-    "home::h6zsfyk": "          A knot, mathematically, is a closed loop embedded in three-dimensional space.<br>          Take a piece of string, tangle it up, and glue the ends together — that’s a knot.<br>          Two knots are <em>equivalent</em> if you can deform one into the other without cutting or<br>          passing the string through itself. The fundamental problem of knot theory is determining<br>          when two knots are equivalent and when they are not.<br>        "
+    "home::h6zsfyk": "          A knot, mathematically, is a closed loop embedded in three-dimensional space.<br>          Take a piece of string, tangle it up, and glue the ends together — that’s a knot.<br>          Two knots are <em>equivalent</em> if you can deform one into the other without cutting or<br>          passing the string through itself. The fundamental problem of knot theory is determining<br>          when two knots are equivalent and when they are not.<br>        ",
+    "home::h1tyn39y": "<br>          This is harder than it sounds. Even the question “is this knot actually knotted, or<br>          can it be untangled into a simple circle?” has no obvious answer in general.<br>          The tools developed to attack this problem — polynomial invariants, homological algebra,<br>          quantum groups — connect knot theory to areas throughout mathematics and physics.<br>        ",
+    "home::h1ixr1it": "Welcome to KnotLab"
   }
 }
