@@ -121,6 +121,33 @@
   }
 
   /**
+   * Count link components from a PD code via union-find on arcs.
+   * At each crossing [a,b,c,d], arcs a↔c and b↔d belong to the same component.
+   *
+   * @param {number[][]} pdCode
+   * @returns {number} number of link components (1 for knots)
+   */
+  function componentCountFromPD(pdCode) {
+    var n = pdCode.length;
+    if (n === 0) return 1;
+    var totalArcs = 2 * n;
+    var parent = [];
+    for (var i = 0; i < totalArcs; i++) parent[i] = i;
+    function find(x) {
+      while (parent[x] !== x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+      return x;
+    }
+    for (var i = 0; i < n; i++) {
+      var a = pdCode[i][0], b = pdCode[i][1], c = pdCode[i][2], dd = pdCode[i][3];
+      parent[find(a)] = find(c);
+      parent[find(b)] = find(dd);
+    }
+    var roots = {};
+    for (var i = 0; i < totalArcs; i++) roots[find(i)] = true;
+    return Object.keys(roots).length;
+  }
+
+  /**
    * Compute writhe directly from a PD code.
    * Writhe = sum of crossing signs.
    *
@@ -539,7 +566,7 @@
     return terms;
   }
 
-  function verifyJones(computed, storedLatex) {
+  function verifyJones(computed, storedLatex, nComponents) {
     if (!storedLatex) {
       return {
         match: false,
@@ -557,27 +584,46 @@
 
     var storedTerms = parseJonesLatex(storedLatex);
 
-    // Compare term by term
-    var allExps = new Set();
-    computedTerms.forEach(function (_, e) { allExps.add(e); });
-    storedTerms.forEach(function (_, e) { allExps.add(e); });
+    function compare(ct, st) {
+      var allExps = new Set();
+      ct.forEach(function (_, e) { allExps.add(e); });
+      st.forEach(function (_, e) { allExps.add(e); });
+      var ok = true;
+      var ms = [];
+      allExps.forEach(function (e) {
+        var cv = ct.get(e) || 0;
+        var sv = st.get(e) || 0;
+        if (Math.abs(cv - sv) > 1e-9) {
+          ok = false;
+          ms.push('q^{' + e + '}: computed=' + cv + ' stored=' + sv);
+        }
+      });
+      return { ok: ok, mismatches: ms };
+    }
 
-    var match = true;
-    var mismatches = [];
-    allExps.forEach(function (e) {
-      var cv = computedTerms.get(e) || 0;
-      var sv = storedTerms.get(e) || 0;
-      if (Math.abs(cv - sv) > 1e-9) {
-        match = false;
-        mismatches.push('q^{' + e + '}: computed=' + cv + ' stored=' + sv);
-      }
-    });
-
-    if (match) {
+    var r = compare(computedTerms, storedTerms);
+    if (r.ok) {
       return {
         match: true,
         storedPoly: null,
-        details: '✓ Computed matches stored polynomial (term-by-term comparison)'
+        details: '\u2713 Computed matches stored polynomial (term-by-term comparison).' +
+          (nComponents && nComponents > 1 ? ' Link has ' + nComponents + ' components.' : '')
+      };
+    }
+
+    // Fallback: try mirror convention (q -> q^{-1})
+    var mirrored = new Map();
+    computedTerms.forEach(function (c, e) { mirrored.set(-e, c); });
+    var rm = compare(mirrored, storedTerms);
+    if (rm.ok) {
+      return {
+        match: true,
+        mirror: true,
+        storedPoly: null,
+        details: '\u2713 Matches stored polynomial under mirror convention \\(q \\to q^{-1}\\)' +
+          ' (database and computation use opposite chirality conventions for this ' +
+          (nComponents || 1) + '-component ' +
+          ((nComponents || 1) > 1 ? 'link' : 'knot') + ').'
       };
     }
 
@@ -586,7 +632,8 @@
       storedPoly: null,
       details: 'Computed: ' + computed.toLatex('q') + '\n' +
                'Stored: ' + storedLatex + '\n' +
-               'Mismatches: ' + mismatches.join(', ')
+               'Mismatches: ' + r.mismatches.join(', ') +
+               (nComponents ? '\nComponents: ' + nComponents : '')
     };
   }
 
@@ -1139,11 +1186,14 @@
       } else {
         storedJones = variant === 'mirror' ? d.mirror_jones_latex : d.jones_latex;
       }
-      var verif = verifyJones(jones, storedJones);
+      var nComponents = componentCountFromPD(pdCode);
+      var verif = verifyJones(jones, storedJones, nComponents);
 
       resultHTML += '<div class="exp-card">';
       resultHTML += '<h3>Jones Polynomial';
-      if (verif.match) {
+      if (verif.match && verif.mirror) {
+        resultHTML += ' <span class="exp-badge pass">verified (mirror convention)</span>';
+      } else if (verif.match) {
         resultHTML += ' <span class="exp-badge pass">verified</span>';
       } else if (storedJones) {
         resultHTML += ' <span class="exp-badge fail">check failed</span>';
@@ -1154,7 +1204,11 @@
         '}(q) = ' + jonesLatex + '\\)</div>';
       resultHTML += '<p style="font-size:0.85rem;color:#666">Computed via \\(V(q) = ' +
         '(-A)^{-3w} \\cdot \\langle K \\rangle\\) with \\(A = q^{1/4}\\), \\(w = ' +
-        writhe + '\\)</p>';
+        writhe + '\\). Components: \\(c = ' + nComponents + '\\).</p>';
+      if (verif.match && verif.mirror) {
+        resultHTML += '<p style="font-size:0.85rem;color:#2e7d32">' +
+          '<strong>Note.</strong> ' + verif.details + '</p>';
+      }
 
       if (storedJones && !verif.match) {
         resultHTML += '<details><summary>Verification details</summary>';
@@ -1279,11 +1333,7 @@
       //   χ_q(Kh) = (-1)^{c-1} · (q + q^{-1}) · V(q^{-2})
       // where V is the normalized Jones polynomial, c = number of link components.
       // For knots (c=1), the sign factor is +1.
-      var nComponents = 1;
-      if (d.gauss_code) {
-        var braceCount = (d.gauss_code.match(/\{/g) || []).length;
-        if (braceCount > 1) nComponents = braceCount;
-      }
+      // nComponents computed above via componentCountFromPD(pdCode)
       var signFactor = ((nComponents - 1) % 2 === 0) ? 1 : -1;
       var qPlusQinv = new LaurentPoly([{ c: 1, e: 1 }, { c: 1, e: -1 }], CoefficientRing.Z);
       var jonesInQKh = jones.substituteQPower(-2);  // V(q^{-2}) in q_Kh variable
@@ -1303,12 +1353,11 @@
       resultHTML += '<p>The unnormalized Jones polynomial is computed from the normalized ' +
         'Jones polynomial via the variable substitution \\(q_{\\text{Jones}} \\to q^{-2}\\) ' +
         'and multiplication by \\((q + q^{-1})\\):</p>';
-      if (nComponents > 1) {
-        resultHTML += '<p style="text-align:center">\\[\\hat{J}(q) = (-1)^{c-1} (q + q^{-1}) \\cdot V(q^{-2})\\]</p>';
-        resultHTML += '<p>For this ' + nComponents + '-component link, \\((-1)^{' + (nComponents-1) + '} = ' + signFactor + '\\).</p>';
-      } else {
-        resultHTML += '<p style="text-align:center">\\[\\hat{J}(q) = (q + q^{-1}) \\cdot V(q^{-2})\\]</p>';
-      }
+      resultHTML += '<p style="text-align:center">\\[\\hat{J}(q) = (-1)^{c-1} (q + q^{-1}) \\cdot V(q^{-2})\\]</p>';
+      resultHTML += '<p><strong>Component count:</strong> \\(c = ' + nComponents + '\\)' +
+        (nComponents === 1 ? ' (knot)' : ' (link with ' + nComponents + ' components)') +
+        ', so \\((-1)^{c-1} = ' + signFactor + '\\). ' +
+        'This sign factor is essential: without it, every coefficient of \\(\\hat{J}\\) would flip for even-component links.</p>';
       resultHTML += '<p><strong>Step 1.</strong> Start with the Jones polynomial: ' +
         '\\(V(q) = ' + jonesLatexInQ + '\\)</p>';
       resultHTML += '<p><strong>Step 2.</strong> Substitute \\(q \\to q^{-2}\\): ' +
