@@ -282,7 +282,7 @@
           <p>The\
           <span class="kl-term" title="ν⁺(K) (Hom–Wu 2016): integer concordance invariant defined from the minus-flavour knot Floer complex CFK⁻ and the U-action, satisfying τ(K) ≤ ν⁺(K) ≤ g₄(K); often strictly sharper than τ as a 4-genus bound.">\\(\\nu^+\\)</span>-invariant\
           (Hom&ndash;Wu, 2016) is defined from\
-          <span class="kl-term" title="CFK⁻: the 'minus' flavour of the knot Floer complex, a free chain complex over 𝔽[U] whose U-action lowers Alexander grading by 1. Quotient by U gives ĈFK; inverting U gives CFK∞.">\\(\\mathrm{CFK}^-(K)\\)</span>\
+          <span class="kl-term" title="CFK⁻: the &lsquo;minus&rsquo; flavour of the knot Floer complex, a free chain complex over 𝔽[U] whose U-action lowers Alexander grading by 1. Quotient by U gives ĈFK; inverting U gives CFK∞.">\\(\\mathrm{CFK}^-(K)\\)</span>\
           and the\
           <span class="kl-term" title="U-action: the action of the formal variable U on CFK⁻ (or CFK∞) coming from the Heegaard basepoint; lowers Maslov grading by 2 and Alexander grading by 1. Central to the definition of Heegaard Floer d-invariants, ν⁺, and the Υ construction.">\\(U\\)-action</span>. It satisfies</p>\
           <div class="formula-box">\
@@ -710,7 +710,7 @@
           posits a single <em>triply-graded</em> homology theory from which both Khovanov and knot Floer\
           homology descend as spectral-sequence collapses. Let</p>\
           <div class="formula-box">$$\\mathcal{H}(K) \\;=\\; \\mathrm{HHH}(K) \\;=\\; \\bigoplus_{i,j,k} \\mathcal{H}^{i,j,k}(K)$$</div>\
-          <p>denote the <span class="kl-term" title="Triply-graded Khovanov–Rozansky homology HHH: the Hochschild homology of Hochschild homology (hence 'HHH') of the Rouquier complex of Soergel bimodules associated to a braid closure. Triply graded; categorifies the HOMFLY-PT polynomial. Computed in closed form for torus links by Hogancamp–Mellit and Elias–Hogancamp.">triply-graded Khovanov&ndash;Rozansky (HHH) homology</span> &mdash;\
+          <p>denote the <span class="kl-term" title="Triply-graded Khovanov–Rozansky homology HHH: the Hochschild homology of Hochschild homology (hence &lsquo;HHH&rsquo;) of the Rouquier complex of Soergel bimodules associated to a braid closure. Triply graded; categorifies the HOMFLY-PT polynomial. Computed in closed form for torus links by Hogancamp–Mellit and Elias–Hogancamp.">triply-graded Khovanov&ndash;Rozansky (HHH) homology</span> &mdash;\
           obtained as Hochschild homology of the Hochschild homology of the\
           <span class="kl-term" title="Rouquier complex: a complex of Soergel bimodules associated to a braid word, with homotopy type an invariant of the braid. Introduced by Rouquier (math/0409593) as a categorification of the braid group; Khovanov&rsquo;s 2007 observation that its Hochschild homology gives the triply graded HOMFLY homology.">Rouquier complex</span>\
           of Soergel bimodules for a braid representative (Khovanov 2007). Its graded Euler characteristic is the\
