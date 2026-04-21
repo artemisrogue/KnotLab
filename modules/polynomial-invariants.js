@@ -754,7 +754,7 @@
             'compute the module from any group presentation of \\(\\pi_1(S^3 \\setminus K)\\).</li>' +
             '<li>The <strong><span class="kl-term" title="Blanchfield pairing: non-singular Hermitian form on the Alexander module with values in Q(t)/ℤ[t,t⁻¹]; Hermitian w.r.t. t ↔ t⁻¹; metabolic for slice knots.">Blanchfield pairing</span></strong> &mdash; a Hermitian form on the module that refines ' +
             '\\(\\Delta_K\\) to a smooth concordance invariant.</li>' +
-            '<li>A <strong>super-Lie reinterpretation</strong> &mdash; \\(\\Delta_K\\) is the ' +
+            '<li>A <strong>Lie-superalgebra reinterpretation</strong> &mdash; \\(\\Delta_K\\) is the ' +
             'Reshetikhin&ndash;Turaev invariant of \\(U_q(\\mathfrak{gl}(1|1))\\), placing it firmly inside ' +
             'the quantum family.</li>' +
           '</ul>' +
@@ -861,16 +861,64 @@
         '</div>' +
 
         '<div class="expo-panel">' +
-          '<h3>6. Super Lie algebras &mdash; primer</h3>' +
+          '<h3>6. Superalgebras &mdash; a broader primer</h3>' +
           '<p>The quantum group that produces the Alexander polynomial is not an ordinary Lie algebra but a ' +
-          '<strong>super Lie algebra</strong>. Here is a quick self-contained reminder.</p>' +
-          '<p>A <strong>super Lie algebra</strong> (or <em>Lie superalgebra</em>) is a ' +
-          '\\(\\mathbb{Z}/2\\)-graded vector space ' +
-          '\\(\\mathfrak{g} = \\mathfrak{g}_{\\bar 0} \\oplus \\mathfrak{g}_{\\bar 1}\\) ' +
-          'equipped with a bilinear bracket \\([\\,\\cdot\\,,\\,\\cdot\\,]\\colon \\mathfrak{g}\\otimes\\mathfrak{g} \\to \\mathfrak{g}\\) ' +
+          '<strong>Lie superalgebra</strong>. Before specialising to the Lie case, it pays to review the ' +
+          'universe of &ldquo;super&rdquo; algebraic objects in general &mdash; the sign rule is identical in ' +
+          'every flavour, and the structural consequences follow from it.</p>' +
+
+          '<h4>\\(\\mathbb{Z}/2\\)-grading and parity</h4>' +
+          '<p>A <strong>super vector space</strong> is a vector space \\(V = V_{\\bar 0} \\oplus V_{\\bar 1}\\) ' +
+          'with a distinguished \\(\\mathbb{Z}/2\\)-grading. Elements of \\(V_{\\bar 0}\\) are ' +
+          '<em>even</em> (parity \\(|v|=\\bar 0\\)); elements of \\(V_{\\bar 1}\\) are <em>odd</em> ' +
+          '(parity \\(|v|=\\bar 1\\)). Morphisms are parity-preserving linear maps. The tensor product is ' +
+          'graded via \\(|v\\otimes w| = |v| + |w|\\) in \\(\\mathbb{Z}/2\\); the crucial new ingredient is the ' +
+          '<strong>braiding</strong> (or <em>super-swap</em>)</p>' +
+          '<div class="formula-box">' +
+            '$$\\tau_{V,W}\\colon V\\otimes W \\longrightarrow W\\otimes V, \\qquad ' +
+            'v\\otimes w \\;\\longmapsto\\; (-1)^{|v||w|}\\,w\\otimes v,$$' +
+          '</div>' +
+          '<p>which differs from the ordinary swap by the <strong>Koszul sign</strong>: swapping two odd ' +
+          'elements produces a minus sign. Once this sign is accepted, every &ldquo;super&rdquo; structure is ' +
+          'obtained from its classical counterpart by <em>inserting the Koszul sign whenever two odd objects ' +
+          'cross</em>.</p>' +
+
+          '<h4>\\(\\mathbb{Z}/2\\)-graded (associative) algebras</h4>' +
+          '<p>A <strong><span class="kl-term" title="Superalgebra: a Z/2-graded associative algebra A = A_0 \u2295 A_1 with A_i\u00b7A_j \u2286 A_{i+j}. The grading need not be compatible with any extra structure unless stated.">superalgebra</span></strong> is an associative algebra ' +
+          '\\(A = A_{\\bar 0} \\oplus A_{\\bar 1}\\) whose multiplication respects the grading: ' +
+          '\\(A_\\alpha \\cdot A_\\beta \\subseteq A_{\\alpha+\\beta}\\). It is ' +
+          '<strong>super-commutative</strong> if</p>' +
+          '<div class="formula-box">' +
+            '$$xy \\;=\\; (-1)^{|x||y|}\\,yx \\qquad \\text{for all homogeneous } x, y.$$' +
+          '</div>' +
+          '<p>So even elements commute with everything, and two odd elements <em>anticommute</em>.</p>' +
+          '<ul>' +
+            '<li><strong>Grassmann (exterior) algebra</strong> \\(\\Lambda[\\theta_1,\\ldots,\\theta_n]\\): ' +
+            'all \\(\\theta_i\\) declared odd, subject to \\(\\theta_i\\theta_j = -\\theta_j\\theta_i\\) and ' +
+            '\\(\\theta_i^2 = 0\\). This is the universal super-commutative algebra on \\(n\\) odd generators and ' +
+            'underlies differential forms (\\(\\theta_i = dx_i\\)) and fermionic physics.</li>' +
+            '<li><strong>Endomorphism superalgebra</strong> \\(\\mathrm{End}(V_{\\bar 0} \\oplus V_{\\bar 1})\\): ' +
+            'block \\(2\\times 2\\) matrices \\(\\begin{pmatrix} A & B \\\\ C & D\\end{pmatrix}\\) with ' +
+            'even part the block-diagonal matrices (\\(A, D\\) blocks) and odd part the block off-diagonal ' +
+            '(\\(B, C\\) blocks). Composition is ordinary matrix multiplication &mdash; the grading tracks how ' +
+            'each operator maps \\(V_{\\bar 0}\\) vs. \\(V_{\\bar 1}\\). Not super-commutative in general.</li>' +
+            '<li><strong>Polynomial de Rham complex</strong> ' +
+            '\\(\\Omega^{\\bullet}(\\mathbb{R}^n) = \\mathbb{R}[x_1,\\ldots,x_n] \\otimes \\Lambda[dx_1,\\ldots,dx_n]\\): ' +
+            'the canonical super-commutative algebra in geometry.</li>' +
+          '</ul>' +
+          '<p>The <strong>supertrace</strong> on \\(\\mathrm{End}(V)\\) is ' +
+          '\\(\\mathrm{str}\\begin{pmatrix}A & B\\\\ C & D\\end{pmatrix} = \\mathrm{tr}(A) - \\mathrm{tr}(D)\\); ' +
+          'its sign flip on the odd block is exactly the Koszul sign carried by cyclic permutation of odd ' +
+          'elements. The supertrace is the natural categorical trace in the super world and is what appears ' +
+          'in Reshetikhin&ndash;Turaev link invariants built from Lie superalgebras.</p>' +
+
+          '<h4>Lie superalgebras</h4>' +
+          '<p>A <strong>Lie superalgebra</strong> is a \\(\\mathbb{Z}/2\\)-graded vector space ' +
+          '\\(\\mathfrak{g} = \\mathfrak{g}_{\\bar 0} \\oplus \\mathfrak{g}_{\\bar 1}\\) equipped with a ' +
+          'bilinear bracket \\([\\,\\cdot\\,,\\,\\cdot\\,]\\colon \\mathfrak{g}\\otimes\\mathfrak{g}\\to\\mathfrak{g}\\) ' +
           'that respects the grading &mdash; ' +
           '\\([\\mathfrak{g}_{\\alpha}, \\mathfrak{g}_{\\beta}] \\subseteq \\mathfrak{g}_{\\alpha+\\beta}\\) &mdash; and satisfies the ' +
-          'two graded axioms. Write \\(|x| \\in \\{\\bar 0, \\bar 1\\}\\) for the parity of a homogeneous element.</p>' +
+          'two graded axioms obtained by inserting Koszul signs into the Lie axioms:</p>' +
           '<ul>' +
             '<li><strong>Super-antisymmetry:</strong> \\([x,y] = -(-1)^{|x||y|}\\,[y,x].\\)</li>' +
             '<li><strong>Super-Jacobi identity:</strong></li>' +
@@ -878,31 +926,42 @@
           '<div class="formula-box">' +
             '$$(-1)^{|x||z|}\\,[x,[y,z]] \\;+\\; (-1)^{|y||x|}\\,[y,[z,x]] \\;+\\; (-1)^{|z||y|}\\,[z,[x,y]] \\;=\\; 0.$$' +
           '</div>' +
-          '<p>Setting all parities to \\(\\bar 0\\) recovers ordinary Lie algebras. When one of \\(x, y\\) is ' +
-          'odd (parity \\(\\bar 1\\)), the sign flips &mdash; e.g. on two odd elements the bracket ' +
-          'becomes symmetric: \\([x,y] = [y,x]\\), so the bracket on \\(\\mathfrak{g}_{\\bar 1}\\) behaves like ' +
-          'an anticommutator.</p>' +
+          '<p>Setting all parities to \\(\\bar 0\\) recovers ordinary Lie algebras. When both \\(x, y\\) are ' +
+          'odd the sign flips &mdash; the bracket becomes <em>symmetric</em>: \\([x,y] = [y,x]\\), so on ' +
+          '\\(\\mathfrak{g}_{\\bar 1}\\) the bracket behaves like an anticommutator. Equivalently, a Lie ' +
+          'superalgebra is the &ldquo;commutator&rdquo; version of an associative superalgebra: given any ' +
+          'superalgebra \\(A\\), the super-commutator ' +
+          '\\([x,y] := xy - (-1)^{|x||y|}\\,yx\\) turns \\(A\\) into a Lie superalgebra.</p>' +
           '<p>A <strong>representation</strong> (or module) of \\(\\mathfrak{g}\\) is a ' +
           '\\(\\mathbb{Z}/2\\)-graded vector space \\(V = V_{\\bar 0} \\oplus V_{\\bar 1}\\) together with a ' +
           'bracket-preserving action \\(\\mathfrak{g} \\otimes V \\to V\\) that respects the grading: ' +
           '\\(\\mathfrak{g}_{\\alpha}\\cdot V_{\\beta} \\subseteq V_{\\alpha+\\beta}\\). Morphisms are ' +
           'parity-preserving linear maps intertwining the action.</p>' +
+
+          '<h4>From \\(\\mathfrak{gl}(m|n)\\) to the Alexander polynomial</h4>' +
           '<p>The basic example for knot theory is ' +
-          '<strong>\\(\\mathfrak{gl}(1|1)\\)</strong>, the super Lie algebra of ' +
-          '\\(2\\times 2\\) matrices graded by putting the diagonal in \\(\\mathfrak{g}_{\\bar 0}\\) and the ' +
-          'off-diagonal entries in \\(\\mathfrak{g}_{\\bar 1}\\). Its quantum deformation ' +
-          '\\(U_q(\\mathfrak{gl}(1|1))\\) is a Hopf superalgebra whose standard \\((1|1)\\)-dimensional ' +
-          'representation has an R-matrix whose Reshetikhin&ndash;Turaev trace on a braid closure computes ' +
-          'the <strong>Alexander polynomial</strong>. The super structure is essential: an ordinary Lie ' +
-          'algebra R-matrix can never produce \\(\\Delta_K\\) because the relevant tensor category must be ' +
-          '&ldquo;non-semisimple,&rdquo; a feature only visible in the super setting.</p>' +
+          '<strong>\\(\\mathfrak{gl}(1|1)\\)</strong>, the Lie superalgebra underlying the endomorphism ' +
+          'superalgebra \\(\\mathrm{End}(\\mathbb{C}^{1|1})\\): \\(2\\times 2\\) matrices graded by putting ' +
+          'the diagonal in \\(\\mathfrak{g}_{\\bar 0}\\) and the off-diagonal entries in ' +
+          '\\(\\mathfrak{g}_{\\bar 1}\\), with bracket given by the super-commutator above. Its quantum ' +
+          'deformation ' +
+          '\\(U_q(\\mathfrak{gl}(1|1))\\) is a <em>Hopf superalgebra</em> whose standard ' +
+          '\\((1|1)\\)-dimensional representation has an R-matrix whose Reshetikhin&ndash;Turaev trace on a ' +
+          'braid closure &mdash; using the <em>supertrace</em> at the closure step &mdash; computes the ' +
+          '<strong>Alexander polynomial</strong>. The super structure is essential: an ordinary Lie ' +
+          'algebra R-matrix can never produce \\(\\Delta_K\\) because the relevant tensor category is ' +
+          '<em>non-semisimple</em> (it has indecomposable projectives that are not simple), a feature only ' +
+          'visible in the super setting. The more general family ' +
+          '\\(U_q(\\mathfrak{gl}(m|n))\\) similarly produces Alexander-like ' +
+          '(&ldquo;multivariable&rdquo;) invariants.</p>' +
         '</div>' +
 
         '<div class="expo-panel">' +
-          '<h3>7. Super-Lie reinterpretation: \\(\\Delta_K\\) from \\(U_q(\\mathfrak{gl}(1|1))\\)</h3>' +
+          '<h3>7. Lie-superalgebra reinterpretation: \\(\\Delta_K\\) from \\(U_q(\\mathfrak{gl}(1|1))\\)</h3>' +
           '<p>The Alexander polynomial looks nothing like the Jones polynomial at first glance, yet both ' +
           'are Reshetikhin&ndash;Turaev invariants. The quantum group that produces \\(\\Delta_K\\) is the ' +
-          'super-algebra \\(U_q(\\mathfrak{gl}(1|1))\\). Its standard \\(2|1\\)-dimensional representation ' +
+          'Lie superalgebra \\(U_q(\\mathfrak{gl}(1|1))\\) (more precisely, its Hopf-superalgebra quantisation). ' +
+          'The standard \\((1|1)\\)-dimensional representation ' +
           'gives a ribbon super-category whose graded trace, applied to any braid closure representing ' +
           '\\(K\\), yields</p>' +
           '<div class="formula-box">' +
@@ -1364,7 +1423,7 @@
           '</details>' +
 
           '<details class="kl-example"><summary><strong>Road 5 (recap).</strong> R-matrices from quantum \\(\\mathfrak{sl}_2\\)</summary>' +
-            '<p>The fourth "road" proper was developed in the YBE sub-tab: the universal R-matrix of ' +
+            '<p>The fifth road proper is developed in the YBE sub-tab: the universal R-matrix of ' +
             '\\(U_q(\\mathfrak{sl}_2)\\) acts on \\(V^{\\otimes n}\\) (where \\(V\\) is the two-dimensional ' +
             'irrep) and gives a braid-group representation \\(B_n \\to \\mathrm{End}(V^{\\otimes n})\\); the ' +
             'quantum trace (partial trace against \\(K\\), the pivotal element) is Markov, and its value on ' +
@@ -1374,12 +1433,19 @@
             '<div class="formula-box">' +
               '$$TL_n(\\delta) \\;\\subset\\; H_n(q) \\;\\twoheadrightarrow\\; \\mathrm{Image}(B_n) \\;\\subset\\; \\mathrm{End}(V^{\\otimes n}) \\;\\subset\\; \\mathcal{B}(\\mathcal{H}).$$' +
             '</div>' +
-            '<p>All four roads are the same algebra viewed four ways: a planar diagram algebra (TL), a ' +
-            'deformation of a group algebra (Hecke), a tensor-product endomorphism algebra (R-matrix), ' +
-            'and a tower of operator algebras (subfactors).</p>' +
+            '<p>The five roads fall into the same algebraic family viewed from different vantage points: ' +
+            'a planar diagram algebra (TL), a deformation of a group algebra (Hecke), a tower of operator ' +
+            'algebras (subfactors), and a tensor-product endomorphism algebra built from a quantum-group ' +
+            'R-matrix. The fifth road &mdash; statistical-mechanical / R-matrix &mdash; is literally the ' +
+            'operator form of the TL / subfactor road: the TL relations are exactly the algebraic shadow of ' +
+            'a solution of the Yang&ndash;Baxter equation, and the quantum trace against the pivotal ' +
+            'element \\(K\\) is the operator-theoretic incarnation of the Markov trace on \\(TL_n\\). So ' +
+            '&ldquo;stat-mech R-matrix&rdquo; and &ldquo;TL algebra&rdquo; agree as invariant machines; the ' +
+            'difference is whether one thinks diagrammatically or in terms of transfer matrices on a spin ' +
+            'chain.</p>' +
           '</details>' +
 
-          '<h4 style="margin-top:18px">Summary: all four roads, side by side</h4>' +
+          '<h4 style="margin-top:18px">Summary: all five roads, side by side</h4>' +
           '<div class="formula-box" style="font-size:0.95em;overflow-x:auto">' +
             '<table style="border-collapse:collapse;margin:0 auto;">' +
               '<thead><tr style="border-bottom:1.5px solid #1f3a5f">' +
@@ -1398,12 +1464,16 @@
               '</tbody>' +
             '</table>' +
           '</div>' +
-          '<p style="margin-top:10px">All four (five) roads give braid-group representations. In each, ' +
-          'Markov II (stabilization under adding a strand) and Markov I (conjugation invariance) force the ' +
-          'same normalization of the trace; the common value on the braid closure \\(\\hat\\beta = K\\) is ' +
-          '\\(V_K(q)\\). The agreement is not a coincidence &mdash; it reflects the fact that all four ' +
-          'algebras share the same finite-dimensional semisimple quotients indexed by Young diagrams with ' +
-          'at most two rows, i.e. the representation theory of \\(U_q(\\mathfrak{sl}_2)\\).</p>' +
+          '<p style="margin-top:10px">All five roads give braid-group representations. In each, ' +
+          'Markov II (stabilisation under adding a strand) and Markov I (conjugation invariance) force the ' +
+          'same normalisation of the trace; the common value on the braid closure \\(\\hat\\beta = K\\) is ' +
+          '\\(V_K(q)\\). The agreement is not a coincidence &mdash; all five algebras share the same ' +
+          'finite-dimensional semisimple quotients indexed by Young diagrams with at most two rows, i.e. the ' +
+          'representation theory of \\(U_q(\\mathfrak{sl}_2)\\). In particular the ' +
+          '<em>stat-mech R-matrix road</em> is the operator form of the <em>TL / subfactor</em> road: the ' +
+          'spin-chain Hilbert space \\(V^{\\otimes n}\\) carries a TL action, and the R-matrix ' +
+          '\\(A\\cdot\\mathrm{id} + A^{-1}\\cdot e_i\\) is nothing but the Kauffman image of the braid ' +
+          'generator expressed as an operator.</p>' +
         '</div>' +
 
         '<div class="expo-panel">' +
@@ -1662,29 +1732,81 @@
             '\\;=\\; (\\mathrm{id} \\otimes R)(R \\otimes \\mathrm{id})(\\mathrm{id} \\otimes R).$$' +
           '</div>' +
           '<p>Diagrammatically, the two sides are the two ways to slide three strands past one ' +
-          'another &mdash; exactly the two tangles related by a Reidemeister&nbsp;III move:</p>' +
-          '<div style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap">' +
-            '<svg viewBox="0 0 280 120" width="280" height="120" aria-label="R3 LHS">' +
-              '<line x1="20"  y1="10" x2="140" y2="110" stroke="#c0392b" stroke-width="2.4"/>' +
-              '<line x1="80"  y1="10" x2="20"  y2="110" stroke="#fff"    stroke-width="6"/>' +
-              '<line x1="80"  y1="10" x2="20"  y2="110" stroke="#2e86de" stroke-width="2.4"/>' +
-              '<line x1="140" y1="10" x2="80"  y2="110" stroke="#fff"    stroke-width="6"/>' +
-              '<line x1="140" y1="10" x2="80"  y2="110" stroke="#27ae60" stroke-width="2.4"/>' +
-              '<text x="140" y="118" text-anchor="middle" font-size="11" fill="#555">(R\u2297id)(id\u2297R)(R\u2297id)</text>' +
+          'another &mdash; exactly the two tangles related by a <strong>Reidemeister&nbsp;III</strong> ' +
+          'move. The three strands are labelled \\(1, 2, 3\\) across the top; each \\(R\\) acts on two ' +
+          'adjacent tensor factors, matching the operator order on the left to the vertical stacking order ' +
+          'of the crossings in the diagram (read bottom-to-top as operator composition).</p>' +
+          '<div style="display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap">' +
+            // --- LHS: (R⊗id)(id⊗R)(R⊗id) — three-strand triangle move, matches the introduction.js braid-relation figure
+            '<svg viewBox="0 0 180 200" width="180" height="200" aria-label="R3 LHS: (R\u2297id)(id\u2297R)(R\u2297id)">' +
+              '<text x="20"  y="12" font-size="11" fill="#333" text-anchor="middle">1</text>' +
+              '<text x="80"  y="12" font-size="11" fill="#333" text-anchor="middle">2</text>' +
+              '<text x="140" y="12" font-size="11" fill="#333" text-anchor="middle">3</text>' +
+              '<g fill="none" stroke-linecap="round">' +
+                // Strand R: 1 -> (c1: R⊗id at y~30-60, strands 1&2) -> 2 -> (c2: id⊗R at y~80-110, strands 2&3) -> 3
+                '<path d="M20,18 L20,30 C20,45 80,45 80,60 L80,80 C80,95 140,95 140,110 L140,188" stroke="#c0392b" stroke-width="4.5"/>' +
+                // Strand B: 2 -> (c1) -> 1 -> straight -> 1 -> (c3: R⊗id at y~130-160, strands 1&2) -> 2
+                '<path d="M80,18 L80,30 C80,45 20,45 20,60 L20,130 C20,145 80,145 80,160 L80,188" stroke="#2e86de" stroke-width="3"/>' +
+                // gap on B at c1 (under); R above gets redrawn
+                '<line x1="47" y1="42" x2="53" y2="48" stroke="#ffffff" stroke-width="10"/>' +
+                // Strand G: 3 -> straight -> (c2) -> 2 -> (c3) -> 1
+                '<path d="M140,18 L140,80 C140,95 80,95 80,110 L80,130 C80,145 20,145 20,160 L20,188" stroke="#27ae60" stroke-width="3"/>' +
+                // gap on G at c2 (under); R above gets redrawn
+                '<line x1="107" y1="92" x2="113" y2="98" stroke="#ffffff" stroke-width="10"/>' +
+                // gap on B at c3 (under)
+                '<line x1="47" y1="142" x2="53" y2="148" stroke="#ffffff" stroke-width="10"/>' +
+                // redraw over-strand R-colour for three crossings
+                '<path d="M20,30 C20,45 80,45 80,60" stroke="#c0392b" stroke-width="4.5" fill="none"/>' +
+                '<path d="M80,80 C80,95 140,95 140,110" stroke="#c0392b" stroke-width="4.5" fill="none"/>' +
+                '<path d="M80,130 C80,145 140,145 140,160" stroke="#c0392b" stroke-width="4.5" fill="none"/>' +
+              '</g>' +
+              '<text x="90" y="198" text-anchor="middle" font-size="10" fill="#555">(R\u2297id)(id\u2297R)(R\u2297id)</text>' +
             '</svg>' +
-            '<span style="font-size:1.4em">\\(=\\)</span>' +
-            '<svg viewBox="0 0 280 120" width="280" height="120" aria-label="R3 RHS">' +
-              '<line x1="20"  y1="10" x2="140" y2="110" stroke="#c0392b" stroke-width="2.4"/>' +
-              '<line x1="80"  y1="10" x2="140" y2="60"  stroke="#fff"    stroke-width="6"/>' +
-              '<line x1="80"  y1="10" x2="140" y2="60"  stroke="#2e86de" stroke-width="2.4"/>' +
-              '<line x1="140" y1="60" x2="80"  y2="110" stroke="#fff"    stroke-width="6"/>' +
-              '<line x1="140" y1="60" x2="80"  y2="110" stroke="#2e86de" stroke-width="2.4"/>' +
-              '<line x1="140" y1="10" x2="20"  y2="110" stroke="#fff"    stroke-width="6"/>' +
-              '<line x1="140" y1="10" x2="20"  y2="110" stroke="#27ae60" stroke-width="2.4"/>' +
-              '<text x="140" y="118" text-anchor="middle" font-size="11" fill="#555">(id\u2297R)(R\u2297id)(id\u2297R)</text>' +
+            '<span style="font-size:1.6em">\\(=\\)</span>' +
+            // --- RHS: (id⊗R)(R⊗id)(id⊗R)
+            '<svg viewBox="0 0 180 200" width="180" height="200" aria-label="R3 RHS: (id\u2297R)(R\u2297id)(id\u2297R)">' +
+              '<text x="20"  y="12" font-size="11" fill="#333" text-anchor="middle">1</text>' +
+              '<text x="80"  y="12" font-size="11" fill="#333" text-anchor="middle">2</text>' +
+              '<text x="140" y="12" font-size="11" fill="#333" text-anchor="middle">3</text>' +
+              '<g fill="none" stroke-linecap="round">' +
+                // Strand R at position 1: straight down to y=80 then crosses to position 2 (c2: R⊗id, strands 1&2) then straight
+                '<path d="M20,18 L20,80 C20,95 80,95 80,110 L80,188" stroke="#c0392b" stroke-width="4.5"/>' +
+                // Strand B at position 2 top: (c1: id⊗R, strands 2&3) -> 3 -> straight -> (c3: id⊗R) -> 2
+                '<path d="M80,18 L80,30 C80,45 140,45 140,60 L140,130 C140,145 80,145 80,160 L80,188" stroke="#2e86de" stroke-width="3"/>' +
+                // Strand G at position 3: (c1) -> 2 -> (c2) -> 1 -> straight
+                '<path d="M140,18 L140,30 C140,45 80,45 80,60 L80,80 C80,95 20,95 20,110 L20,188" stroke="#27ae60" stroke-width="3"/>' +
+                // gap on G at c1 (under B)
+                '<line x1="107" y1="42" x2="113" y2="48" stroke="#ffffff" stroke-width="10"/>' +
+                // gap on G at c2 (under R)
+                '<line x1="47" y1="92" x2="53" y2="98" stroke="#ffffff" stroke-width="10"/>' +
+                // gap on B at c3 (under R? actually at c3 B crosses from 3->2, R is at position 2 after its own crossing, so B over G? No, B crosses from right to left at y 130-160, between positions 3 and 2. Let B be over.)
+                // Actually for simplicity let B be over at c3 (no gap on B at c3):
+                // redraw over-strand
+                '<path d="M80,30 C80,45 140,45 140,60" stroke="#2e86de" stroke-width="4.5" fill="none"/>' +
+                '<path d="M20,80 C20,95 80,95 80,110" stroke="#c0392b" stroke-width="4.5" fill="none"/>' +
+                '<path d="M140,130 C140,145 80,145 80,160" stroke="#2e86de" stroke-width="4.5" fill="none"/>' +
+              '</g>' +
+              '<text x="90" y="198" text-anchor="middle" font-size="10" fill="#555">(id\u2297R)(R\u2297id)(id\u2297R)</text>' +
             '</svg>' +
           '</div>' +
-          '<p>Thus YBE \\(\\Longleftrightarrow\\) Reidemeister&nbsp;III as a tangle equation.</p>' +
+          '<p>Reading each operator &ldquo;bottom to top&rdquo; as composition:</p>' +
+          '<div class="formula-box">' +
+            '$$\\underbrace{(R\\otimes\\mathrm{id})}_{\\text{strands 1,2}}\\; ' +
+            '\\underbrace{(\\mathrm{id}\\otimes R)}_{\\text{strands 2,3}}\\; ' +
+            '\\underbrace{(R\\otimes\\mathrm{id})}_{\\text{strands 1,2}} ' +
+            '\\;=\\; ' +
+            '(\\mathrm{id}\\otimes R)(R\\otimes\\mathrm{id})(\\mathrm{id}\\otimes R).$$' +
+          '</div>' +
+          '<p>So the <strong>braided Yang&ndash;Baxter equation</strong> ' +
+          '\\((R\\otimes\\mathrm{id})(\\mathrm{id}\\otimes R)(R\\otimes\\mathrm{id}) = ' +
+          '(\\mathrm{id}\\otimes R)(R\\otimes\\mathrm{id})(\\mathrm{id}\\otimes R)\\) ' +
+          'is <em>exactly</em> the algebraic content of Reidemeister III, strand for strand: each R on ' +
+          'the LHS is a crossing on the corresponding pair of neighbouring strands on the left side of the ' +
+          'diagram, and similarly for the RHS.</p>' +
+          '<p>(The same equation in the textbook &ldquo;R_{ij}&rdquo; notation &mdash; see panel 6 below ' +
+          '&mdash; reads \\(R_{12} R_{13} R_{23} = R_{23} R_{13} R_{12}\\); the &ldquo;braided&rdquo; form ' +
+          'above is what appears when one keeps track of where the two tensor factors each R acts on sit ' +
+          'among the three strands.)</p>' +
         '</div>' +
 
         '<div class="expo-panel">' +
@@ -2069,7 +2191,7 @@
 
         '<div class="expo-panel">' +
           '<h3>Beyond Jones: TL &sub; Hecke &sub; BMW and the full polynomial zoo</h3>' +
-          '<p>Each of the four roads above factored through an algebra whose braid generator satisfied ' +
+          '<p>Each of the five roads above factored through an algebra whose braid generator satisfied ' +
           'a <em>quadratic</em> eigenvalue relation. Widen the relation to a cubic and a whole new ' +
           'two-variable invariant &mdash; the Kauffman polynomial \\(F\\) &mdash; falls out. The right ' +
           'organizing picture is the tower</p>' +
