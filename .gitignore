@@ -1,3 +1,12 @@
-knot-explorer/data/
-knot-explorer/images/
+# Knot Explorer data: commit core JSON + images, skip the massive
+# pre-rendered plot set and the cross-project symlink. Missing optional
+# caches are handled gracefully by knot-explorer/index.html.
+knot-explorer/data/cache/plots/
+knot-explorer/data/cache/resolutions
+knot-explorer/data/cache/test/
+
 __pycache__/
+history/
+overrides.json
+review.json
+uploads/
