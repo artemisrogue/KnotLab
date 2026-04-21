@@ -472,6 +472,8 @@ footer {
   <button class="tab-btn" data-tab="cube" onclick="switchTab('cube')">Cube of Resolutions</button>
   <button class="tab-btn" data-tab="homological" onclick="switchTab('homological')">Homological</button>
   <button class="tab-btn" data-tab="khovanov-complex" onclick="switchTab('khovanov-complex')">Khovanov Complex</button>
+  <button class="tab-btn" data-tab="khovanov-rozansky" onclick="switchTab('khovanov-rozansky')">Khovanov&ndash;Rozansky</button>
+  <button class="tab-btn" data-tab="knot-floer" onclick="switchTab('knot-floer')">Knot Floer</button>
   <!-- Virtual Knots tab button removed; container kept -->
 
   <!-- MOY tab temporarily disabled -->
@@ -556,6 +558,8 @@ footer {
 
 <div id="tab-homological" class="tab-content"></div>
 <div id="tab-khovanov-complex" class="tab-content"></div>
+<div id="tab-khovanov-rozansky" class="tab-content"></div>
+<div id="tab-knot-floer" class="tab-content"></div>
 <div id="tab-virtual" class="tab-content"></div>
 <div id="tab-moy" class="tab-content"></div>
 
@@ -2612,6 +2616,8 @@ function switchTab(tabId) {
   if (tabId === 'cube') initCubeTab();
   if (tabId === 'homological' && typeof initHomologicalTab === 'function') initHomologicalTab();
   if (tabId === 'khovanov-complex' && typeof initKhovanovComplexTab === 'function') initKhovanovComplexTab();
+  if (tabId === 'khovanov-rozansky' && typeof initKhovanovRozanskyTab === 'function') initKhovanovRozanskyTab();
+  if (tabId === 'knot-floer' && typeof initKnotFloerTab === 'function') initKnotFloerTab();
   if (tabId === 'virtual' && typeof initVirtualTab === 'function') initVirtualTab();
   if (tabId === 'moy' && typeof initMoyTab === 'function') initMoyTab();
 }
@@ -4541,6 +4547,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="experimental/lib/diagram-builder.js"></script>
 <script src="experimental/tab-homological.js?v=20260421e"></script>
 <script src="experimental/tab-khovanov-complex.js"></script>
+<script src="experimental/tab-khovanov-rozansky.js?v=20260421a"></script>
+<script src="experimental/tab-knot-floer.js?v=20260421a"></script>
 <script src="experimental/tab-virtual.js"></script>
 <script src="experimental/tab-moy.js"></script>
 
