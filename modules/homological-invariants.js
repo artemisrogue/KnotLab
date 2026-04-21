@@ -234,6 +234,79 @@
           </ul>\
           <p>These geometric perspectives have led to new computational techniques and structural\
           results, including proofs of various conjectures about the homology of torus knots.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>MOY Calculus: The Decategorified Skeleton</h3>\
+          <p>Before categorifying, one needs a clean diagrammatic model of the\
+          \\(\\mathfrak{sl}(N)\\) <em>quantum polynomial</em> itself. Murakami, Ohtsuki and Yamada (1998)\
+          gave exactly this: a state-sum on colored <span class="kl-term" title="Trivalent graph: a planar graph whose vertices all have degree 3. In MOY calculus, edges are labeled by positive integers (representations of U_q(sl_N)) and vertices encode projections V_a ⊗ V_b → V_{a+b} and their duals.">trivalent graphs</span>\
+          whose vertices are projections between tensor products of fundamental representations.</p>\
+          <p><strong>Rules.</strong> Edges are labeled by positive integers \\(a \\in \\{1, \\ldots, N-1\\}\\) (the\
+          exterior powers \\(\\Lambda^a V\\) of the defining representation \\(V = \\mathbb{C}^N\\) of\
+          \\(U_q(\\mathfrak{sl}_N)\\)). A trivalent vertex joins edges of labels \\((a, b, a+b)\\) and encodes\
+          the projection \\(\\Lambda^a V \\otimes \\Lambda^b V \\twoheadrightarrow \\Lambda^{a+b} V\\) or its\
+          dual. Closed <span class="kl-term" title="MOY state: a labeled (oriented, trivalent) closed planar graph appearing as a resolution of a link diagram in MOY calculus. Each MOY state evaluates to a rational function in q via the local MOY relations (circle, digon, square).">MOY state</span>s evaluate via local relations involving\
+          <span class="kl-term" title="Quantum integer [k] = (q^k − q^{−k})/(q − q^{−1}); evaluates to k at q = 1, appears as the quantum dimension of representations of U_q(sl_N) and as the loop-value in MOY calculus.">quantum integers</span>\
+          \\([k] = (q^k - q^{-k})/(q - q^{-1})\\).</p>\
+          <div class="formula-box">\
+            $$\\langle \\bigcirc_a \\rangle \\;=\\; \\binom{N}{a}_{\\!q}, \\qquad\
+            \\langle \\text{digon}(a,b) \\rangle \\;=\\; \\binom{N - a}{b}_{\\!q}\\,\\langle\\,\\cdot\\,\\rangle,$$\
+          </div>\
+          <p>and the <strong>square relation</strong> writes a 4-valent &ldquo;square&rdquo; state as a\
+          \\(q\\)-weighted sum of its two planar resolutions (&ldquo;I&rdquo; and &ldquo;H&rdquo;).</p>\
+          <p><strong>Crossings.</strong> Each crossing in an oriented link diagram is resolved as a\
+          \\(q\\)-linear combination of two MOY states:</p>\
+          <div class="formula-box">\
+            $$\\bigl\\langle \\raisebox{-1pt}{\\(\\times\\)} \\bigr\\rangle \\;=\\; q^{\\,1/N}\\bigl\\langle \\mathrm{I} \\bigr\\rangle \\;-\\; q^{-1 + 1/N}\\bigl\\langle \\mathrm{H} \\bigr\\rangle,$$\
+          </div>\
+          <p>(with the inverse for the opposite crossing), the \\(q^{1/N}\\) normalization ensuring framing\
+          invariance. Summing over all crossings and evaluating with the circle/digon/square rules gives\
+          the <strong>quantum \\(\\mathfrak{sl}(N)\\) polynomial</strong> \\(P_N(K; q)\\), i.e.&nbsp;the\
+          specialization of HOMFLY at \\(a = q^N\\). MOY calculus is the decategorified skeleton of\
+          Khovanov&ndash;Rozansky homology: replace each MOY state by a graded vector space, and each local\
+          relation becomes a <em>categorical</em> decomposition.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>Matrix Factorizations: Building KR from the MOY Skeleton</h3>\
+          <p>Khovanov&ndash;Rozansky (2008) upgrade MOY calculus to a chain complex by assigning, to each\
+          edge of a MOY graph, a <span class="kl-term" title="Matrix factorization of a potential W in a ring R: a ℤ/2-graded free R-module P = P⁰ ⊕ P¹ with an odd map d : P → P such that d² = W · id. The homotopy category of MFs is a triangulated category; for isolated singularities it is equivalent to the singularity category of R/(W).">matrix factorization</span>\
+          of a fixed <span class="kl-term" title="Potential: the polynomial W in a matrix factorization d² = W · id. For KR sl(N) homology, W is a sum of terms x_i^{N+1} over edge-endpoint variables; its critical locus governs the homological behavior.">potential</span> \\(W\\).</p>\
+          <p><strong>Definition.</strong> A matrix factorization of \\(W \\in R\\) is a pair of free\
+          \\(R\\)-modules \\(P^0, P^1\\) with maps\
+          \\(d^0 : P^0 \\to P^1\\) and \\(d^1 : P^1 \\to P^0\\) satisfying</p>\
+          <div class="formula-box">\
+            $$d^1 \\circ d^0 \\;=\\; W \\cdot \\mathrm{id}_{P^0}, \\qquad d^0 \\circ d^1 \\;=\\; W \\cdot \\mathrm{id}_{P^1}.$$\
+          </div>\
+          <p>Equivalently, a &#8484;/2-graded module with an odd endomorphism \\(d\\) satisfying \\(d^2 = W \\cdot \\mathrm{id}\\).\
+          When \\(W\\) has isolated singularities, the homotopy category of matrix factorizations is\
+          equivalent (Orlov) to the singularity category of the hypersurface \\(\\{W = 0\\}\\) &mdash; the\
+          <span class="kl-term" title="Jacobi algebra of a potential W: Jac(W) = R/(∂_i W); for W = x^{N+1} over one variable this is ℂ[x]/(x^N), the cohomology of ℂℙ^{N−1}. Appears as the Hochschild-type invariant of the corresponding matrix factorization.">Jacobi algebra</span>\
+          \\(\\mathrm{Jac}(W) = R/(\\partial_i W)\\) is the key invariant.</p>\
+          <p><strong>KR setup.</strong> For sl\\((N)\\) homology the potential is\
+          \\(W = \\sum_e x_e^{N+1}\\) summed over the endpoint variables of each MOY edge\
+          (for each vertex, one instead uses \\(W = x_1^{N+1} + x_2^{N+1} - x_3^{N+1}\\) with appropriate\
+          signs from edge orientations). To each MOY edge one associates the &ldquo;Koszul-type&rdquo;\
+          matrix factorization\
+          \\(P = \\{R \\xrightarrow{\\pi} R \\xrightarrow{x^{N+1}/\\pi} R\\}\\) for a chosen factorization\
+          \\(\\pi\\) of \\(x^{N+1}\\). Each MOY crossing then becomes a cone between the two resolution\
+          matrix factorizations (&ldquo;I&rdquo; and &ldquo;H&rdquo;), producing a chain complex of matrix\
+          factorizations whose total cohomology is\
+          \\(\\mathrm{KR}_N(K)\\). The graded Euler characteristic collapses the category back to the MOY\
+          polynomial \\(P_N(K; q)\\) &mdash; categorification in action.</p>\
+          <p><strong>The \\(N \\to \\infty\\) limit: triply-graded HOMFLY homology.</strong> The stable limit\
+          of the KR construction replaces matrix factorizations by\
+          <span class="kl-term" title="Soergel bimodule: a summand of tensor products of R ⊗_{R^{s_i}} R over a polynomial ring R = ℂ[x_1,…,x_n], where s_i are simple reflections. Soergel (2007) proved these categorify the Hecke algebra; their homotopy category contains the Rouquier complexes that categorify braids.">Soergel bimodule</span>\
+          Rouquier complexes, and Hochschild homology replaces the matrix-factorization cohomology. The\
+          output is the <span class="kl-term" title="Triply-graded HOMFLY homology HHH(K): Khovanov's categorification (2007) of the HOMFLY-PT polynomial, via Hochschild homology of the Rouquier complex of a braid whose closure is K, in the category of Soergel bimodules. Bears three gradings (homological, q-grading, and Hochschild/a-grading).">triply-graded HOMFLY homology</span>\
+          \\(\\mathrm{HHH}(K)\\) (Khovanov 2007, Khovanov&ndash;Rozansky 2008):</p>\
+          <div class="formula-box">\
+            $$\\mathrm{HHH}(K) \\;=\\; \\mathrm{HH}_*\\bigl(\\mathrm{Rouquier}(\\beta)\\bigr), \\qquad \\hat\\beta = K,$$\
+          </div>\
+          <p>with three independent gradings (homological, \\(q\\)-grading, Hochschild / \\(a\\)-grading)\
+          whose graded Euler characteristic is the HOMFLY-PT polynomial \\(P_K(a, q)\\). Rasmussen&rsquo;s\
+          spectral sequences \\(\\mathrm{HHH}(K) \\Rightarrow \\mathrm{KR}_N(K)\\), driven by differentials\
+          \\(d_N\\) coming from the potential \\(W = x^{N+1}\\), collapse the Hochschild grading for each\
+          fixed finite \\(N\\) and recover the sl\\((N)\\) homology; see the Spectral Sequences sub-tab.</p>\
         </div>';
       mathRender(el);
     }
