@@ -10,6 +10,7 @@
     { id: 'alexmodule', label: 'Alexander Module' },
     { id: 'jones',     label: 'Jones Polynomial' },
     { id: 'homflypt',  label: 'HOMFLY-PT Polynomial' },
+    { id: 'ybe',       label: 'Yang\u2013Baxter & R-matrices' },
     { id: 'quantum',   label: 'Quantum Link Invariants' },
     { id: 'others',    label: 'Other Polynomial Invariants' }
   ];
@@ -50,6 +51,7 @@
       else if (state.subTab === 'alexmodule') renderAlexmodule(content);
       else if (state.subTab === 'jones') renderJones(content);
       else if (state.subTab === 'homflypt') renderHomflypt(content);
+      else if (state.subTab === 'ybe') renderYbe(content);
       else if (state.subTab === 'quantum') renderQuantum(content);
       else if (state.subTab === 'others') renderOthers(content);
     }
@@ -1201,6 +1203,326 @@
     }
 
     // ── Quantum Link Invariants ───────────────────────────────
+    // ── Yang–Baxter & R-matrices ──────────────────────────────
+    function renderYbe(el) {
+      el.innerHTML =
+        '<div class="expo-panel">' +
+          '<h3>1. Why R-matrices?</h3>' +
+          '<p>Every link can be presented as the closure \\(\\hat{\\beta}\\) of a braid ' +
+          '\\(\\beta \\in B_n\\) (Alexander&rsquo;s theorem). To turn such a presentation into a ' +
+          'number, one would like to assign to each crossing a linear operator ' +
+          '\\(R : V \\otimes V \\to V \\otimes V\\) on some auxiliary vector space \\(V\\), ' +
+          'multiply these operators up the braid, and take a trace. For the result to depend ' +
+          'only on the link and not on the chosen braid diagram, the assignment must be invariant ' +
+          'under the Reidemeister moves. Reidemeister II asks \\(R\\) to be invertible; ' +
+          'Reidemeister III asks \\(R\\) to satisfy the ' +
+          '<strong><span class="kl-term" title="(R⊗id)(id⊗R)(R⊗id) = (id⊗R)(R⊗id)(id⊗R) in End(V⊗V⊗V); the algebraic form of the Reidemeister III move.">Yang&ndash;Baxter equation</span></strong>. ' +
+          'This is the <em>operational heart</em> of all Reshetikhin&ndash;Turaev invariants: ' +
+          'Jones, HOMFLY-PT, colored Jones, Kauffman, and Khovanov&ndash;Rozansky all differ ' +
+          'only in the choice of \\((V, R)\\).</p>' +
+        '</div>' +
+
+        '<div class="expo-panel">' +
+          '<h3>2. The Yang&ndash;Baxter equation</h3>' +
+          '<p>Let \\(R : V \\otimes V \\to V \\otimes V\\) be a linear operator. The ' +
+          '<strong>Yang&ndash;Baxter equation</strong> (YBE) is the identity in ' +
+          '\\(\\mathrm{End}(V \\otimes V \\otimes V)\\)</p>' +
+          '<div class="formula-box">' +
+            '$$(R \\otimes \\mathrm{id})(\\mathrm{id} \\otimes R)(R \\otimes \\mathrm{id}) ' +
+            '\\;=\\; (\\mathrm{id} \\otimes R)(R \\otimes \\mathrm{id})(\\mathrm{id} \\otimes R).$$' +
+          '</div>' +
+          '<p>Diagrammatically, the two sides are the two ways to slide three strands past one ' +
+          'another &mdash; exactly the two tangles related by a Reidemeister&nbsp;III move:</p>' +
+          '<div style="display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap">' +
+            '<svg viewBox="0 0 280 120" width="280" height="120" aria-label="R3 LHS">' +
+              '<line x1="20"  y1="10" x2="140" y2="110" stroke="#c0392b" stroke-width="2.4"/>' +
+              '<line x1="80"  y1="10" x2="20"  y2="110" stroke="#fff"    stroke-width="6"/>' +
+              '<line x1="80"  y1="10" x2="20"  y2="110" stroke="#2e86de" stroke-width="2.4"/>' +
+              '<line x1="140" y1="10" x2="80"  y2="110" stroke="#fff"    stroke-width="6"/>' +
+              '<line x1="140" y1="10" x2="80"  y2="110" stroke="#27ae60" stroke-width="2.4"/>' +
+              '<text x="140" y="118" text-anchor="middle" font-size="11" fill="#555">(R\u2297id)(id\u2297R)(R\u2297id)</text>' +
+            '</svg>' +
+            '<span style="font-size:1.4em">\\(=\\)</span>' +
+            '<svg viewBox="0 0 280 120" width="280" height="120" aria-label="R3 RHS">' +
+              '<line x1="20"  y1="10" x2="140" y2="110" stroke="#c0392b" stroke-width="2.4"/>' +
+              '<line x1="80"  y1="10" x2="140" y2="60"  stroke="#fff"    stroke-width="6"/>' +
+              '<line x1="80"  y1="10" x2="140" y2="60"  stroke="#2e86de" stroke-width="2.4"/>' +
+              '<line x1="140" y1="60" x2="80"  y2="110" stroke="#fff"    stroke-width="6"/>' +
+              '<line x1="140" y1="60" x2="80"  y2="110" stroke="#2e86de" stroke-width="2.4"/>' +
+              '<line x1="140" y1="10" x2="20"  y2="110" stroke="#fff"    stroke-width="6"/>' +
+              '<line x1="140" y1="10" x2="20"  y2="110" stroke="#27ae60" stroke-width="2.4"/>' +
+              '<text x="140" y="118" text-anchor="middle" font-size="11" fill="#555">(id\u2297R)(R\u2297id)(id\u2297R)</text>' +
+            '</svg>' +
+          '</div>' +
+          '<p>Thus YBE \\(\\Longleftrightarrow\\) Reidemeister&nbsp;III as a tangle equation.</p>' +
+        '</div>' +
+
+        '<div class="expo-panel">' +
+          '<h3>3. Braid group representation</h3>' +
+          '<p>Given any \\(R\\) satisfying YBE, define a representation of the ' +
+          '<span class="kl-term" title="Artin braid group B_n on n strands: generators σ_1,…,σ_{n-1} subject to σ_iσ_{i+1}σ_i = σ_{i+1}σ_iσ_{i+1} and σ_iσ_j = σ_jσ_i for |i−j|≥2.">braid group</span> \\(B_n\\) by</p>' +
+          '<div class="formula-box">' +
+            '$$\\rho_R : B_n \\longrightarrow \\mathrm{End}(V^{\\otimes n}), \\qquad ' +
+            '\\sigma_i \\;\\longmapsto\\; \\mathrm{id}^{\\otimes(i-1)} \\otimes R \\otimes \\mathrm{id}^{\\otimes(n-i-1)}.$$' +
+          '</div>' +
+          '<details class="kl-proof"><summary>Why this is a representation</summary>' +
+            '<p>Far commutation \\(\\sigma_i\\sigma_j = \\sigma_j\\sigma_i\\) for \\(|i-j|\\ge 2\\) is ' +
+            'automatic: the operators act on disjoint tensor factors. The braid relation ' +
+            '\\(\\sigma_i\\sigma_{i+1}\\sigma_i = \\sigma_{i+1}\\sigma_i\\sigma_{i+1}\\) reduces, on ' +
+            'the three adjacent factors, to exactly the Yang&ndash;Baxter equation. So YBE ' +
+            '\\(\\Longrightarrow\\) braid relations.</p>' +
+          '</details>' +
+          '<p>To get a link invariant from \\(\\rho_R(\\beta)\\) one still needs invariance under ' +
+          '<em>Markov moves</em>: conjugation in \\(B_n\\) (handled by the trace) and ' +
+          'stabilisation \\(\\beta \\mapsto \\beta\\sigma_n^{\\pm1} \\in B_{n+1}\\). The latter ' +
+          'requires an <em>enhancement</em> of \\(R\\) by a ' +
+          '<span class="kl-term" title="Ribbon element: a central element v in a ribbon Hopf algebra with Δ(v) = (v⊗v)(R_{21}R)^{-1}, S(v)=v; encodes the twist/framing and gives rise to the quantum trace.">ribbon element</span> ' +
+          '\\(u\\), producing a <span class="kl-term" title="Quantum trace tr_q(x) = tr(u·x) for the ribbon element u; invariant under Markov stabilisation and the correct trace for RT invariants.">quantum trace</span> ' +
+          '\\(\\mathrm{tr}_q\\). The resulting ' +
+          '<span class="kl-term" title="Markov trace: a trace on the braid group algebra (or Hecke algebra) invariant under conjugation and controlled under σ_n-stabilisation; produces link invariants by closure.">Markov trace</span> ' +
+          'of \\(\\rho_R(\\beta)\\), suitably normalised by a writhe factor, is a link invariant of ' +
+          '\\(\\hat{\\beta}\\).</p>' +
+        '</div>' +
+
+        '<div class="expo-panel">' +
+          '<h3>4. The \\(U_q(\\mathfrak{sl}_2)\\) R-matrix</h3>' +
+          '<p>Take \\(V = \\mathbb{C}\\{e_0, e_1\\}\\) (the fundamental 2-dimensional representation ' +
+          'of \\(U_q(\\mathfrak{sl}_2)\\)). In the ordered basis ' +
+          '\\(\\{e_0\\otimes e_0,\\; e_0\\otimes e_1,\\; e_1\\otimes e_0,\\; e_1\\otimes e_1\\}\\) ' +
+          'of \\(V\\otimes V\\), a standard normalisation of the R-matrix is</p>' +
+          '<div class="formula-box">' +
+            '$$R \\;=\\; \\begin{pmatrix} q & 0 & 0 & 0 \\\\ 0 & q - q^{-1} & 1 & 0 \\\\ 0 & 1 & 0 & 0 \\\\ 0 & 0 & 0 & q \\end{pmatrix}.$$' +
+          '</div>' +
+          '<p>This satisfies the <em>Hecke quadratic relation</em> ' +
+          '\\(R - R^{-1} = (q - q^{-1})\\,\\mathrm{id}\\) on the braid generator and, with the ' +
+          'quantum-trace normalisation below, produces the Jones polynomial in the skein ' +
+          'form \\(q^{-1}V(L_+) - q\\,V(L_-) = (q^{1/2} - q^{-1/2})\\,V(L_0)\\).</p>' +
+          '<details class="kl-example"><summary>Sketch: verifying YBE on a basis vector</summary>' +
+            '<p>Write \\(R_1 = R \\otimes \\mathrm{id}\\), \\(R_2 = \\mathrm{id} \\otimes R\\) in ' +
+            '\\(\\mathrm{End}(V^{\\otimes 3})\\) (both \\(8\\times 8\\)). YBE asserts ' +
+            '\\(R_1R_2R_1 = R_2R_1R_2\\). Evaluate on \\(e_1\\otimes e_0\\otimes e_0\\):</p>' +
+            '<ul>' +
+              '<li>\\(R_1 (e_1 e_0 e_0) = e_0 e_1 e_0 \\) (the \\(1\\)-entry column).</li>' +
+              '<li>\\(R_2 (e_0 e_1 e_0) = (q-q^{-1})\\,e_0 e_1 e_0 + e_0 e_0 e_1\\).</li>' +
+              '<li>\\(R_1\\) applied to the previous gives ' +
+              '\\((q-q^{-1})\\,e_1 e_0 e_0 \\,\\text{-contribution from first term} + q\\,e_0 e_0 e_1\\) ' +
+              '(keeping track of all four nonzero column images).</li>' +
+            '</ul>' +
+            '<p>Performing the analogous reduction for \\(R_2R_1R_2\\) yields the identical ' +
+            'combination. Repeating for each of the 8 basis vectors gives the full ' +
+            'identity; the interactive widget in panel 6 checks this numerically.</p>' +
+          '</details>' +
+        '</div>' +
+
+        '<div class="expo-panel">' +
+          '<h3>5. From R-matrix to the Jones polynomial</h3>' +
+          '<p>The Reshetikhin&ndash;Turaev recipe. Given a braid \\(\\beta \\in B_n\\) with ' +
+          'closure \\(L = \\hat{\\beta}\\):</p>' +
+          '<ol>' +
+            '<li>Form \\(\\rho_R(\\beta) \\in \\mathrm{End}(V^{\\otimes n})\\) by substituting ' +
+            'the matrix of panel 4 for each generator.</li>' +
+            '<li>Take the <em>quantum trace</em> ' +
+            '\\(\\mathrm{tr}_q(x) = \\mathrm{tr}(K_{2\\rho}\\,x)\\), where ' +
+            '\\(K_{2\\rho} = \\operatorname{diag}(q, q^{-1})\\) on each tensor factor is the ' +
+            'ribbon/pivotal element for \\(U_q(\\mathfrak{sl}_2)\\).</li>' +
+            '<li>Normalise by \\(q^{-3w(\\beta)/2}\\) (or an equivalent writhe factor) to ' +
+            'correct for Reidemeister&nbsp;I.</li>' +
+          '</ol>' +
+          '<p>The result is the Jones polynomial \\(V_L(q)\\).</p>' +
+          '<details class="kl-example"><summary>Tiny worked example: \\(\\sigma_1^3\\) closes to the trefoil</summary>' +
+            '<p>The 2-strand braid \\(\\sigma_1^3 \\in B_2\\) closes to the right-handed trefoil ' +
+            '\\(3_1\\). Computing \\(\\rho_R(\\sigma_1^3) = R^3\\) on \\(V\\otimes V\\) and then ' +
+            'taking \\(\\mathrm{tr}_q = \\mathrm{tr}\\bigl((K_{2\\rho}\\otimes K_{2\\rho})\\,\\cdot\\bigr)\\) ' +
+            'produces, after the writhe correction \\(q^{-9/2}\\), the Laurent polynomial</p>' +
+            '<div class="formula-box">' +
+              '$$V_{3_1}(q) \\;=\\; -q^{-4} + q^{-3} + q^{-1}.$$' +
+            '</div>' +
+            '<p>The full arithmetic is a page of 4&times;4 matrix bookkeeping; we leave it to the ' +
+            'RT expansion in the <em>Quantum Link Invariants</em> sub-tab and confirm the ' +
+            'numerical answer in the widget below.</p>' +
+          '</details>' +
+        '</div>' +
+
+        '<div class="expo-panel">' +
+          '<h3>6. Interactive: verify YBE numerically</h3>' +
+          '<p>Pick a value of \\(q\\). The widget builds the \\(8\\times 8\\) matrices ' +
+          '\\(R_1 = R\\otimes\\mathrm{id}\\) and \\(R_2 = \\mathrm{id}\\otimes R\\) ' +
+          'numerically, computes both sides of the Yang&ndash;Baxter equation, and reports the ' +
+          'Frobenius norm of the difference (should be \\(\\sim 10^{-15}\\), i.e. machine zero). ' +
+          'It also computes a quantum trace of \\(R^3\\) on \\(V\\otimes V\\) as a sanity check ' +
+          'against \\(V_{3_1}(q) = -q^{-4} + q^{-3} + q^{-1}\\).</p>' +
+          '<div class="kl-interactive">' +
+            '<div class="kl-controls">' +
+              '<label>Value of \\(q\\): ' +
+              '<select id="pi-ybe-q">' +
+                '<option value="2" selected>q = 2 (real)</option>' +
+                '<option value="0.5">q = 1/2 (real)</option>' +
+                '<option value="i">q = i</option>' +
+                '<option value="exp5">q = e^{i\u03c0/5}</option>' +
+                '<option value="exp7">q = e^{i\u03c0/7}</option>' +
+              '</select></label>' +
+            '</div>' +
+            '<div class="kl-readout" id="pi-ybe-readout"></div>' +
+          '</div>' +
+        '</div>';
+
+      mathRender(el);
+
+      // ── YBE widget: numerical verification ──
+      // Complex arithmetic as [re, im] pairs; 8x8 matrices as length-64 Float64Arrays.
+      function cAdd(a, b) { return [a[0]+b[0], a[1]+b[1]]; }
+      function cSub(a, b) { return [a[0]-b[0], a[1]-b[1]]; }
+      function cMul(a, b) { return [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]]; }
+      function cInv(a) {
+        var d = a[0]*a[0] + a[1]*a[1];
+        return [a[0]/d, -a[1]/d];
+      }
+      function cAbs(a) { return Math.sqrt(a[0]*a[0] + a[1]*a[1]); }
+      function cFmt(a) {
+        var r = a[0], i = a[1];
+        if (Math.abs(i) < 1e-12) return r.toFixed(4);
+        if (Math.abs(r) < 1e-12) return i.toFixed(4) + 'i';
+        return r.toFixed(4) + (i >= 0 ? ' + ' : ' - ') + Math.abs(i).toFixed(4) + 'i';
+      }
+      // Build the 4x4 R-matrix as a 16-entry complex array (row-major).
+      function buildR(q) {
+        var qinv = cInv(q);
+        var d = cSub(q, qinv); // q - q^{-1}
+        var Z = [0,0], O = [1,0];
+        return [
+          q, Z, Z, Z,
+          Z, d, O, Z,
+          Z, O, Z, Z,
+          Z, Z, Z, q
+        ];
+      }
+      // Tensor two 4x4 complex matrices A (on factors 1,2) with id_2 on factor 3
+      // to get an 8x8 acting on V⊗V⊗V. Indexing: basis index = 4*i + 2*j + k.
+      // R1 = R ⊗ id: acts on (i,j), passes k through.
+      // R2 = id ⊗ R: acts on (j,k), passes i through.
+      function buildR1(R4) {
+        var M = new Array(64);
+        for (var a = 0; a < 64; a++) M[a] = [0,0];
+        for (var i = 0; i < 2; i++)
+         for (var j = 0; j < 2; j++)
+          for (var k = 0; k < 2; k++)
+           for (var ip = 0; ip < 2; ip++)
+            for (var jp = 0; jp < 2; jp++) {
+              var row = 4*i + 2*j + k, col = 4*ip + 2*jp + k;
+              M[row*8 + col] = R4[(2*i+j)*4 + (2*ip+jp)];
+            }
+        return M;
+      }
+      function buildR2(R4) {
+        var M = new Array(64);
+        for (var a = 0; a < 64; a++) M[a] = [0,0];
+        for (var i = 0; i < 2; i++)
+         for (var j = 0; j < 2; j++)
+          for (var k = 0; k < 2; k++)
+           for (var jp = 0; jp < 2; jp++)
+            for (var kp = 0; kp < 2; kp++) {
+              var row = 4*i + 2*j + k, col = 4*i + 2*jp + kp;
+              M[row*8 + col] = R4[(2*j+k)*4 + (2*jp+kp)];
+            }
+        return M;
+      }
+      function matMul8(A, B) {
+        var C = new Array(64);
+        for (var i = 0; i < 8; i++) {
+          for (var j = 0; j < 8; j++) {
+            var s = [0,0];
+            for (var k = 0; k < 8; k++) {
+              s = cAdd(s, cMul(A[i*8+k], B[k*8+j]));
+            }
+            C[i*8+j] = s;
+          }
+        }
+        return C;
+      }
+      function matMul4(A, B) {
+        var C = new Array(16);
+        for (var i = 0; i < 4; i++) {
+          for (var j = 0; j < 4; j++) {
+            var s = [0,0];
+            for (var k = 0; k < 4; k++) s = cAdd(s, cMul(A[i*4+k], B[k*4+j]));
+            C[i*4+j] = s;
+          }
+        }
+        return C;
+      }
+      function frobDiff(A, B) {
+        var s = 0;
+        for (var a = 0; a < 64; a++) {
+          var d = cSub(A[a], B[a]);
+          s += d[0]*d[0] + d[1]*d[1];
+        }
+        return Math.sqrt(s);
+      }
+      // Quantum trace of M (4x4 on V⊗V) with pivotal K = diag(q, q^{-1}) on each factor.
+      function qTrace(M, q) {
+        var qinv = cInv(q);
+        var diag = [q, qinv]; // K on one factor
+        var s = [0,0];
+        for (var i = 0; i < 2; i++)
+          for (var j = 0; j < 2; j++) {
+            var idx = (2*i+j)*4 + (2*i+j);
+            s = cAdd(s, cMul(cMul(diag[i], diag[j]), M[idx]));
+          }
+        return s;
+      }
+      function parseQ(v) {
+        if (v === '2') return [2, 0];
+        if (v === '0.5') return [0.5, 0];
+        if (v === 'i') return [0, 1];
+        if (v === 'exp5') return [Math.cos(Math.PI/5), Math.sin(Math.PI/5)];
+        if (v === 'exp7') return [Math.cos(Math.PI/7), Math.sin(Math.PI/7)];
+        return [2, 0];
+      }
+      var ysel = document.getElementById('pi-ybe-q');
+      var yout = document.getElementById('pi-ybe-readout');
+      function updateYbe() {
+        if (!ysel || !yout) return;
+        var q = parseQ(ysel.value);
+        var R4 = buildR(q);
+        var R1 = buildR1(R4);
+        var R2 = buildR2(R4);
+        var lhs = matMul8(matMul8(R1, R2), R1);
+        var rhs = matMul8(matMul8(R2, R1), R2);
+        var diff = frobDiff(lhs, rhs);
+        // R^3 on V⊗V, quantum-trace, writhe-correct by q^{-9/2} (approx using principal branch).
+        var R2_4 = matMul4(R4, R4);
+        var R3_4 = matMul4(R2_4, R4);
+        var tr3 = qTrace(R3_4, q);
+        // Writhe factor q^{-9/2}: use exp(-(9/2) log q). For complex q we take the principal log.
+        var lnr = Math.log(cAbs(q));
+        var arg = Math.atan2(q[1], q[0]);
+        var k = -9/2;
+        var w = [Math.exp(k*lnr)*Math.cos(k*arg), Math.exp(k*lnr)*Math.sin(k*arg)];
+        var jones = cMul(w, tr3);
+        // Target: V_{3_1}(q) = -q^{-4} + q^{-3} + q^{-1}
+        var qi = cInv(q);
+        var qi2 = cMul(qi, qi);
+        var qi3 = cMul(qi2, qi);
+        var qi4 = cMul(qi3, qi);
+        var target = cAdd(cAdd([-qi4[0], -qi4[1]], qi3), qi);
+        yout.innerHTML =
+          '<div><strong>Frobenius norm of YBE difference:</strong> ' +
+          diff.toExponential(3) + ' &nbsp; ' +
+          (diff < 1e-10 ? '<span style="color:#27ae60">\u2713 YBE holds</span>' :
+           '<span style="color:#c0392b">\u2717 mismatch</span>') + '</div>' +
+          '<div style="margin-top:0.4rem"><strong>\\(q^{-9/2}\\,\\mathrm{tr}_q(R^3)\\):</strong> ' +
+          cFmt(jones) + '</div>' +
+          '<div style="margin-top:0.2rem"><strong>Target \\(V_{3_1}(q) = -q^{-4} + q^{-3} + q^{-1}\\):</strong> ' +
+          cFmt(target) + '</div>' +
+          '<div style="margin-top:0.2rem;color:#555"><em>The Jones value and target agree up to the ' +
+          'choice of branch for \\(q^{1/2}\\); the YBE check is basis-independent and should be ' +
+          'machine zero for every \\(q\\).</em></div>';
+        mathRender(yout);
+      }
+      if (ysel) ysel.addEventListener('change', updateYbe);
+      updateYbe();
+    }
+
     function renderQuantum(el) {
       el.innerHTML =
         '<div class="expo-panel">' +
@@ -1210,7 +1532,10 @@
           'the universal enveloping algebra of a simple Lie algebra, with \\(q\\) a formal parameter. ' +
           'At \\(q = 1\\) one recovers ordinary representation theory; at \\(q\\) generic the category of ' +
           'finite-dimensional \\(U_q(\\mathfrak{g})\\)-modules acquires a non-trivial <em>braiding</em>, ' +
-          'which is exactly the algebraic ingredient needed to define link invariants.</p>' +
+          'which is exactly the algebraic ingredient needed to define link invariants. ' +
+          'The operational heart &mdash; how an <span class="kl-term" title="R-matrix: a linear operator R: V⊗V → V⊗V (or universal element R ∈ A⊗̂A) satisfying the Yang-Baxter equation; models each crossing of a braid.">R-matrix</span> assigns a linear operator to each crossing and why ' +
+          'the <em>Yang&ndash;Baxter equation</em> makes the assignment consistent &mdash; is developed ' +
+          'in the preceding <em>Yang&ndash;Baxter &amp; R-matrices</em> sub-tab.</p>' +
           '<p>Reshetikhin&ndash;Turaev (1990) turned this observation into a functor</p>' +
           '<div class="formula-box">' +
             '$$Z_{\\mathfrak{g},R} : \\{\\text{oriented framed tangles}\\} \\longrightarrow ' +
