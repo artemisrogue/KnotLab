@@ -166,7 +166,7 @@
           '\\(\\pm t^n\\).</p>' +
           '<details class="kl-proof">' +
             '<summary>Proof sketch: \\(\\Delta_K\\) is well-defined (S-equivalence)</summary>' +
-            '<p>Sketch. Any two Seifert surfaces \\(\\Sigma_0, \\Sigma_1\\) for \\(K\\) become isotopic after finitely many <em>stabilizations</em> (attaching a tube away from \\(\\partial\\)) and <em>handle slides</em> on \\(H_1\\). On Seifert matrices these operations become: (a) conjugation \\(V \\mapsto P V P^{\\mathsf T}\\) by \\(P \\in GL_n(\\mathbb{Z})\\) (change of basis), and (b) stabilization \\(V \\mapsto \\begin{psmallmatrix} V & * & 0 \\\\ 0 & 0 & 1 \\\\ 0 & 0 & 0 \\end{psmallmatrix}\\) or its transpose. Both preserve \\(\\det(V - t V^{\\mathsf T})\\) up to multiplication by \\(\\pm t^k\\): (a) gives \\(\\det(P)^2 = 1\\) times the original; (b) the extra \\(2\\times 2\\) block contributes factor \\(-t\\). Thus \\(\\Delta_K(t)\\) is well-defined in \\(\\mathbb{Z}[t^{\\pm 1}]/\\langle \\pm t^k\\rangle\\). (Trotter 1962; see also Kauffman\u2019s <em>On Knots</em>.)</p>' +
+            '<p>Sketch. Any two Seifert surfaces \\(\\Sigma_0, \\Sigma_1\\) for \\(K\\) become isotopic after finitely many <em>stabilizations</em> (attaching a tube away from \\(\\partial\\)) and <em>handle slides</em> on \\(H_1\\). On Seifert matrices these operations become: (a) conjugation \\(V \\mapsto P V P^{\\mathsf T}\\) by \\(P \\in GL_n(\\mathbb{Z})\\) (change of basis), and (b) stabilization \\(V \\mapsto \\left(\\begin{smallmatrix} V & * & 0 \\\\ 0 & 0 & 1 \\\\ 0 & 0 & 0 \\end{smallmatrix}\\right)\\) or its transpose. Both preserve \\(\\det(V - t V^{\\mathsf T})\\) up to multiplication by \\(\\pm t^k\\): (a) gives \\(\\det(P)^2 = 1\\) times the original; (b) the extra \\(2\\times 2\\) block contributes factor \\(-t\\). Thus \\(\\Delta_K(t)\\) is well-defined in \\(\\mathbb{Z}[t^{\\pm 1}]/\\langle \\pm t^k\\rangle\\). (Trotter 1962; see also Kauffman\u2019s <em>On Knots</em>.)</p>' +
           '</details>' +
         '</div>' +
 
@@ -1581,6 +1581,7 @@
           '<div class="formula-box">' +
             '$$P_{\\bigcirc}(a,z) = 1, \\qquad a^{-1}\\,P_{L_+} - a\\,P_{L_-} = z\\,P_{L_0}.$$' +
           '</div>' +
+          '<p style="font-size:0.92em;color:#555"><em>Convention.</em> This is the Lickorish&ndash;Millett / Przytycki&ndash;Traczyk form. KnotAtlas and Bar-Natan use the opposite sign on \\(a\\) (i.e. \\(a\\,P_{L_+} - a^{-1}\\,P_{L_-} = z\\,P_{L_0}\\)); their tabulated exponents of \\(a\\) are therefore negated relative to ours.</p>' +
           '<p>Existence is the content of the theorem: any quantity satisfying these two rules on every ' +
           'link diagram is well-defined and independent of the order of skein reductions. The proof ' +
           '(Lickorish&ndash;Millett, Przytycki&ndash;Traczyk) uses the Alexander theorem that every ' +

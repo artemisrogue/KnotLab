@@ -101,6 +101,19 @@ The Knot Explorer tab is a self-contained iframe app under `knot-explorer/` with
 - Every new entry should ship with a PDF in `bibliography/` verified by pypdf first-page read against the entry's title + first author.
 - Keep entries sorted by ID conventionally: `firstauthor-year[-tag]` (`ozsvath-szabo-2005`, `hom-2014`, …).
 
+## QA tooling
+
+- Preview server: `python serve.py` on port 8780 (also exposed via `.claude/launch.json` as `knotlab`).
+- Headless QA pattern: drive `location.hash`, scrape `document.body.innerText`, count `document.querySelectorAll('.katex-error').length`, and check `console` via the preview MCP. Prefer eval-based text scraping over screenshots.
+- Canonical reference sources for computational checks: **KnotInfo**, **Bar-Natan KnotAtlas**, Rolfsen, Kawauchi, Lickorish.
+- App signature convention: `σ(right-handed trefoil) = −2`, `σ(T(2,q)) = −(q−1)`, `σ(mirror) = −σ`. Jones in `q` with `V(RH 3₁) = −q⁻⁴+q⁻³+q⁻¹`. HOMFLY-PT uses Lickorish–Millett `a⁻¹P₊ − aP₋ = zP₀` — call out the sign convention explicitly because KnotAtlas uses the opposite.
+- Latest QA report: `QA_REPORT.md` (regenerate; don't hand-edit).
+
+## KaTeX gotchas
+
+- `psmallmatrix` is NOT in KaTeX 0.16.x — use `\left(\begin{smallmatrix}…\end{smallmatrix}\right)` instead.
+- Check `document.querySelectorAll('.katex-error').length === 0` after any math-heavy edit.
+
 ## Known quirks
 
 - `smoke_test.py`'s brace-count warnings are informational, not errors. Treat only `ERROR` lines as blocking.

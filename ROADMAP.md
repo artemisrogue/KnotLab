@@ -6,6 +6,9 @@ This document records planned additions and their target locations in the app. I
 
 ## Recent completions (April 2026)
 
+- **QA pass 2026-04-21.** Full walkthrough of all 8 top-level tabs and every subtab via headless eval. Verified Jones, Alexander, signature, determinant, Arf values for 3₁, 4₁, 5₁, 5₂, 6₁, 6₂, 6₃, 7₁, Hopf against KnotAtlas/KnotInfo — all PASS. Fixed KaTeX `psmallmatrix` parse error in Alexander-module Seifert-stabilization (→ `\left(\begin{smallmatrix}…\end{smallmatrix}\right)`). Added HOMFLY-PT convention call-out (Lickorish–Millett vs. KnotAtlas sign on `a`). Report: `QA_REPORT.md`. Deferred: subtab-level deep-linking (hash `#tab/subtab` currently lands on tab only); Miscellaneous `data-tab` attrs on subtab buttons; explicit `Kh(unknot)=q+q⁻¹` printout; trefoil PD code echo on Polynomial Invariants tab.
+
+
 - **Home tab reorganization.** Diagrammatic Encodings (signed Gauss code, PD notation, realizability) now lives between Knot Diagrams and Braids on the Home tab (previously buried under gauss-linking).
 - **Polynomial Invariants expansion.** Every sub-tab now has full pedagogical panels on par with Seifert & Alexander: Jones (6 panels + interactive table), HOMFLY-PT (5 panels + table), Quantum (6 panels incl. R-matrix/YBE, Volume Conjecture, Chern–Simons, colored Jones), Others (Conway, Kauffman F, Vassiliev, Kontsevich, Levine–Tristram, BLM/Ho, ADO, multi-variable Alexander).
 - **Seifert subtab rename.** "Seifert & Alexander" → **"Seifert Surfaces & the Alexander Polynomial"**, now including a full skein-relation panel with worked Hopf-link → trefoil derivation.
