@@ -1045,32 +1045,48 @@
           </figcaption>
         </figure>
 
-        <figure style="margin:0;text-align:center;max-width:260px;">
-          <svg width="240" height="200" viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" aria-label="Commutation sigma_i sigma_j equals sigma_j sigma_i for |i-j| at least 2">
-            <!-- Four strands at x=30, 75, 155, 210.  Left pair (cols 1,2) and right pair (cols 3,4) are far apart. -->
-            <g fill="none" stroke-linecap="round">
-              <!-- Left pair: \u03c3_i crossing at y=40..80 -->
-              <!-- Strand 1 (blue): col1 top -> col2 bottom, OVER -->
-              <path d="M30,20 C30,40 75,40 75,80 L75,180" stroke="#2171b5" stroke-width="3"/>
-              <!-- Strand 2 (orange): col2 top -> col1 bottom, UNDER -->
-              <path d="M75,20 C75,40 30,40 30,80 L30,180" stroke="#d94801" stroke-width="3"/>
-              <!-- gap on strand 2 at centre (52, 60) -->
-              <line x1="45" y1="57" x2="60" y2="63" stroke="#ffffff" stroke-width="10"/>
-              <path d="M30,20 C30,40 75,40 75,80" stroke="#2171b5" stroke-width="5" fill="none"/>
-              <!-- Right pair: \u03c3_j crossing at y=110..150 -->
-              <!-- Strand 3 (green): col3 top -> col4 bottom, OVER -->
-              <path d="M155,20 L155,110 C155,130 210,130 210,150 L210,180" stroke="#27ae60" stroke-width="3"/>
-              <!-- Strand 4 (purple): col4 top -> col3 bottom, UNDER -->
-              <path d="M210,20 L210,110 C210,130 155,130 155,150 L155,180" stroke="#984ea3" stroke-width="3"/>
-              <!-- gap on strand 4 at (182, 130) -->
-              <line x1="175" y1="127" x2="190" y2="133" stroke="#ffffff" stroke-width="10"/>
-              <path d="M155,110 C155,130 210,130 210,150" stroke="#27ae60" stroke-width="5" fill="none"/>
+        <figure style="margin:0;text-align:center;max-width:440px;">
+          <svg width="430" height="220" viewBox="0 0 430 220" xmlns="http://www.w3.org/2000/svg" aria-label="Commutation sigma_i sigma_j equals sigma_j sigma_i for |i-j| at least 2">
+            <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5">
+              <!-- ===== LHS: sigma_i (top, y=40..70) then sigma_j (bottom, y=100..130). ===== -->
+              <!-- cols: i=30, i+1=75, j=130, j+1=175 -->
+              <!-- Blue (col 30): vertical 20->40, diag to (75,70) [OVER], vertical to 200 -->
+              <polyline points="30,20 30,40 75,70 75,200" stroke="#2171b5"/>
+              <!-- Orange (col 75): vert to 40, diag to (30,70) UNDER (two pieces), vert to 200 -->
+              <polyline points="75,20 75,40 60.25,50.5" stroke="#d94801"/>
+              <polyline points="44.75,59.5 30,70 30,200" stroke="#d94801"/>
+              <!-- Green (col 130): vert to 100, diag to (175,130) [OVER], vert to 200 -->
+              <polyline points="130,20 130,100 175,130 175,200" stroke="#27ae60"/>
+              <!-- Purple (col 175): vert to 100, diag to (130,130) UNDER, vert to 200 -->
+              <polyline points="175,20 175,100 160.25,110.5" stroke="#984ea3"/>
+              <polyline points="144.75,119.5 130,130 130,200" stroke="#984ea3"/>
             </g>
+            <!-- equality -->
+            <text x="220" y="115" font-size="26" fill="#333" text-anchor="middle">=</text>
+            <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5">
+              <!-- ===== RHS: sigma_j (top, y=40..70) then sigma_i (bottom, y=100..130). ===== -->
+              <!-- cols: i=250, i+1=295, j=350, j+1=395 -->
+              <!-- Blue (col 250, i): vert to 100, diag to (295,130) [OVER], vert to 200 -->
+              <polyline points="250,20 250,100 295,130 295,200" stroke="#2171b5"/>
+              <!-- Orange (col 295, i+1): vert to 100, diag to (250,130) UNDER -->
+              <polyline points="295,20 295,100 280.25,110.5" stroke="#d94801"/>
+              <polyline points="264.75,119.5 250,130 250,200" stroke="#d94801"/>
+              <!-- Green (col 350, j): vert to 40, diag to (395,70) OVER, vert to 200 -->
+              <polyline points="350,20 350,40 395,70 395,200" stroke="#27ae60"/>
+              <!-- Purple (col 395, j+1): vert to 40, diag to (350,70) UNDER -->
+              <polyline points="395,20 395,40 380.25,50.5" stroke="#984ea3"/>
+              <polyline points="364.75,59.5 350,70 350,200" stroke="#984ea3"/>
+            </g>
+            <!-- Labels -->
             <text x="30" y="14" font-size="10" fill="#666" text-anchor="middle">i</text>
             <text x="75" y="14" font-size="10" fill="#666" text-anchor="middle">i+1</text>
-            <text x="155" y="14" font-size="10" fill="#666" text-anchor="middle">j</text>
-            <text x="210" y="14" font-size="10" fill="#666" text-anchor="middle">j+1</text>
-            <text x="120" y="195" font-size="11" fill="#555" text-anchor="middle">\\(|i-j|\\ge 2\\)</text>
+            <text x="130" y="14" font-size="10" fill="#666" text-anchor="middle">j</text>
+            <text x="175" y="14" font-size="10" fill="#666" text-anchor="middle">j+1</text>
+            <text x="250" y="14" font-size="10" fill="#666" text-anchor="middle">i</text>
+            <text x="295" y="14" font-size="10" fill="#666" text-anchor="middle">i+1</text>
+            <text x="350" y="14" font-size="10" fill="#666" text-anchor="middle">j</text>
+            <text x="395" y="14" font-size="10" fill="#666" text-anchor="middle">j+1</text>
+            <text x="215" y="215" font-size="11" fill="#555" text-anchor="middle">\\(|i-j|\\ge 2\\)</text>
           </svg>
           <figcaption style="font-size:0.88rem;color:#555;">
             <strong>Commutation</strong>
