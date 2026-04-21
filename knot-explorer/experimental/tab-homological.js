@@ -1280,17 +1280,86 @@
       // For Lee / Bar-Natan we show a single explanatory card instead.
       var isBigradedMeaningful = (algebraName === 'Khovanov');
       if (!isBigradedMeaningful) {
-        // Explanatory card — why the bigraded view is absent.
+        // Expository background card
+        var isLee = (algebraName === 'Lee');
+        var xxRHS = isLee ? '1' : 'x';
+        var djShift = isLee ? '+4' : '+2';
         resultHTML += '<div class="exp-card">';
-        resultHTML += '<h3>Why no bigraded table for ' + algebraName + '?</h3>';
-        resultHTML += '<p style="background:#fff3cd;border:1px solid #ffe58f;padding:0.6rem 0.8rem;' +
-          'border-radius:4px;font-size:0.9rem;color:#664d03">' +
-          'The ' + algebraName + ' multiplication breaks the quantum grading \\(j\\) ' +
-          '(\\(x \\otimes x \\mapsto ' + (algebraName === 'Lee' ? '1' : 'x') + '\\)), so ' +
-          '\\(Kh^{i,j}\\), the graded Euler characteristic \\(\\chi_q\\), and the ' +
-          'categorification identity \\(\\chi_q(Kh) = (-1)^{c-1}(q+q^{-1})V(q^{-2})\\) are ' +
-          'Khovanov-specific. The natural ' + algebraName + ' invariant is the ' +
-          'singly-graded filtered homology, shown below.</p>';
+        resultHTML += '<h3>' + algebraName + ' homology: background</h3>';
+        resultHTML += '<p>Both Lee (Lee, 2005) and Bar-Natan (Bar-Natan, 2005) homologies ' +
+          'arise by deforming the Frobenius algebra underlying Khovanov\u2019s construction. ' +
+          'The Khovanov algebra is \\(A = \\mathbb{Z}[x]/(x^2)\\); the deformations replace the ' +
+          'relation \\(x^2 = 0\\) with</p>' +
+          '<ul>' +
+            '<li><strong>Lee:</strong> \\(A_{\\mathrm{Lee}} = \\mathbb{Z}[x]/(x^2 - 1)\\) &mdash; ' +
+              'a Frobenius algebra over \\(\\mathbb{Q}\\) isomorphic to \\(\\mathbb{Q}\\oplus\\mathbb{Q}\\) ' +
+              'via \\(x \\mapsto \\pm 1\\);</li>' +
+            '<li><strong>Bar-Natan:</strong> \\(A_{\\mathrm{BN}} = \\mathbb{Z}[x]/(x^2 - x)\\) &mdash; ' +
+              'isomorphic to \\(\\mathbb{Z}\\oplus\\mathbb{Z}\\) via \\(x \\mapsto 0,1\\).</li>' +
+          '</ul>' +
+          '<p>Both are specializations of the universal Frobenius deformation ' +
+          '\\(A_{h,t} = \\mathbb{Z}[x]/(x^2 - hx - t)\\) (Khovanov 2004, Bar-Natan 2005): Khovanov is ' +
+          '\\((h,t)=(0,0)\\), Lee is \\((0,1)\\), Bar-Natan is \\((1,0)\\).</p>';
+
+        resultHTML += '<p><strong>Why the bigrading breaks.</strong> Khovanov\u2019s ' +
+          'differential is homogeneous of bidegree \\((1,0)\\) in \\((i,j)\\) because ' +
+          'every edge map is built from \\(m\\) or \\(\\Delta\\) which &mdash; for the ' +
+          'nilpotent relation \\(x^2=0\\) &mdash; raise \\(j\\) by exactly \\(+1\\). ' +
+          'Here the product \\(x \\otimes x \\mapsto ' + xxRHS + '\\) adds a component of ' +
+          'bidegree \\((1, ' + djShift + ')\\), so \\(d\\) only respects the <em>filtration</em> ' +
+          '\\(\\mathcal{F}^{\\,p} C^{i,\\bullet} = \\bigoplus_{j \\ge p} C^{i,j}\\), not the grading itself. ' +
+          'Consequently one works with a singly-graded complex whose associated graded ' +
+          'object is the Khovanov complex.</p>';
+
+        resultHTML += '<p><strong>Rank theorems.</strong> The key structural results are:</p>' +
+          '<ul>' +
+            '<li><em>Lee (2005):</em> for a link \\(L\\) with \\(c\\) components, ' +
+              '\\(\\dim_\\mathbb{Q} Kh_{\\mathrm{Lee}}(L;\\mathbb{Q}) = 2^{c}\\), with canonical ' +
+              'generators indexed by the \\(2^{c}\\) coherent orientations of \\(L\\).</li>' +
+            '<li><em>Bar-Natan (2005), Turner (2006):</em> the same rank \\(2^{c}\\) holds for ' +
+              'Bar-Natan homology over any field where \\(2\\) is invertible.</li>' +
+          '</ul>' +
+          '<p>Thus both deformations <em>simplify drastically</em>. All the interesting ' +
+          'knot-theoretic information has migrated into the filtration: the associated ' +
+          'graded pieces of the filtration on \\(Kh_{\\mathrm{Lee}}\\) and \\(Kh_{\\mathrm{BN}}\\) ' +
+          'are what produce concordance invariants.</p>';
+
+        resultHTML += '<p><strong>The spectral sequence.</strong> The \\(j\\)-filtration on the ' +
+          'deformed complex yields a spectral sequence</p>' +
+          '<p style="text-align:center">\\[ E_1^{i,j} \\;=\\; Kh^{i,j}(L) \\;\\Longrightarrow\\; ' +
+          'Kh_{' + (isLee ? '\\mathrm{Lee}' : '\\mathrm{BN}') + '}(L). \\]</p>' +
+          '<p>The \\(d_1\\) differential is the original Khovanov differential; the higher ' +
+          'differentials \\(d_r : E_r^{i,j} \\to E_r^{i+1,\\,j+' + (isLee ? '4r' : '2r') +
+          '}\\) encode the deformation. The sequence converges after finitely many pages to the ' +
+          '<em>associated graded</em> of the filtered homology, whose total dimension is ' +
+          '\\(2^{c}\\). ' +
+          (isLee
+            ? 'For a knot the two surviving classes live at filtration levels \\(s-1\\) and ' +
+              '\\(s+1\\), where \\(s = s(K) \\in 2\\mathbb{Z}\\) is Rasmussen\u2019s concordance ' +
+              'invariant (Rasmussen, 2010) &mdash; a lower bound on the slice genus ' +
+              '\\(|s(K)| \\le 2 g_4(K)\\) that detects the Milnor conjecture on torus-knot ' +
+              'slice genera.'
+            : 'For a knot the two surviving classes give Mackaay\u2013Turner\u2013Vaz ' +
+              'concordance invariants; in characteristic \\(0\\) these coincide with ' +
+              'Rasmussen\u2019s \\(s\\), but over \\(\\mathbb{F}_p\\) they can split and ' +
+              'refine it (Lipshitz\u2013Sarkar 2014, Lewark\u2013Lobb 2016).') + '</p>';
+
+        resultHTML += '<p><strong>Reading the tables below.</strong> The filtered chain ' +
+          'complex card shows the ranks \\(\\operatorname{rk} C^{i}\\) and the ' +
+          'quantum filtration spectrum (the multiset of \\(j\\)-levels hosting generators at ' +
+          'each homological degree). The filtered homology card reports \\(\\operatorname{rk} H^{i}\\) ' +
+          'and integral torsion. The total free rank over \\(\\mathbb{Z}\\) is checked against ' +
+          'the theoretical value \\(2^{c}\\) over \\(\\mathbb{Q}\\); small discrepancies are ' +
+          'due to integral torsion that vanishes after tensoring with \\(\\mathbb{Q}\\).</p>';
+
+        resultHTML += '<p style="background:#fff3cd;border:1px solid #ffe58f;padding:0.5rem 0.8rem;' +
+          'border-radius:4px;font-size:0.85rem;color:#664d03;margin:0.6rem 0 0">' +
+          '<strong>Why no \\(Kh^{i,j}\\) table for ' + algebraName + '?</strong> ' +
+          'The bigraded table, \\(\\chi_q\\), and the categorification identity ' +
+          '\\(\\chi_q(Kh) = (-1)^{c-1}(q+q^{-1})V(q^{-2})\\) all require the differential ' +
+          'to preserve \\(j\\). Since it doesn\u2019t here, those displays would reduce ' +
+          'silently to the Khovanov case; they appear only when you select ' +
+          '<strong>Khovanov</strong>.</p>';
         resultHTML += '</div>';
 
         // --- Filtered singly-graded complex + homology ---
