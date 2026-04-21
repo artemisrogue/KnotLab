@@ -1736,14 +1736,7 @@ async function loadData() {
     console.log(cacheStatus);
     document.getElementById('loading').remove();
     addInstance('3_1');
-    addInstance('3_1');
-    // Set second instance to mirror mode
-    const secondId = 'inst-2';
-    mirrorInstances.add(secondId);
-    const mirrorToggle = document.getElementById(`${secondId}-mirror-toggle`);
-    if (mirrorToggle) mirrorToggle.checked = true;
-    const secondSel = document.getElementById(secondId)?.querySelector('select');
-    if (secondSel) renderInstance(secondId, secondSel.value);
+    addInstance('3_1', /* startMirrored */ true);
   } catch(e) {
     document.getElementById('loading').textContent =
       'Error loading data. Serve via: python -m http.server 8080 --directory knot-explorer/app';
@@ -1761,7 +1754,7 @@ function getAllItems() {
 //  INSTANCE MANAGEMENT
 // ═══════════════════════════════════════════════════════════════════
 
-function addInstance(defaultKey) {
+function addInstance(defaultKey, startMirrored) {
   instanceCount++;
   const id = `inst-${instanceCount}`;
   const items = getAllItems();
@@ -1775,7 +1768,16 @@ function addInstance(defaultKey) {
   div.innerHTML = `<div class="instance-body" id="${id}-body"></div>`;
 
   document.getElementById('instances').appendChild(div);
+
+  // If this instance should start mirrored, set the flag BEFORE the initial
+  // render so we never do a non-mirror render first. The double-render pattern
+  // (render non-mirror, then re-render mirror) races against img.onload
+  // callbacks for cached plots, occasionally leaving non-Alexander canvases
+  // showing the non-mirror plot on first paint.
+  if (startMirrored) mirrorInstances.add(id);
+
   renderInstance(id, selected);
+  return id;
 }
 
 function removeInstance(id) {
