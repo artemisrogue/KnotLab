@@ -534,19 +534,214 @@
           slice-genus bound.</p>\
         </div>\
         <div class="expo-panel">\
-          <h3>Ozsv&aacute;th&ndash;Szab&oacute; Branched-Cover Spectral Sequence</h3>\
-          <p>Ozsv&aacute;th&ndash;Szab&oacute; (2005): for a link \\(L\\), the reduced Khovanov homology of the\
-          mirror carries a spectral sequence converging to Heegaard Floer homology of the\
-          <span class="kl-term" title="Double branched cover Σ(L): the closed 3-manifold obtained as the double cover of S³ branched along the link L. Classical construction; turns link invariants of L into 3-manifold invariants of Σ(L).">double branched cover</span>:</p>\
-          <div class="formula-box">$$\\widetilde{\\mathrm{Kh}}(\\overline{L}; \\mathbb{F}_2) \\;\\Longrightarrow\\; \\widehat{HF}\\bigl(\\Sigma(L); \\mathbb{F}_2\\bigr).$$</div>\
-          <p>This implies rank inequalities \\(\\operatorname{rk} \\widehat{HF}(\\Sigma(L)) \\le \\operatorname{rk} \\widetilde{\\mathrm{Kh}}(L)\\)\
-          and was refined by Baldwin, Levine, and others to\
-          <span class="kl-term" title="Heegaard Floer homology (Ozsváth–Szabó): package of 3- and 4-manifold invariants defined via Lagrangian Floer homology on symmetric products of Heegaard surfaces. ĤF is the &lsquo;hat&rsquo; flavor.">Heegaard Floer</span> spectral sequences with target branched covers of more general manifolds.\
-          Szab&oacute; (2015) gave a combinatorial, bordered-Floer-inspired formula for the higher\
-          differentials \\(d_r\\), \\(r \\ge 2\\).</p>\
-          <p>This was a key piece of evidence that Khovanov homology &ldquo;sees&rdquo; 3-manifold topology,\
-          not merely knot data &mdash; and it launched an industry of categorified spectral sequences.</p>\
+          <h3>Ozsv&aacute;th&ndash;Szab&oacute; Branched-Cover Spectral Sequence (full depth)</h3>\
+          <p>Ozsv&aacute;th&ndash;Szab&oacute; (2005, math/0309170): for a link \\(L \\subset S^3\\), the reduced\
+          Khovanov homology of the mirror \\(\\overline{L}\\) carries a spectral sequence converging to the\
+          Heegaard Floer homology of the\
+          <span class="kl-term" title="Double branched cover Σ(L): the closed 3-manifold obtained as the double cover of S³ branched along the link L. Classical construction; turns link invariants of L into 3-manifold invariants of Σ(L).">double branched cover</span>\
+          \\(\\Sigma(L)\\):</p>\
+          <div class="formula-box">$$E_2 \\;=\\; \\widetilde{\\mathrm{Kh}}\\bigl(\\overline{L}; \\mathbb{F}_2\\bigr) \\;\\Longrightarrow\\; E_\\infty \\;=\\; \\widehat{HF}\\bigl(-\\Sigma(L); \\mathbb{F}_2\\bigr).$$</div>\
+          <p><strong>Construction (sketch).</strong> A diagram with \\(n\\) crossings gives a\
+          <span class="kl-term" title="Cube of resolutions: the 2^n-vertex cube whose vertices are the complete resolutions of a link diagram (0- and 1-smoothings at each crossing) and whose edges are crossing-change cobordisms. The Khovanov complex arises by applying a TQFT-like functor to this cube.">cube of resolutions</span>\
+          \\(\\{0,1\\}^n\\). Applying the branched-cover construction vertex-by-vertex produces a cube of 3-manifolds\
+          (each an \\(L\\)-space of some lens-space type for the all-0 and all-1 resolutions) linked by two-handle\
+          cobordisms. Ozsv&aacute;th&ndash;Szab&oacute;&rsquo;s <em>link surgery formula</em> turns this cube into a filtered\
+          complex in Heegaard Floer theory; the associated spectral sequence has \\(E_2\\) identified with reduced\
+          Khovanov homology of the mirror. Baldwin (2011, arXiv:0809.3293) subsequently proved that <em>every</em>\
+          page \\(E_k\\), \\(k \\ge 2\\), is itself an invariant of \\(L\\) &mdash; not merely the abutment.</p>\
+          <p><strong>Szab&oacute;&rsquo;s geometric differentials (2015, arXiv:1010.4252).</strong> The higher differentials\
+          \\(d_r\\), \\(r \\ge 2\\), had originally been defined only up to naturality statements via holomorphic-disk\
+          counts. Szab&oacute; gave a <em>purely combinatorial</em>, diagrammatic definition of a family\
+          \\(\\{d_r^{\\mathrm{Sz}}\\}\\) on the Khovanov cube via configurations of decorated arcs:</p>\
+          <ul>\
+            <li>\\(d_1\\) is the ordinary Khovanov differential on \\(\\widetilde{CKh}(\\overline{L})\\);</li>\
+            <li>\\(d_2\\) counts certain &ldquo;resolution configurations&rdquo; &mdash; pairs of arcs joining active circles in a resolved diagram &mdash; with coefficients in \\(\\mathbb{F}_2\\);</li>\
+            <li>\\(d_r\\), \\(r \\ge 3\\), counts configurations of \\(r\\) arcs satisfying explicit compatibility (passive-circle / dual-graph) conditions.</li>\
+          </ul>\
+          <p>The total map \\(D = d_1 + d_2 + \\cdots\\) squares to zero, and its homology over \\(\\mathbb{F}_2\\) is\
+          conjecturally isomorphic to \\(\\widehat{HF}(-\\Sigma(L))\\); this has been verified for all links up to\
+          12 crossings and proved in broad families.</p>\
+          <details class="kl-example">\
+            <summary>Worked example: the trefoil \\(3_1\\)</summary>\
+            <p>For the right-handed trefoil \\(L = 3_1\\), reduced Khovanov homology over \\(\\mathbb{F}_2\\) has\
+            total rank \\(3\\): generators in bigradings \\((0,2), (2,5), (3,7)\\) (mirror conventions adjusted).\
+            The double branched cover is the lens space \\(\\Sigma(3_1) = L(3,1)\\), and\
+            \\(\\widehat{HF}(L(3,1); \\mathbb{F}_2) \\cong \\mathbb{F}_2^{|H_1|} = \\mathbb{F}_2^3\\) since lens\
+            spaces are <span class="kl-term" title="L-space: a rational homology 3-sphere Y with rk ĤF(Y) = |H_1(Y;Z)|, the minimum possible. Lens spaces, Seifert-fibered spaces with no horizontal foliation, and double branched covers of quasi-alternating links are all L-spaces.">L-spaces</span>.\
+            The spectral sequence has \\(E_2 = \\mathbb{F}_2^3 = E_\\infty\\): it <em>collapses at \\(E_2\\)</em>. This is a\
+            general phenomenon for <span class="kl-term" title="Quasi-alternating link: smallest class of links containing the unknot and closed under a skein-type recursion with nondegenerate determinant. Introduced by Ozsváth-Szabó; their double branched covers are L-spaces and their reduced Khovanov homology is thin.">quasi-alternating</span>\
+            links (which include all alternating links): ranks agree on the nose, no higher differentials.</p>\
+          </details>\
+          <details class="kl-example">\
+            <summary>Worked example: the figure-eight \\(4_1\\)</summary>\
+            <p>The figure-eight is amphichiral and alternating, so \\(\\overline{4_1} = 4_1\\). Reduced Khovanov\
+            homology has total \\(\\mathbb{F}_2\\)-rank \\(5\\), concentrated on a thin diagonal. The double branched\
+            cover is \\(\\Sigma(4_1) = L(5,2)\\), again a lens space, and\
+            \\(\\widehat{HF}(L(5,2); \\mathbb{F}_2) = \\mathbb{F}_2^5\\). The spectral sequence again collapses at\
+            \\(E_2\\): \\(5 = 5\\). These small cases illustrate a theorem of Ozsv&aacute;th&ndash;Szab&oacute;: for\
+            quasi-alternating \\(L\\), \\(\\operatorname{rk} \\widetilde{\\mathrm{Kh}}(L) = |\\det(L)| = \\operatorname{rk}\\widehat{HF}(\\Sigma(L))\\),\
+            forcing \\(E_2 = E_\\infty\\). The first examples where strict inequality occurs (so \\(d_r \\ne 0\\)\
+            for some \\(r \\ge 2\\)) are non-quasi-alternating knots such as the \\((3,5,7)\\)-pretzel.</p>\
+          </details>\
+          <details class="kl-proof">\
+            <summary>Bloom&rsquo;s monopole analogue (2011, arXiv:0909.0816)</summary>\
+            <p>Bloom constructed an analogous spectral sequence with target the monopole (Seiberg&ndash;Witten)\
+            Floer homology of \\(\\Sigma(L)\\):\
+            \\(\\;\\widetilde{\\mathrm{Kh}}(\\overline{L}) \\Longrightarrow \\widehat{HM}(\\Sigma(L))\\).\
+            Via Kutluhan&ndash;Lee&ndash;Taubes / Colin&ndash;Ghiggini&ndash;Honda equivalence of monopole and Heegaard\
+            Floer homology, this is consistent with the Ozsv&aacute;th&ndash;Szab&oacute; sequence, but is built from\
+            a genuinely different (gauge-theoretic) surgery formula, and Bloom proves that the pages \\(E_k\\) for\
+            \\(k \\ge 2\\) depend only on the <em>mutation equivalence class</em> of \\(L\\) &mdash; giving the first\
+            strong evidence that the whole tower is mutation-invariant.</p>\
+          </details>\
           <p><em>Cross-ref:</em> see the Knot Floer Homology sub-tab for the definition of \\(\\widehat{HF}\\) and its relatives.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>What Khovanov Sees vs What Knot Floer Sees</h3>\
+          <p>Both \\(\\mathrm{Kh}(K)\\) and \\(\\widehat{HFK}(K)\\) categorify classical polynomials, but they\
+          see the knot through very different lenses. The following table summarises the structural contrast;\
+          entries are well-established theorems unless explicitly flagged &ldquo;conjectural&rdquo;.</p>\
+          <table class="kl-table">\
+            <thead>\
+              <tr><th>Feature</th><th>Khovanov homology \\(\\mathrm{Kh}(K)\\)</th><th>Knot Floer homology \\(\\widehat{HFK}(K)\\)</th></tr>\
+            </thead>\
+            <tbody>\
+              <tr>\
+                <td>Bigrading</td>\
+                <td><span class="kl-term" title="Quantum grading q: the internal grading on Khovanov chain groups coming from the q-graded TQFT structure; categorifies the q-variable of the Jones polynomial.">quantum \\(q\\)</span> and <span class="kl-term" title="Homological grading i: the cohomological grading along the cube of resolutions in the Khovanov complex.">homological \\(i\\)</span></td>\
+                <td><span class="kl-term" title="Alexander grading A: grading on ĤFK coming from the relative Spin^c structure on the knot complement; categorifies the exponent in the Alexander polynomial.">Alexander \\(A\\)</span> and <span class="kl-term" title="Maslov grading M: the absolute Z-grading on ĤFK coming from the Maslov index of holomorphic disks; categorifies the homological variable.">Maslov \\(M\\)</span></td>\
+              </tr>\
+              <tr>\
+                <td>Categorifies</td>\
+                <td>Jones polynomial: \\(\\chi_q(\\mathrm{Kh}(K)) = (q + q^{-1}) V_K(q^2)\\)</td>\
+                <td>Alexander polynomial: \\(\\chi_A(\\widehat{HFK}(K)) = \\Delta_K(t)\\)</td>\
+              </tr>\
+              <tr>\
+                <td>Mirror</td>\
+                <td>\\(\\mathrm{Kh}^{i,j}(\\overline{K}) \\cong \\mathrm{Kh}^{-i,-j}(K)^\\vee\\)</td>\
+                <td>\\(\\widehat{HFK}_m(\\overline{K}, a) \\cong \\widehat{HFK}^{m-2a}(K, -a)\\) (dual)</td>\
+              </tr>\
+              <tr>\
+                <td>Reverse (orientation)</td>\
+                <td>invariant for knots; for links depends on component orientations</td>\
+                <td>invariant; \\(\\widehat{HFK}\\) does not distinguish \\(K\\) from \\(K^{\\mathrm{rev}}\\) (known)</td>\
+              </tr>\
+              <tr>\
+                <td>Concordance invariant</td>\
+                <td>\\(s(K) \\in 2\\mathbb{Z}\\) (Rasmussen), \\(|s| \\le 2 g_4\\)</td>\
+                <td>\\(\\tau(K) \\in \\mathbb{Z}\\) (Ozsv&aacute;th&ndash;Szab&oacute;), \\(|\\tau| \\le g_4\\)</td>\
+              </tr>\
+              <tr>\
+                <td>Detection: unknot</td>\
+                <td>yes (Kronheimer&ndash;Mrowka 2011, via instantons)</td>\
+                <td>yes (Ozsv&aacute;th&ndash;Szab&oacute; 2004, from \\(g(K) = 0 \\Leftrightarrow \\widehat{HFK} = \\mathbb{Z}\\))</td>\
+              </tr>\
+              <tr>\
+                <td>Detection: trefoils, figure-eight</td>\
+                <td>yes, trefoils (Baldwin&ndash;Sivek), figure-eight (Baldwin&ndash;Dowlin&ndash;Levine&ndash;Sivek 2021)</td>\
+                <td>yes (same authors / earlier arguments using fiberedness)</td>\
+              </tr>\
+              <tr>\
+                <td>Detection: Hopf link</td>\
+                <td>yes (Baldwin&ndash;Sivek 2020 for \\(T(2,2)\\))</td>\
+                <td>yes</td>\
+              </tr>\
+              <tr>\
+                <td>Detection: Seifert genus</td>\
+                <td>not known to detect \\(g(K)\\)</td>\
+                <td><strong>yes</strong>: \\(g(K) = \\max\\{\\,a : \\widehat{HFK}(K,a) \\ne 0\\,\\}\\) (Ozsv&aacute;th&ndash;Szab&oacute;)</td>\
+              </tr>\
+              <tr>\
+                <td>Detection: fiberedness</td>\
+                <td>not known to detect</td>\
+                <td><strong>yes</strong>: \\(K\\) fibered \\(\\Leftrightarrow \\widehat{HFK}(K, g(K)) \\cong \\mathbb{Z}\\) (Ni 2007)</td>\
+              </tr>\
+              <tr>\
+                <td>Computational complexity</td>\
+                <td>exponential in crossing number (cube of \\(2^n\\) resolutions); polynomial-time hard but fast in practice via Bar-Natan&rsquo;s scanning algorithm; computed to \\(\\sim 20\\) crossings</td>\
+                <td>no combinatorial definition until grid homology (Manolescu&ndash;Ozsv&aacute;th&ndash;Sarkar 2009); grid complexes are very large but polynomial-space; bordered Floer gives efficient algorithms</td>\
+              </tr>\
+              <tr>\
+                <td>Gauge-theoretic cousin</td>\
+                <td>instanton \\(I^\\natural\\) via Kronheimer&ndash;Mrowka spectral sequence</td>\
+                <td>monopole \\(\\widehat{HM}\\) via Kutluhan&ndash;Lee&ndash;Taubes (isomorphism, not spectral sequence)</td>\
+              </tr>\
+              <tr>\
+                <td>Categorification target</td>\
+                <td>Jones / quantum \\(\\mathfrak{sl}_2\\) representation theory</td>\
+                <td>Heegaard Floer / symplectic geometry of symmetric products</td>\
+              </tr>\
+            </tbody>\
+          </table>\
+          <p><strong>A striking asymmetry.</strong> Knot Floer homology <em>detects</em> both the Seifert genus and\
+          fiberedness outright; Khovanov homology detects neither directly, but compensates by detecting the\
+          smooth slice genus only up to the factor of 2 inherent in \\(|s| \\le 2g_4\\), and by supplying\
+          the combinatorial proof of the Milnor conjecture. The philosophical reading &mdash; made precise below &mdash;\
+          is that Khovanov homology is a <em>shadow along one direction</em> of a larger triply-graded theory,\
+          while knot Floer is the shadow along a different (transverse) direction.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>Conjectural Unification: Both Are Shadows of HHH</h3>\
+          <p>The central organising conjecture of modern categorified knot theory, due to\
+          <span class="kl-term" title="Dunfield–Gukov–Rasmussen 2006 (math/0505662): proposed a triply-graded knot homology unifying all sl(N) Khovanov–Rozansky homologies and knot Floer homology via families of anticommuting differentials d_N (N ≥ 1) and d_0.">Dunfield&ndash;Gukov&ndash;Rasmussen (2006)</span>,\
+          posits a single <em>triply-graded</em> homology theory from which both Khovanov and knot Floer\
+          homology descend as spectral-sequence collapses. Let</p>\
+          <div class="formula-box">$$\\mathcal{H}(K) \\;=\\; \\mathrm{HHH}(K) \\;=\\; \\bigoplus_{i,j,k} \\mathcal{H}^{i,j,k}(K)$$</div>\
+          <p>denote the <span class="kl-term" title="Triply-graded Khovanov–Rozansky homology HHH: the Hochschild homology of Hochschild homology (hence 'HHH') of the Rouquier complex of Soergel bimodules associated to a braid closure. Triply graded; categorifies the HOMFLY-PT polynomial. Computed in closed form for torus links by Hogancamp–Mellit and Elias–Hogancamp.">triply-graded Khovanov&ndash;Rozansky (HHH) homology</span> &mdash;\
+          obtained as Hochschild homology of the Hochschild homology of the\
+          <span class="kl-term" title="Rouquier complex: a complex of Soergel bimodules associated to a braid word, with homotopy type an invariant of the braid. Introduced by Rouquier (math/0409593) as a categorification of the braid group; Khovanov's 2007 observation that its Hochschild homology gives the triply graded HOMFLY homology.">Rouquier complex</span>\
+          of Soergel bimodules for a braid representative (Khovanov 2007). Its graded Euler characteristic is the\
+          <span class="kl-term" title="HOMFLY-PT polynomial: two-variable generalization of the Jones and Alexander polynomials (Freyd–Yetter–Hoste–Lickorish–Millett–Ocneanu 1985; Przytycki–Traczyk 1987). Specializations at specific values of a recover Jones (a = q^2) and, after suitable substitutions, the Alexander polynomial.">HOMFLY-PT polynomial</span>\
+          \\(P_K(a, q)\\).</p>\
+          <p><strong>The DGR conjectural picture.</strong> \\(\\mathrm{HHH}(K)\\) carries a family of\
+          <em>anticommuting</em> differentials \\(\\{d_N\\}_{N \\in \\mathbb{Z}}\\) of tridegrees determined by \\(N\\),\
+          with the following properties:</p>\
+          <ul>\
+            <li>For \\(N \\ge 1\\): the homology \\(H(\\mathrm{HHH}(K), d_N)\\) is isomorphic to\
+                \\(\\mathfrak{sl}(N)\\) Khovanov&ndash;Rozansky homology \\(\\mathrm{KR}_N(K)\\). In particular\
+                \\(d_2\\) recovers ordinary Khovanov homology \\(\\mathrm{Kh}(K)\\).</li>\
+            <li>For \\(N = 0\\): the differential \\(d_0\\) gives\
+                \\(H(\\mathrm{HHH}(K), d_0) \\cong \\widehat{HFK}(K)\\). This is the conjectural bridge\
+                from HHH to <span class="kl-term" title="Knot Floer homology ĤFK: bigraded homology theory categorifying the Alexander polynomial; defined by Ozsváth-Szabó and independently Rasmussen.">knot Floer homology</span>.</li>\
+            <li>A further differential \\(d_{-N}\\) (Gukov&ndash;Stosic 2012) gives <em>mirror</em> \\(\\mathfrak{sl}(N)\\) homology,\
+                encoding the functoriality under \\(K \\leftrightarrow \\overline{K}\\).</li>\
+          </ul>\
+          <p>The\
+          <span class="kl-term" title="Superpolynomial P(a, q, t): the triply graded Poincaré polynomial of HHH(K), conjectured by Dunfield–Gukov–Rasmussen to unify the sl(N) Khovanov–Rozansky and knot Floer Poincaré polynomials.">superpolynomial</span>\
+          \\(\\mathcal{P}_K(a, q, t) = \\sum_{i,j,k} t^i a^j q^k \\dim \\mathcal{H}^{i,j,k}(K)\\)\
+          thus encodes the Poincar&eacute; polynomials of \\(\\mathrm{Kh}\\), every \\(\\mathrm{KR}_N\\), and \\(\\widehat{HFK}\\)\
+          as collapses onto appropriate slices.</p>\
+          <p><strong>Status of the conjectures.</strong> As of 2026 the situation is nuanced and worth stating carefully:</p>\
+          <ul>\
+            <li>The differentials \\(d_N\\) (\\(N \\ge 1\\)) on HHH, and the isomorphism\
+                \\(H(\\mathrm{HHH}, d_N) \\cong \\mathrm{KR}_N\\), were constructed rigorously by Rasmussen (2006, arXiv:math/0607544);\
+                the \\(N \\ge 1\\) side of DGR is a <em>theorem</em>.</li>\
+            <li>The conjectural \\(d_0\\) identifying \\(H(\\mathrm{HHH}, d_0)\\) with \\(\\widehat{HFK}\\)\
+                <strong>remains open in full generality</strong>. It is verified for two-bridge knots, small\
+                torus knots, and knots with at most \\(\\sim 10\\) crossings by computer calculation, and it is\
+                supported by matching of ranks and superpolynomials in all known examples.</li>\
+            <li>Gukov&ndash;Stosic (2012, arXiv:1112.0030) extended the framework to\
+                <span class="kl-term" title="Colored HOMFLY homology: categorification of colored HOMFLY-PT polynomial, where the knot is decorated with a Young diagram (or representation of sl(N)). Triply graded for each color; conjecturally forms a tower indexed by partitions.">colored HOMFLY homology</span>\
+                \\(\\mathcal{H}_\\lambda(K)\\) indexed by partitions \\(\\lambda\\), with colored differentials and a\
+                refined (quadruply-graded) superpolynomial; this is the closest framework to physical\
+                BPS-state counts.</li>\
+            <li>The explicit computation of \\(\\mathrm{HHH}\\) for torus links was achieved by\
+                Hogancamp&ndash;Mellit (2019, arXiv:1909.00418) and Elias&ndash;Hogancamp (2019, arXiv:1603.00407),\
+                verifying the Gorsky&ndash;Oblomkov&ndash;Rasmussen&ndash;Shende conjectures for these families.</li>\
+            <li>Gorsky&ndash;Negut&ndash;Rasmussen (2016, arXiv:1608.07308) provided a geometric model for HHH via\
+                <span class="kl-term" title="Flag Hilbert scheme: parameter space of flags of ideals of colength n in the plane; central to the geometric realization of Khovanov–Rozansky homology and to the 'Hilbert scheme' side of Gorsky–Negut–Rasmussen's conjectures.">flag Hilbert schemes</span>\
+                of points in \\(\\mathbb{C}^2\\), tying the categorified story to the algebraic geometry of\
+                Hilbert schemes and to the shuffle algebra.</li>\
+          </ul>\
+          <p><strong>Picture.</strong> One may summarise the current (2026) consensus as follows:</p>\
+          <div class="formula-box">$$\\begin{array}{c} \\mathrm{HHH}(K) \\\\[2pt] \\swarrow \\quad \\big\\downarrow \\quad \\searrow \\\\[2pt] \\mathrm{KR}_2 = \\mathrm{Kh} \\quad \\mathrm{KR}_N \\; (N \\ge 3) \\quad \\widehat{HFK} \\\\[2pt] (\\text{theorem, Rasmussen}) \\quad\\quad\\quad\\quad (\\text{conjectural, DGR}) \\end{array}$$</div>\
+          <p>Both Khovanov and knot Floer homologies are, in this view, projections of a single triply-graded\
+          object to orthogonal axes &mdash; explaining both their strong structural parallels (categorification,\
+          spectral sequences, concordance invariants, detection theorems) and their stubborn resistance to\
+          direct comparison.</p>\
+          <p><em>Attributional caveat.</em> The unification statement is a <strong>conjecture</strong> of\
+          Dunfield&ndash;Gukov&ndash;Rasmussen; the \\(d_0 \\to \\widehat{HFK}\\) piece is not known to hold for all knots.\
+          The \\(d_N \\to \\mathrm{KR}_N\\) piece (\\(N \\ge 1\\)) is a theorem of Rasmussen.</p>\
         </div>\
         <div class="expo-panel">\
           <h3>Khovanov&ndash;Rozansky \\(\\mathfrak{sl}(N)\\) Spectral Sequences</h3>\
