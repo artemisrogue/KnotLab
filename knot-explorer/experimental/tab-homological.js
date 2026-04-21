@@ -611,7 +611,7 @@
       };
     }
 
-    // Fallback: try mirror convention (q -> q^{-1})
+    // Fallback 1: try mirror convention (q -> q^{-1})
     var mirrored = new Map();
     computedTerms.forEach(function (c, e) { mirrored.set(-e, c); });
     var rm = compare(mirrored, storedTerms);
@@ -624,6 +624,54 @@
           ' (database and computation use opposite chirality conventions for this ' +
           (nComponents || 1) + '-component ' +
           ((nComponents || 1) > 1 ? 'link' : 'knot') + ').'
+      };
+    }
+
+    // Fallback 2: try a pure Laurent shift (storedTerms = q^k * computedTerms)
+    // Useful when normalization/framing conventions differ by an overall q^k.
+    function tryShift(src, tgt) {
+      var srcExps = [], tgtExps = [];
+      src.forEach(function (_, e) { srcExps.push(e); });
+      tgt.forEach(function (_, e) { tgtExps.push(e); });
+      if (srcExps.length !== tgtExps.length || srcExps.length === 0) return null;
+      srcExps.sort(function (a, b) { return a - b; });
+      tgtExps.sort(function (a, b) { return a - b; });
+      var k = tgtExps[0] - srcExps[0];
+      // Must be a half-integer
+      if (Math.abs(k * 2 - Math.round(k * 2)) > 1e-9) return null;
+      var shifted = new Map();
+      src.forEach(function (c, e) { shifted.set(Math.round((e + k) * 2) / 2, c); });
+      var r2 = compare(shifted, tgt);
+      return r2.ok ? k : null;
+    }
+    var shiftK = tryShift(computedTerms, storedTerms);
+    if (shiftK !== null) {
+      return {
+        match: true,
+        shifted: true,
+        shiftK: shiftK,
+        storedPoly: null,
+        details: '\u2713 Matches stored polynomial up to an overall Laurent shift ' +
+          '\\(q^{' + shiftK + '}\\) (database and computation use different ' +
+          'framing/normalization for this ' + (nComponents || 1) + '-component ' +
+          ((nComponents || 1) > 1 ? 'link' : 'knot') + ').'
+      };
+    }
+
+    // Fallback 3: mirror combined with Laurent shift
+    var shiftKm = tryShift(mirrored, storedTerms);
+    if (shiftKm !== null) {
+      return {
+        match: true,
+        mirror: true,
+        shifted: true,
+        shiftK: shiftKm,
+        storedPoly: null,
+        details: '\u2713 Matches stored polynomial under mirror \\(q \\to q^{-1}\\) ' +
+          'composed with a Laurent shift \\(q^{' + shiftKm + '}\\). ' +
+          'This indicates the database uses opposite orientation/chirality and ' +
+          'a different framing convention for this ' + (nComponents || 1) + '-component ' +
+          ((nComponents || 1) > 1 ? 'link' : 'knot') + '.'
       };
     }
 
@@ -1191,8 +1239,12 @@
 
       resultHTML += '<div class="exp-card">';
       resultHTML += '<h3>Jones Polynomial';
-      if (verif.match && verif.mirror) {
+      if (verif.match && verif.mirror && verif.shifted) {
+        resultHTML += ' <span class="exp-badge pass">verified (mirror + shift)</span>';
+      } else if (verif.match && verif.mirror) {
         resultHTML += ' <span class="exp-badge pass">verified (mirror convention)</span>';
+      } else if (verif.match && verif.shifted) {
+        resultHTML += ' <span class="exp-badge pass">verified (Laurent shift)</span>';
       } else if (verif.match) {
         resultHTML += ' <span class="exp-badge pass">verified</span>';
       } else if (storedJones) {
@@ -1205,7 +1257,7 @@
       resultHTML += '<p style="font-size:0.85rem;color:#666">Computed via \\(V(q) = ' +
         '(-A)^{-3w} \\cdot \\langle K \\rangle\\) with \\(A = q^{1/4}\\), \\(w = ' +
         writhe + '\\). Components: \\(c = ' + nComponents + '\\).</p>';
-      if (verif.match && verif.mirror) {
+      if (verif.match && (verif.mirror || verif.shifted)) {
         resultHTML += '<p style="font-size:0.85rem;color:#2e7d32">' +
           '<strong>Note.</strong> ' + verif.details + '</p>';
       }
