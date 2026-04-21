@@ -141,6 +141,11 @@
           'trefoil surface above, a convenient basis consists of two cycles running through two of the ' +
           'three bands; the resulting Seifert matrix is</p>' +
           '<div class="formula-box">$$V_{3_1} \\;=\\; \\begin{pmatrix}-1 & 1 \\\\ 0 & -1\\end{pmatrix}.$$</div>' +
+          '<details class="kl-proof">' +
+            '<summary>Where \\(V\\) comes from</summary>' +
+            '<p>Concretely, \\(\\alpha_1,\\alpha_2\\) are simple closed loops on the twisted-band trefoil surface, each running along the disc and through exactly two of the three half-twisted bands (so that together they span \\(H_1(\\Sigma)=\\mathbb{Z}^2\\)). The diagonal entries are self-linking numbers of the push-off: \\(V_{ii} = \\operatorname{lk}(\\alpha_i^+,\\alpha_i)\\) equals the framing induced by \\(\\Sigma\\) on \\(\\alpha_i\\), which picks up one full \\(-1\\) twist for each left-handed half-twisted band the loop traverses &mdash; here two half-twists share sign and combine, giving \\(V_{11}=V_{22}=-1\\).</p>' +
+            '<p>The off-diagonal entries \\(V_{12}=\\operatorname{lk}(\\alpha_1^+,\\alpha_2)\\) and \\(V_{21}=\\operatorname{lk}(\\alpha_2^+,\\alpha_1)\\) differ by exactly \\(1\\) because \\(\\alpha_1\\) and \\(\\alpha_2\\) cross the middle shared band once: on one side of \\(\\Sigma\\) the push-off links \\(\\alpha_2\\) with linking number \\(1\\), while the opposite push-off links it with linking number \\(0\\). This asymmetry \\(V - V^{\\mathsf T} = \\bigl(\\begin{smallmatrix}0&1\\\\-1&0\\end{smallmatrix}\\bigr)\\) is exactly the intersection form on \\(\\Sigma\\), as it must be.</p>' +
+          '</details>' +
         '</div>' +
 
         '<div class="expo-panel">' +
@@ -181,7 +186,7 @@
             '<div class="formula-box">$$\\Delta_{3_1}(t) - \\Delta_{\\text{unknot}}(t) = (t^{1/2} - t^{-1/2})\\,\\Delta_{\\text{Hopf}}(t).$$</div>' +
             '<p>A second application of the skein to the Hopf link (flip one crossing to get two unlinked ' +
             'circles; smooth to get one unknot) gives \\(\\Delta_{\\text{Hopf}}(t) = t^{1/2} - t^{-1/2}\\) ' +
-            '(using the convention \\(\\Delta_{\\bigcirc \\sqcup \\bigcirc}(t) = 0\\)). Substituting back:</p>' +
+            '(using the convention \\(\\Delta_{\\bigcirc \\sqcup \\bigcirc}(t) = 0\\)). (Sign depends on orientation of the Hopf link; the other orientation gives the negative. Either choice makes the trefoil computation below come out correctly because only the square appears.) Substituting back:</p>' +
             '<div class="formula-box">$$\\Delta_{3_1}(t) \\;=\\; 1 + (t^{1/2} - t^{-1/2})^2 \\;=\\; t - 1 + t^{-1}. \\checkmark$$</div>' +
             '<p>This matches the Seifert-matrix computation above &mdash; now obtained without ever drawing a ' +
             'Seifert surface.</p>' +
@@ -964,6 +969,14 @@
           '</ul>' +
           '<p>The mirror trefoil has \\(P_{\\overline{3_1}}(a,z) = P_{3_1}(a^{-1}, z)\\), so HOMFLY-PT ' +
           'detects chirality (unlike Alexander, like Jones).</p>' +
+          '<details class="kl-example">' +
+            '<summary>Actual skein reduction</summary>' +
+            '<p><strong>(i)</strong> Use Convention B \\(a^{-1}P_{L_+} - a\\,P_{L_-} = z\\,P_{L_0}\\). At one crossing of \\(3_1\\): flipping it unknots the diagram (\\(L_- = \\bigcirc\\)), smoothing it gives the positive Hopf link \\(H\\), so</p>' +
+            '<div class="formula-box">$$a^{-1}P(3_1) \\;-\\; a\\,P(\\bigcirc) \\;=\\; z\\,P(H), \\qquad P(\\bigcirc)=1.$$</div>' +
+            '<p><strong>(ii)</strong> Apply the skein at one crossing of \\(H\\) itself: flipping gives the two-component unlink \\(\\bigcirc\\sqcup\\bigcirc\\), smoothing gives the unknot. The standard normalization for disjoint unions is \\(P(\\bigcirc\\sqcup\\bigcirc) = \\tfrac{a^{-1}-a}{z}\\,P(\\bigcirc) = \\tfrac{a^{-1}-a}{z}\\). Hence</p>' +
+            '<div class="formula-box">$$a^{-1}P(H) \\;-\\; a\\cdot\\tfrac{a^{-1}-a}{z} \\;=\\; z\\cdot 1 \\quad\\Longrightarrow\\quad P(H) \\;=\\; a\\,z \\;+\\; \\tfrac{a - a^{3}}{z}.$$</div>' +
+            '<p><strong>(iii)</strong> Substitute back: \\(P(3_1) = a^2 + a\\,z\\,P(H) = a^2 + a\\,z\\bigl(az + \\tfrac{a-a^3}{z}\\bigr) = a^2 + a^2 z^2 + a^2 - a^4 = -a^{4} + a^{2}z^{2} + 2a^{2},\\) matching the tabulated value above. \u2713</p>' +
+          '</details>' +
         '</div>' +
 
         '<div class="expo-panel">' +
@@ -1124,12 +1137,13 @@
 
         '<div class="expo-panel">' +
           '<h3>6. Interactive: colored Jones of the trefoil</h3>' +
-          '<p>The colored Jones polynomials of \\(3_1\\) have Habiro\'s cyclotomic closed form ' +
-          '\\(J_n(3_1;q) = \\sum_{k=0}^{n-1} q^{k(n-1)} \\prod_{j=1}^{k}(1 - q^{j-n}).\\) ' +
-          '<em>(Habiro expansion: valid as an identity in the cyclotomic completion ' +
-          '\\(\\widehat{\\mathbb{Z}[q]} = \\varprojlim_n \\mathbb{Z}[q]/((q;q)_n)\\), and on the nose at roots of unity. ' +
-          'For generic Laurent-polynomial use one should expand each inner product first; the normalized table below ' +
-          'lists the Laurent polynomials in \\(q\\).)</em> The first few:</p>' +
+          '<p>Each \\(J_n(3_1;q)\\) is a Laurent polynomial in \\(q\\), tabulated below. ' +
+          'The compact Habiro closed form ' +
+          '\\(J_n(3_1;q) = \\sum_{k=0}^{n-1} q^{k(n-1)} \\prod_{j=1}^{k}(1 - q^{j-n})\\) ' +
+          'is valid as an identity in the cyclotomic completion ' +
+          '\\(\\widehat{\\mathbb{Z}[q]} = \\varprojlim_n \\mathbb{Z}[q]/((q;q)_n)\\) ' +
+          '(and on the nose at roots of unity); to get a genuine Laurent polynomial, expand each inner product ' +
+          '\\(\\prod_{j=1}^{k}(1 - q^{j-n})\\) and collect. The first few:</p>' +
           '<div class="kl-interactive">' +
             '<div class="kl-controls">' +
               '<label>Color \\(n\\): ' +

@@ -156,7 +156,10 @@
         '<h4>Counterintuitive facts</h4>' +
         '<ul>' +
           '<li>Some knots require more crossing changes from a <em>minimum-crossing</em> diagram than from a ' +
-          'non-minimal one. An explicit example is the knot \\(10_8\\).</li>' +
+          'non-minimal one. An explicit example is the knot \\(10_8\\), which has ' +
+          '<span class="kl-term" title="Unknotting number u(K): minimum number of crossing changes (over all diagrams of K) needed to transform K into the unknot. A 4-dimensional/concordance-type invariant with u(K) ≥ g₄(K) bounds from τ, s, signature.">unknotting number</span> ' +
+          '\\(u(10_8) = 3\\) but requires \\(4\\) crossing changes if one insists on starting from its minimal ' +
+          '\\(10\\)-crossing diagram (Bleiler 1984; Nakanishi 1983).</li>' +
           '<li>Additivity \\(u(K_1 \\# K_2) = u(K_1) + u(K_2)\\) is <em>open</em>. It is not even known if ' +
           '\\(u(K \\# K) = 2u(K)\\) always.</li>' +
           '<li>Neither \\(|\\sigma|/2\\) nor \\(|s|/2\\) alone detects unknotting number &mdash; there exist ' +

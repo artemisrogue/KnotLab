@@ -64,6 +64,12 @@
           crossings: standing on the under-strand facing its direction of travel, the crossing is \\(+1\\) if the\
           over-strand passes right-to-left and \\(-1\\) if left-to-right\
           (equivalently \\(\\varepsilon = \\operatorname{sign}\\,\\det[\\mathbf{u}_{\\text{under}}, \\mathbf{u}_{\\text{over}}]\\)).</p>\
+          <details class="kl-example">\
+            <summary>Worked mini-example: \\(\\mathrm{Kh}(\\text{unknot})\\)</summary>\
+            <p>The crossing-less diagram of the unknot has \\(n=0\\), so the cube \\(\\{0,1\\}^0\\) has a single vertex carrying one circle, hence one copy of the Frobenius algebra \\(A = \\mathbb{Z}[X]/(X^2)\\) with generators \\(1\\) in \\(q\\)-degree \\(+1\\) and \\(X\\) in \\(q\\)-degree \\(-1\\). The chain complex is concentrated in homological degree \\(0\\) with no differentials, so</p>\
+            <div class="formula-box">$$\\mathrm{Kh}(\\bigcirc) \\;=\\; \\mathbb{Z}_{(0,1)} \\;\\oplus\\; \\mathbb{Z}_{(0,-1)}.$$</div>\
+            <p>The graded Euler characteristic is \\(q + q^{-1} = V_{\\bigcirc}(q)\\), confirming categorification.</p>\
+          </details>\
         </div>\
         <div class="expo-panel">\
           <h3>Recovering the Jones Polynomial</h3>\
@@ -119,8 +125,9 @@
         </div>\
         <div class="expo-panel">\
           <h3>The <span class="kl-term" title="Ozsváth–Szabó τ invariant (2003): integer concordance homomorphism from the Alexander filtration on CFK̂(K); |τ(K)| ≤ g₄(K), with equality for positive knots and torus knots.">\\(\\tau\\)</span> Invariant</h3>\
-          <p>The invariant \\(\\tau(K)\\), extracted from a filtration on \\(\\widehat{\\mathrm{HFK}}\\),\
+          <p>The invariant \\(\\tau(K)\\), extracted from the <span class="kl-term" title="Alexander filtration: the filtration of CFK^∞(K) (or CFK̂(K)) by the Alexander grading A; its associated graded recovers ĤFK. τ(K) is the minimum Alexander level at which the filtration contains a generator mapping to a generator of ĤF(S³) = ℤ.">Alexander filtration</span> on \\(\\mathrm{CFK}^{\\infty}(K)\\) (equivalently \\(\\widehat{\\mathrm{CFK}}(K)\\)),\
           defines a <strong>concordance homomorphism</strong>:</p>\
+          <p>Concretely, \\(\\tau(K)\\) is the minimum Alexander grading at which the filtration includes a generator mapping to a generator of \\(\\widehat{\\mathrm{HF}}(S^3) = \\mathbb{Z}\\).</p>\
           <div class="formula-box">\
             $$\\tau \\colon \\mathcal{C} \\to \\mathbb{Z}, \\qquad |\\tau(K)| \\leq g_4(K)$$\
           </div>\
