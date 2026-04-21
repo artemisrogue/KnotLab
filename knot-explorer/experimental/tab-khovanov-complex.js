@@ -621,12 +621,9 @@
           html += '<div style="margin:0.5em 0;padding:0.5em;background:#f8f8f8;border-radius:4px;font-size:0.85em">';
           html += '<strong>\\(d^{' + i + ',' + j + '}\\)</strong>: ' +
             mat.rows + '×' + mat.cols;
-          if (mat.rows <= 12 && mat.cols <= 12) {
-            html += '<pre style="margin:0.3em 0;font-size:0.8em">' +
-              formatMatrix(mat) + '</pre>';
-          } else {
-            html += ' <em>(too large to display)</em>';
-          }
+          html += '<div style="max-height:320px;max-width:100%;overflow:auto;">' +
+            '<pre style="margin:0.3em 0;font-size:0.75em;white-space:pre;display:inline-block">' +
+            formatMatrix(mat) + '</pre></div>';
           html += '</div>';
         }
       }

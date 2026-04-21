@@ -1005,15 +1005,15 @@
             -->
             <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5">
               <!-- ===== LHS: sigma_i sigma_{i+1} sigma_i.  cols x = 20, 70, 120. ===== -->
-              <!-- R (over at c1,c2; unaffected at c3): single polyline. -->
+              <!-- R (over at c1, over at c2, unaffected at c3): no breaks. -->
               <polyline points="20,15 20,30 70,60 70,80 120,110 120,215" stroke="#c0392b"/>
-              <!-- G has ONE under-break (c2: 120,80 -> 70,110).  Also over at c3. -->
-              <polyline points="120,15 120,80 102.5,90.5" stroke="#27ae60"/>
-              <polyline points="87.5,99.5 70,110 70,130 20,160 20,215" stroke="#27ae60"/>
-              <!-- B has TWO under-breaks: c1 (70,30->20,60) and c3 (20,130->70,160). -->
+              <!-- B: under at c1 (70,30 -> 20,60), unaffected at c2, OVER at c3 (no break). -->
               <polyline points="70,15 70,30 52.5,40.5" stroke="#2e86de"/>
-              <polyline points="37.5,49.5 20,60 20,130 37.5,140.5" stroke="#2e86de"/>
-              <polyline points="52.5,149.5 70,160 70,215" stroke="#2e86de"/>
+              <polyline points="37.5,49.5 20,60 20,130 70,160 70,215" stroke="#2e86de"/>
+              <!-- G: unaffected at c1, UNDER at c2 (120,80->70,110), UNDER at c3 (70,130->20,160). -->
+              <polyline points="120,15 120,80 102.5,90.5" stroke="#27ae60"/>
+              <polyline points="87.5,99.5 70,110 70,130 52.5,140.5" stroke="#27ae60"/>
+              <polyline points="37.5,149.5 20,160 20,215" stroke="#27ae60"/>
 
               <!-- ===== RHS: sigma_{i+1} sigma_i sigma_{i+1}.  cols x = 220, 270, 320. ===== -->
               <!-- R unaffected at c1, over at c2 and c3: single polyline. -->

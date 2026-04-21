@@ -1206,12 +1206,8 @@
             var mat = complex.differentials[dkey];
             resultHTML += '<p>\\(d^{' + hi + ',' + qi + '}\\): ' +
               mat.rows + ' &times; ' + mat.cols + '</p>';
-            if (mat.rows <= 16 && mat.cols <= 16) {
-              resultHTML += '<div class="exp-matrix">' + formatMatrix(mat) + '</div>';
-            } else {
-              resultHTML += '<p style="color:#999">(Matrix too large to display: ' +
-                mat.rows + ' &times; ' + mat.cols + ')</p>';
-            }
+            resultHTML += '<div class="exp-matrix" style="max-height:320px;max-width:100%;overflow:auto;">' +
+              formatMatrix(mat) + '</div>';
           }
         }
       }
