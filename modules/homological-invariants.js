@@ -82,6 +82,14 @@
           <p>Khovanov homology is <strong>strictly stronger</strong> than the Jones polynomial &mdash;\
           it can distinguish knots that share the same Jones polynomial. For example, it separates\
           certain mutant knot pairs that the Jones polynomial cannot tell apart.</p>\
+          <details class="kl-proof">\
+            <summary>Proof sketch: \\(d^2 = 0\\) on the Khovanov complex</summary>\
+            <p>Sketch. The differential is a signed sum of edge maps in the resolution cube \\(\\{0,1\\}^n\\); each edge flips a single crossing from 0-smoothing to 1-smoothing and induces either a <em>merge</em> \\(m: A \\otimes A \\to A\\) or a <em>split</em> \\(\\Delta: A \\to A \\otimes A\\) on the Frobenius algebra \\(A = \\mathbb{Z}[X]/(X^2)\\). Each 2-face of the cube is one of three local types (two crossings far apart; two crossings sharing one circle; two crossings sharing two circles). A finite case check on \\(A\\) &mdash; using \\(m(\\Delta\\otimes\\mathrm{id}) = \\Delta m\\) (Frobenius identity) and \\(m\\Delta = X\\otimes 1 + 1\\otimes X\\) &mdash; shows each 2-face commutes up to sign. Assigning signs by declaring edge \\(\\xi \\to \\xi \\cup \\{i\\}\\) to have sign \\((-1)^{|\\xi \\cap \\{1,\\ldots,i-1\\}|}\\) makes <em>all</em> 2-faces anticommute, hence \\(d^2 = 0\\). See Khovanov (2000) \u00a75 or Bar-Natan (2002).</p>\
+          </details>\
+          <details class="kl-proof">\
+            <summary>Proof sketch: Kh is a knot invariant (chain homotopies for R1, R2, R3)</summary>\
+            <p>Sketch. Reidemeister's theorem reduces invariance to producing explicit chain homotopy equivalences between the Khovanov complexes of diagrams related by a single R-move. For each move one writes down a local complex (involving only arcs inside the R-move disc) and exhibits a deformation retraction: <strong>R1</strong> uses the fact that the Frobenius algebra has a "delooping" isomorphism \\(A \\cong q A[1] \\oplus q^{-1} A\\) that cancels the extra circle introduced by the twist; <strong>R2</strong> uses a "Gaussian elimination" cancellation of a pair of isomorphic summands connected by an iso differential; <strong>R3</strong> follows from R2 via the categorified R2\u2009+\u2009(braid-like slide) argument of Bar-Natan. The homotopies themselves are explicit and local, so invariance extends to functoriality on cobordisms. References: Khovanov (2000); Bar-Natan, <em>Algebr. Geom. Topol.</em> 2 (2002); clean account in Lipshitz\u2013Sarkar notes.</p>\
+          </details>\
         </div>\
         <div class="expo-panel">\
           <h3>The Rasmussen \\(s\\)-Invariant</h3>\
@@ -511,6 +519,21 @@
             unknotting number \\(u(3_1) = 1\\) forces \\(g_4(3_1) \\le 1\\), and \\(g_3(3_1) = 1\\) with \\(g_4 \\le g_3\\) gives\
             \\(g_4 \\le 1\\). Rasmussen&rsquo;s bound reads \\(2 = |s| \\le 2 g_4 \\le 2\\), so \\(g_4(3_1) = 1\\)\
             &mdash; equality throughout.</p>\
+          </details>\
+          <details class="kl-proof">\
+            <summary>Proof sketch: \\(\\mathrm{Kh}_{\\mathrm{Lee}}(K) \\cong \\mathbb{Q}^2\\)</summary>\
+            <p>Sketch. Lee&rsquo;s deformed Frobenius algebra over \\(\\mathbb{Q}\\) has comultiplication\
+            \\(\\Delta(1) = 1 \\otimes x + x \\otimes 1\\) and \\(\\Delta(x) = x \\otimes x + 1 \\otimes 1\\). The element\
+            \\(1\\) is no longer nilpotent: the change of basis \\(\\mathbf{a} = x\\), \\(\\mathbf{b} = 1 - x\\)\
+            diagonalises the algebra as \\(\\mathbb{Q}\\mathbf{a} \\oplus \\mathbb{Q}\\mathbf{b}\\), two copies of\
+            \\(\\mathbb{Q}\\) with orthogonal idempotents.</p>\
+            <p>On an \\(n\\)-crossing diagram, each complete resolution is a disjoint union of circles, so its\
+            Lee chain group splits as a tensor of \\(\\mathbb{Q}\\mathbf{a} \\oplus \\mathbb{Q}\\mathbf{b}\\) factors.\
+            Lee shows the homology is supported on the <em>oriented resolution</em>: label each Seifert circle\
+            by \\(\\mathbf{a}\\) or \\(\\mathbf{b}\\) according to a canonical orientation rule, producing two\
+            generators \\(\\mathfrak{s}_+, \\mathfrak{s}_-\\). A direct computation shows all other contributions\
+            cancel, leaving \\(\\mathrm{Kh}_{\\mathrm{Lee}}(K) \\cong \\mathbb{Q}^2\\). The \\(q\\)-filtration degrees\
+            of \\(\\mathfrak{s}_\\pm\\) are \\(s(K) \\pm 1\\) by definition.</p>\
           </details>\
           <p><em>Cross-ref:</em> see the Khovanov Homology sub-tab for the Lee remark and \\(s\\)-invariant tooltip.</p>\
         </div>\

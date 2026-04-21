@@ -164,6 +164,10 @@
           '<p>The polynomial itself does not depend on the choice of surface or basis: different choices ' +
           'are related by S-equivalence, which preserves \\(\\det(V-tV^{\\mathsf{T}})\\) up to units ' +
           '\\(\\pm t^n\\).</p>' +
+          '<details class="kl-proof">' +
+            '<summary>Proof sketch: \\(\\Delta_K\\) is well-defined (S-equivalence)</summary>' +
+            '<p>Sketch. Any two Seifert surfaces \\(\\Sigma_0, \\Sigma_1\\) for \\(K\\) become isotopic after finitely many <em>stabilizations</em> (attaching a tube away from \\(\\partial\\)) and <em>handle slides</em> on \\(H_1\\). On Seifert matrices these operations become: (a) conjugation \\(V \\mapsto P V P^{\\mathsf T}\\) by \\(P \\in GL_n(\\mathbb{Z})\\) (change of basis), and (b) stabilization \\(V \\mapsto \\begin{psmallmatrix} V & * & 0 \\\\ 0 & 0 & 1 \\\\ 0 & 0 & 0 \\end{psmallmatrix}\\) or its transpose. Both preserve \\(\\det(V - t V^{\\mathsf T})\\) up to multiplication by \\(\\pm t^k\\): (a) gives \\(\\det(P)^2 = 1\\) times the original; (b) the extra \\(2\\times 2\\) block contributes factor \\(-t\\). Thus \\(\\Delta_K(t)\\) is well-defined in \\(\\mathbb{Z}[t^{\\pm 1}]/\\langle \\pm t^k\\rangle\\). (Trotter 1962; see also Kauffman\u2019s <em>On Knots</em>.)</p>' +
+          '</details>' +
         '</div>' +
 
         '<div class="expo-panel">' +
@@ -986,6 +990,10 @@
           '<p>Together with \\(V_{\\bigcirc}(q) = 1\\) this uniquely determines \\(V_K\\) for every link &mdash; ' +
           'you can compute by picking any crossing, applying the relation, and inducting on a complexity ' +
           'measure that decreases under skein moves.</p>' +
+          '<details class="kl-proof">' +
+            '<summary>Proof sketch: the skein relation + \\(V_{\\bigcirc}=1\\) determine \\(V_K\\)</summary>' +
+            '<p>Sketch. Induct on the number of crossings \\(n\\) and, among diagrams with a fixed \\(n\\), on the minimum number of crossing changes needed to reach an unlink. For the base case \\(n=0\\): a diagram of an unlink with \\(k\\) components has value \\((-q^{1/2}-q^{-1/2})^{k-1}\\), obtained by \\(k-1\\) applications of the skein relation to connect a component to a neighbour and resolve to the unknot. Induction step: pick any crossing of \\(D\\). The skein relation writes \\(V_{L_+} - q^2 V_{L_-}\\) (or vice versa) in terms of \\(V_{L_0}\\), where \\(L_0\\) has strictly fewer crossings. By switching crossings one at a time, we reach an unlink after finitely many steps \u2014 a standard fact (every link diagram can be "unknotted" by a sequence of crossing changes). Uniqueness and well-definedness require also checking that different orders of applying the skein relation give the same answer, which follows from a local calculation at pairs of crossings. Existence was established by Jones via the Kauffman bracket (equivalent route).</p>' +
+          '</details>' +
         '</div>' +
 
         '<div class="expo-panel">' +

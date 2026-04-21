@@ -625,6 +625,12 @@
     <div class="expo-panel">
       <h3>Diagram Equivalence &amp; Reidemeister Moves</h3>
       <p>A foundational result in knot theory states that two knot diagrams represent the same knot if and only if they are related by a finite sequence of <strong>Reidemeister moves</strong>, together with planar isotopy.</p>
+
+      <details class="kl-proof">
+        <summary>Proof sketch: Reidemeister's theorem (1927)</summary>
+        <p>Sketch. Place the two diagrams \\(D_0, D_1\\) as generic projections of ambient-isotopic knots \\(K_0, K_1 \\subset \\mathbb{R}^3\\). Lift the ambient isotopy to a smooth 1-parameter family \\(K_t\\) and project to a fixed plane. By transversality applied to the projection map restricted to this family, for a generic isotopy the projection \\(D_t\\) is a regular diagram except at finitely many parameter values \\(t_1 &lt; \\cdots &lt; t_N\\), where exactly one of three codimension-one singularities occurs: a cusp (a strand acquires a vertical tangent) \u2192 <strong>RI</strong>; a tangency between two strands \u2192 <strong>RII</strong>; a triple point where three strands meet \u2192 <strong>RIII</strong>. Between consecutive \\(t_i\\) the diagram changes only by planar isotopy. The proof appears in Reidemeister (1927) and independently Alexander\u2013Briggs (1926). The general-position argument is cleanest in the smooth category; a PL proof requires a little more care.</p>
+      </details>
+
       <p>There are three types of Reidemeister moves:</p>
 
       <div style="margin:16px 0;">
@@ -870,6 +876,11 @@
       obtained by connecting the top endpoints to the corresponding bottom endpoints.</p>
       <p>For example, the trefoil is the closure of the braid \\(\\sigma_1^3 \\in B_2\\), and the
       figure-eight knot is the closure of \\(\\sigma_1 \\sigma_2^{-1} \\sigma_1 \\sigma_2^{-1} \\in B_3\\).</p>
+
+      <details class="kl-proof">
+        <summary>Proof sketch: Alexander's theorem (1923)</summary>
+        <p>Sketch. Fix an oriented diagram \\(D\\) of \\(L\\) and a base point \\(p\\) in the plane off the diagram. Call an arc <em>good</em> if it winds around \\(p\\) in the orientation sense and <em>bad</em> otherwise. A bad arc can be eliminated by an "Alexander trick": isotope a portion of the arc across \\(p\\), replacing it by two good arcs (and changing the diagram by a Markov-stabilization-like move). After finitely many tricks all arcs are good; the diagram then wraps around \\(p\\) like a braid closed around the axis through \\(p\\). Reading off the over/under crossings level by level gives a braid word \\(\\beta\\) with \\(\\widehat{\\beta} = L\\). A modern proof uses Yamada\u2013Vogel's algorithm, which makes the trick deterministic.</p>
+      </details>
     </div>
 
     <div class="expo-panel">
@@ -925,6 +936,13 @@
         <li><strong>Determinant</strong> \\(\\det(K)\\): \\(|\\det(V + V^{\\mathsf{T}})| = |\\Delta_K(-1)|\\), where \\(V\\) is any Seifert matrix.</li>
       </ul>
       <p>These invariants are computed and displayed in the <em>Knot Explorer</em> tab.</p>
+
+      <details class="kl-proof">
+        <summary>Proof sketch: \\(\\det(K) = |\\Delta_K(-1)|\\)</summary>
+        <p>Sketch. For any Seifert matrix \\(V\\) of \\(K\\), the Alexander polynomial is \\(\\Delta_K(t) \\doteq \\det(tV - V^{\\mathsf{T}})\\) (well-defined up to \\(\\pm t^k\\)). Specializing at \\(t = -1\\):</p>
+        <div class="formula-box">$$\\Delta_K(-1) \\;\\doteq\\; \\det(-V - V^{\\mathsf{T}}) \\;=\\; (-1)^{2g}\\,\\det(V + V^{\\mathsf{T}}),$$</div>
+        <p>where \\(2g = \\dim H_1(\\Sigma)\\) is the size of \\(V\\). Taking absolute values gives \\(|\\Delta_K(-1)| = |\\det(V + V^{\\mathsf{T}})| = \\det(K)\\). The symmetrized matrix \\(V + V^{\\mathsf{T}}\\) is exactly the intersection form pairing cycles with their push-offs symmetrically, which is also what the double-branched cover \\(\\Sigma_2(K)\\) presents on \\(H_1\\); equivalently \\(\\det(K) = |H_1(\\Sigma_2(K); \\mathbb{Z})|\\).</p>
+      </details>
     </div>
 
     <div class="expo-panel">
@@ -941,6 +959,11 @@
       complete invariant for prime knots (by the Gordon&ndash;Luecke theorem), the knot group is difficult
       to work with computationally because group isomorphism is generally undecidable.</p>
       <p>The knot group is explored further in the <em>Miscellaneous</em> tab.</p>
+
+      <details class="kl-proof">
+        <summary>Proof sketch: trefoil group \\(\\cong \\langle a,b \\mid aba = bab\\rangle\\)</summary>
+        <p>Sketch. Use the standard 3-crossing diagram of \\(3_1\\). Wirtinger assigns one meridian generator per arc: three arcs \\(a, b, c\\). Each crossing contributes a relation of the form "outgoing under = (over) \\(\\cdot\\) (incoming under) \\(\\cdot\\) (over)\\(^{-1}\\)". The three relations read \\(c = aba^{-1}\\), \\(a = bcb^{-1}\\), \\(b = cac^{-1}\\); any two imply the third (a general fact about Wirtinger presentations \u2014 there is always one redundant relation). Eliminating \\(c\\) via the first, the second becomes \\(aba = bab\\). Substituting \\(x = ab, y = aba\\) yields the alternative presentation \\(\\langle x, y \\mid x^3 = y^2\\rangle\\), the standard form of the \\((2,3)\\)-torus knot group and isomorphic to the braid group \\(B_3\\).</p>
+      </details>
     </div>
 
     <div class="expo-panel">

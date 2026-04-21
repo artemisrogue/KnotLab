@@ -109,6 +109,10 @@
           'the equivalence \\((p,q) \\sim (p, q^{\\pm 1} \\bmod p)\\). The <span class="kl-term" title="Schubert (2-bridge) classification (1956): 2-bridge knots correspond bijectively to pairs (p,q) with p odd, 0<q<p, gcd(p,q)=1, modulo q ~ q^{±1} mod p. First infinite family of knots classified.">Schubert (2-bridge) classification</span> (1956) is via continued fractions &mdash; the first infinite family of knots ever classified.</li>' +
           '<li>All torus knots \\(T(p,q)\\) with \\(p = 2\\) are 2-bridge. \\(T(3,4) = 8_{19}\\) is 3-bridge.</li>' +
         '</ul>' +
+        '<details class="kl-proof">' +
+          '<summary>Proof sketch: \\(b(K) = 1 \\iff K\\) is the unknot</summary>' +
+          '<p>Sketch. If \\(b(K) = 1\\), \\(K\\) has Morse position with a single maximum and (by closedness of \\(K\\)) a single minimum. Split \\(K\\) by a horizontal plane strictly between the two critical values: above and below lie single monotone arcs with the same pair of endpoints. Two monotone arcs in \\(\\mathbb{R}^3\\) with common endpoints cobound an embedded disk (straight-line homotopy in height-parametrized form), so \\(K\\) bounds a disk in \\(S^3\\) and is the unknot. Conversely, the round planar circle achieves \\(b = 1\\).</p>' +
+        '</details>' +
       '</div>' +
       '<div class="expo-panel">' +
         '<h4>Schubert\'s additivity theorem (1954)</h4>' +
@@ -184,13 +188,17 @@
         '<ul>' +
           '<li><strong>Additivity.</strong> \\(g(K_1 \\# K_2) = g(K_1) + g(K_2)\\). Proved by Schubert; follows ' +
           'from a sphere-decomposition argument.</li>' +
-          '<li><strong><span class="kl-term" title="Alexander polynomial Δ_K(t) ∈ ℤ[t,t⁻¹]: Laurent polynomial invariant (1928), det(tV−Vᵀ) up to ±t^k; satisfies Δ_K(t) ≐ Δ_K(t⁻¹) and Δ_K(1)=±1.">Alexander polynomial</span> lower bound.</strong> \\(2 g(K) \\geq \\deg \\Delta_K(t) - 1\\) (where ' +
+          '<li><strong><span class="kl-term" title="Alexander polynomial Δ_K(t) ∈ ℤ[t,t⁻¹]: Laurent polynomial invariant (1928), det(tV−Vᵀ) up to ±t^k; satisfies Δ_K(t) ≐ Δ_K(t⁻¹) and Δ_K(1)=±1.">Alexander polynomial</span> lower bound.</strong> \\(2 g(K) \\geq \\deg \\Delta_K(t)\\) (breadth; where ' +
           '\\(\\Delta_K\\) is normalized symmetrically). Often sharp, but not always: e.g. for connected sums ' +
           'of Whitehead doubles.</li>' +
           '<li><strong><span class="kl-term" title="Knot Floer homology (Ozsváth–Szabó & Rasmussen, 2003): bigraded abelian group HFK̂(K,j) built from Heegaard diagrams with basepoints; categorifies the Alexander polynomial; detects Seifert genus and fiberedness.">Knot Floer homology</span> detection.</strong> Ozsv&aacute;th&ndash;Szab&oacute; (2004): ' +
           '\\(g(K) = \\max\\{\\,i : \\widehat{HFK}(K, i) \\neq 0\\,\\}\\). This is a <em>theorem</em>, not a bound; ' +
           'knot Floer detects the Seifert genus on the nose.</li>' +
         '</ul>' +
+        '<details class="kl-proof">' +
+          '<summary>Proof sketch: \\(\\deg \\Delta_K(t) \\leq 2 g(K)\\)</summary>' +
+          '<p>Sketch. Let \\(\\Sigma\\) be a genus-\\(g\\) Seifert surface and \\(V\\) a Seifert matrix with respect to a symplectic basis of \\(H_1(\\Sigma) \\cong \\mathbb{Z}^{2g}\\). Then \\(V\\) is \\(2g\\times 2g\\), so \\(\\Delta_K(t) \\doteq \\det(tV - V^{\\mathsf T})\\) has degree at most \\(2g\\); taking the span between highest and lowest nonzero coefficients gives \\(\\deg \\Delta_K \\leq 2g\\). Since \\(g(K)\\) is the minimum over all Seifert surfaces, \\(\\deg \\Delta_K(t) \\leq 2 g(K)\\). Equality fails in general because \\(V\\) need not have full rank; e.g. the untwisted Whitehead double has \\(\\Delta = 1\\) but \\(g = 1\\).</p>' +
+        '</details>' +
       '</div>' +
       '<div class="expo-panel">' +
         '<h4><span class="kl-term" title="Fibered knot: the complement S³∖K fibers over S¹; the fiber is a minimal-genus Seifert surface and its monodromy determines the knot type.">Fibered knot</span>s</h4>' +
@@ -223,6 +231,10 @@
         'the cleanest topological meaning: \\(\\det(K)\\) counts something geometric.</p>' +
         '<p>The determinant is always a <em>positive odd integer</em> for knots. (Reason: ' +
         '\\(\\Sigma_2(K)\\) is a rational homology sphere, so \\(|H_1|\\) is odd.)</p>' +
+        '<details class="kl-proof">' +
+          '<summary>Proof sketch: \\(\\det(K) = |H_1(\\Sigma_2(K);\\mathbb{Z})|\\)</summary>' +
+          '<p>Sketch. Let \\(\\Sigma\\) be a Seifert surface with Seifert matrix \\(V\\). A standard construction (cut \\(S^3\\) along \\(\\Sigma\\), glue two copies) presents \\(\\Sigma_2(K)\\), and Mayer\u2013Vietoris produces the presentation matrix \\(V + V^{\\mathsf T}\\) for \\(H_1(\\Sigma_2(K);\\mathbb{Z})\\). Hence \\(|H_1(\\Sigma_2(K))| = |\\det(V+V^{\\mathsf T})|\\) whenever \\(\\det(V+V^{\\mathsf T}) \\neq 0\\) (and \\(H_1\\) is infinite otherwise, which does not occur for knots). Combined with \\(\\Delta_K(-1) \\doteq \\det(-V - V^{\\mathsf T}) = \\pm\\det(V+V^{\\mathsf T})\\) this yields \\(\\det(K) = |\\Delta_K(-1)| = |H_1(\\Sigma_2(K))|\\). Oddness: \\(\\Sigma_2(K)\\) is a rational homology sphere (standard from the branched cover Euler characteristic), so \\(H_1\\) has odd order.</p>' +
+        '</details>' +
       '</div>' +
       '<div class="expo-panel">' +
         '<h4>Why the determinant matters</h4>' +
@@ -284,6 +296,12 @@
         'concordance invariant (Levine, Tristram 1960s) and remains one of the strongest simple ones; it ' +
         'obstructs sliceness for most small non-slice knots. See also the Levine&ndash;Tristram signature ' +
         'function \\(\\sigma_\\omega(K)\\) on the Polynomial Invariants &rsaquo; Others tab.</p>' +
+        '<details class="kl-proof">' +
+          '<summary>Proof sketch: slice \\(\\Rightarrow \\sigma(K) = 0\\)</summary>' +
+          '<p>Sketch (Murasugi / Levine). Suppose \\(K\\) is smoothly slice, bounding a disk \\(D \\subset B^4\\). Glue a Seifert surface \\(\\Sigma \\subset S^3\\) to \\(D\\) along \\(K\\) to form a closed surface \\(F = \\Sigma \\cup D\\) in \\(B^4\\). The Seifert form on \\(H_1(\\Sigma)\\) has a half-rank <em>metabolizer</em> \\(M \\subset H_1(\\Sigma)\\): the subgroup of cycles that bound in \\(B^4 \\setminus D\\). With respect to a basis compatible with \\(M\\), \\(V\\) has the block form \\(\\begin{pmatrix}0 & A \\\\ B & C\\end{pmatrix}\\), so</p>' +
+          '<div class="formula-box">$$V + V^{\\mathsf T} \\;=\\; \\begin{pmatrix} 0 & A + B^{\\mathsf T} \\\\ A^{\\mathsf T} + B & C + C^{\\mathsf T} \\end{pmatrix},$$</div>' +
+          '<p>a symmetric form with a half-rank isotropic subspace. A standard linear-algebra fact: such a form has signature zero. Concordance: the same argument applied to the annulus from \\(K_0\\) to \\(K_1\\) shows \\(\\sigma(K_0) - \\sigma(K_1) = 0\\). For topological concordance one uses Freedman\u2019s work to produce the metabolizer.</p>' +
+        '</details>' +
       '</div>' +
       '<div class="expo-panel">' +
         '<h4>Bounds and sharpness</h4>' +
@@ -393,6 +411,10 @@
         '<div class="formula-box">$$x_j \\;=\\; x_k^{-1}\\,x_i\\,x_k \\qquad \\text{(positive crossing)}.$$</div>' +
         '<p>For a diagram with \\(n\\) crossings, one of the \\(n\\) relations is a consequence of the others, ' +
         'so the presentation has \\(n\\) generators and \\(n-1\\) relations.</p>' +
+        '<details class="kl-proof">' +
+          '<summary>Proof sketch: Wirtinger presents \\(\\pi_1(S^3\\setminus K)\\)</summary>' +
+          '<p>Sketch. Let \\(N(K)\\) be a tubular neighbourhood and \\(X = S^3 \\setminus \\mathring{N}(K)\\). Thicken the diagram: the regular neighborhood of the knot-projection plane \\(\\Pi\\) deformation-retracts \\(X\\) onto a 2-complex with one 1-cell per arc (running over the arc as a small meridian). Each crossing contributes a 2-cell whose attaching map reads off the conjugation relation \\(x_j = x_k^{-1} x_i x_k\\) (homotope the meridian of the under-strand across the over-strand). Van Kampen applied to this CW structure gives exactly the Wirtinger presentation. The redundancy of one relation reflects that \\(H_2(X)=0\\) forces the product of all relations (in a suitable order around the diagram) to be trivial.</p>' +
+        '</details>' +
       '</div>' +
       '<div class="expo-panel">' +
         '<h4>Examples</h4>' +
@@ -401,7 +423,7 @@
           '<li><strong>Trefoil:</strong> \\(\\pi_G(3_1) \\cong \\langle a, b \\mid a^2 = b^3 \\rangle\\), isomorphic ' +
           'to the braid group \\(B_3\\) and to \\(\\widetilde{SL}_2(\\mathbb{Z})\\).</li>' +
           '<li><strong>Figure-eight:</strong> \\(\\pi_G(4_1) \\cong \\langle a, b \\mid ab^{-1}a^{-1}bab^{-1} = b^{-1}ab^{-1}a^{-1}b \\rangle\\), ' +
-          'with hyperbolic volume \\(\\approx 2.0299\\ldots\\) &mdash; the smallest-volume orientable hyperbolic 3-manifold.</li>' +
+          'with hyperbolic volume \\(\\approx 2.0299\\ldots\\) &mdash; the smallest-volume orientable cusped hyperbolic 3-manifold (Cao&ndash;Meyerhoff 2001).</li>' +
           '<li><strong>\\((p,q)\\)-torus knot:</strong> \\(\\pi_G(T_{p,q}) \\cong \\langle a, b \\mid a^p = b^q\\rangle\\), ' +
           'with non-trivial center generated by \\(a^p = b^q\\).</li>' +
         '</ul>' +
