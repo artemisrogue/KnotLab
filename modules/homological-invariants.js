@@ -100,40 +100,100 @@
     function renderFloer(el) {
       el.innerHTML = '\
         <div class="expo-panel">\
-          <h3>Origins &amp; Construction</h3>\
+          <h3>1. What knot Floer homology is</h3>\
           <p><strong>Knot Floer homology</strong> was independently developed by Ozsv&aacute;th&ndash;Szab&oacute;\
           and Rasmussen in 2003&ndash;2004. It arises from <em>Heegaard Floer homology</em>, a powerful\
           package of invariants for closed 3-manifolds defined via pseudo-holomorphic disks in\
           symmetric products of Heegaard surfaces.</p>\
-          <p>To a knot \\(K \\subset S^3\\), the theory associates a bigraded abelian group\
-          \\(\\widehat{\\mathrm{HFK}}(K)\\) whose graded Euler characteristic recovers the\
+          <p>To a knot \\(K \\subset S^3\\), the theory associates a <strong>bigraded abelian group</strong></p>\
+          <div class="formula-box">\
+            $$\\widehat{\\mathrm{HFK}}(K) \\;=\\; \\bigoplus_{m,\\,s} \\widehat{\\mathrm{HFK}}_{m}(K,\\,s),$$\
+          </div>\
+          <p>where \\(m\\) is the <em>Maslov</em> (homological) grading and \\(s\\) is the\
+          <em>Alexander</em> grading. It is defined by counting pseudo-holomorphic disks in a Heegaard\
+          diagram adapted to \\((S^3, K)\\). Its graded Euler characteristic recovers the\
           <span class="kl-term" title="Alexander polynomial Δ_K(t) ∈ ℤ[t,t⁻¹]: first polynomial knot invariant (Alexander 1928); det(tV−Vᵀ) up to units, symmetric under t ↔ t⁻¹, with Δ_K(1)=±1.">Alexander polynomial</span>:</p>\
           <div class="formula-box">\
-            $$\\Delta_K(t) \\;=\\; \\sum_{j} \\chi\\!\\bigl(\\widehat{\\mathrm{HFK}}^{\\,*,j}(K)\\bigr)\\, t^{\\,j}$$\
+            $$\\Delta_K(q) \\;=\\; \\sum_{m,\\,s} (-1)^{m}\\, q^{\\,s}\\, \\mathrm{rk}\\,\\widehat{\\mathrm{HFK}}_{m}(K,\\,s).$$\
           </div>\
+          <p>In this sense \\(\\widehat{\\mathrm{HFK}}\\) <strong>categorifies</strong> \\(\\Delta_K\\):\
+          polynomial coefficients are replaced by ranks of graded homology groups.</p>\
         </div>\
         <div class="expo-panel">\
-          <h3>Genus Detection &amp; Fibered Knots</h3>\
-          <p>One of the deepest results about knot Floer homology is that it <strong>detects the\
-          <span class="kl-term" title="Seifert genus g(K): the minimum genus over all Seifert surfaces (orientable surfaces in S³ with boundary K). Additive under connected sum; zero iff K is the unknot.">Seifert genus</span></strong> of a knot (Ozsv&aacute;th&ndash;Szab&oacute;):</p>\
+          <h3>2. Genus detection (Ozsv&aacute;th&ndash;Szab&oacute;)</h3>\
+          <p>A landmark theorem &mdash; not a definition &mdash; is that knot Floer homology <strong>detects the\
+          <span class="kl-term" title="Seifert genus g(K): the minimum genus over all Seifert surfaces (orientable surfaces in S³ with boundary K). Additive under connected sum; zero iff K is the unknot.">Seifert genus</span></strong>:</p>\
           <div class="formula-box">\
-            $$g(K) \\;=\\; \\max\\!\\bigl\\{\\, j \\;:\\; \\widehat{\\mathrm{HFK}}^{\\,*,j}(K) \\neq 0 \\,\\bigr\\}$$\
+            $$g(K) \\;=\\; \\max\\!\\bigl\\{\\, s \\;:\\; \\widehat{\\mathrm{HFK}}(K,\\,s) \\neq 0 \\,\\bigr\\}\\qquad \\text{(Ozsv\u00e1th\u2013Szab\u00f3, 2004).}$$\
           </div>\
-          <p>Furthermore, knot Floer homology <strong>detects <span class="kl-term" title="Fibered knot: the complement S³∖K fibers over S¹; the fiber is a minimal-genus Seifert surface, and the monodromy of the fibration determines the knot.">fibered knots</span></strong>: \\(K\\) is fibered if and\
-          only if \\(\\widehat{\\mathrm{HFK}}(K, g(K)) \\cong \\mathbb{Z}\\). This is a remarkable structural\
-          result with no analogue for classical polynomial invariants.</p>\
+          <p>The Alexander polynomial gives only the bound \\(\\deg \\Delta_K \\leq 2 g(K)\\), often strict.\
+          The categorified invariant sees the genus on the nose. See the\
+          <em>Alexander Module</em> sub-tab of Polynomial Invariants for the decategorified picture that\
+          \\(\\widehat{\\mathrm{HFK}}\\) lifts.</p>\
         </div>\
         <div class="expo-panel">\
-          <h3>The <span class="kl-term" title="Ozsváth–Szabó τ invariant (2003): integer concordance homomorphism from the Alexander filtration on CFK̂(K); |τ(K)| ≤ g₄(K), with equality for positive knots and torus knots.">\\(\\tau\\)</span> Invariant</h3>\
-          <p>The invariant \\(\\tau(K)\\), extracted from the <span class="kl-term" title="Alexander filtration: the filtration of CFK^∞(K) (or CFK̂(K)) by the Alexander grading A; its associated graded recovers ĤFK. τ(K) is the minimum Alexander level at which the filtration contains a generator mapping to a generator of ĤF(S³) = ℤ.">Alexander filtration</span> on \\(\\mathrm{CFK}^{\\infty}(K)\\) (equivalently \\(\\widehat{\\mathrm{CFK}}(K)\\)),\
-          defines a <strong>concordance homomorphism</strong>:</p>\
-          <p>Concretely, \\(\\tau(K)\\) is the minimum Alexander grading at which the filtration includes a generator mapping to a generator of \\(\\widehat{\\mathrm{HF}}(S^3) = \\mathbb{Z}\\).</p>\
+          <h3>3. Fibered knot detection (Ni)</h3>\
+          <p>Yi Ni (2007) proved an even sharper structural statement: \\(K\\) is\
+          <span class="kl-term" title="Fibered knot: the complement S³∖K fibers over S¹; the fiber is a minimal-genus Seifert surface, and the monodromy of the fibration determines the knot.">fibered</span> if and only if the top Alexander group is as small as possible,</p>\
           <div class="formula-box">\
-            $$\\tau \\colon \\mathcal{C} \\to \\mathbb{Z}, \\qquad |\\tau(K)| \\leq g_4(K)$$\
+            $$K \\text{ is fibered} \\iff \\widehat{\\mathrm{HFK}}\\!\\bigl(K,\\,g(K)\\bigr) \\;\\cong\\; \\mathbb{Z}.$$\
           </div>\
-          <p>Here \\(\\mathcal{C}\\) is the smooth knot concordance group and \\(g_4(K)\\) is the\
-          4-ball genus. Like Rasmussen&rsquo;s \\(s\\)-invariant, \\(\\tau\\) gives a lower bound\
-          for the slice genus, though the two invariants can differ.</p>\
+          <p>No analogue of this result is known for any classical polynomial invariant.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>4. The <span class="kl-term" title="Ozsváth–Szabó τ invariant (2003): integer concordance homomorphism from the Alexander filtration on CFK̂(K); |τ(K)| ≤ g₄(K), with equality for positive knots and torus knots.">\\(\\tau\\)</span> invariant and the Alexander filtration</h3>\
+          <p>The chain complex \\(\\widehat{\\mathrm{CFK}}(K)\\) is not merely bigraded: it carries an\
+          increasing <strong><span class="kl-term" title="Alexander filtration: the filtration of CFK^∞(K) (or CFK̂(K)) by the Alexander grading A; its associated graded recovers ĤFK. τ(K) is the minimum Alexander level at which the filtration contains a generator mapping to a generator of ĤF(S³) = ℤ.">Alexander filtration</span></strong>\
+          \\(\\cdots \\subset \\mathcal{F}_{s-1} \\subset \\mathcal{F}_{s} \\subset \\cdots\\) whose associated\
+          graded recovers \\(\\widehat{\\mathrm{HFK}}\\). The invariant \\(\\tau(K)\\) is defined directly from this\
+          filtration:</p>\
+          <div class="formula-box">\
+            $$\\tau(K) \\;=\\; \\min\\!\\Bigl\\{\\, s \\;:\\; \\mathcal{F}_{s}\\,\\widehat{\\mathrm{CFK}}(K) \\longrightarrow \\widehat{\\mathrm{HF}}(S^3) = \\mathbb{Z} \\text{ is surjective} \\,\\Bigr\\}.$$\
+          </div>\
+          <p>Equivalently, \\(\\tau(K)\\) is the minimal Alexander grading at which the filtered complex\
+          already \u201csees\u201d the generator of \\(\\widehat{\\mathrm{HF}}(S^3)\\). It satisfies the\
+          4-genus bound</p>\
+          <div class="formula-box">\
+            $$|\\tau(K)| \\;\\leq\\; g_4(K),$$\
+          </div>\
+          <p>where \\(g_4(K)\\) is the smooth 4-ball genus.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>5. Concordance homomorphism and the Milnor conjecture</h3>\
+          <p>The map</p>\
+          <div class="formula-box">\
+            $$\\tau \\colon \\mathcal{C} \\longrightarrow \\mathbb{Z}$$\
+          </div>\
+          <p>is a <strong>group homomorphism</strong> from the smooth knot concordance group\
+          \\(\\mathcal{C}\\) (additive under connected sum). For the \\((p,q)\\)-<span class="kl-term" title="Torus knot T(p,q): lies on a standard torus in S³, wrapping p and q times; fibered, Seifert genus (p−1)(q−1)/2.">torus knot</span></p>\
+          <div class="formula-box">\
+            $$\\tau(T_{p,q}) \\;=\\; \\frac{(p-1)(q-1)}{2},$$\
+          </div>\
+          <p>which together with the bound \\(|\\tau| \\leq g_4\\) reproves the\
+          <span class="kl-term" title="Milnor conjecture: g₄(T_{p,q}) = (p−1)(q−1)/2 for the (p,q)-torus knot. Proved by Kronheimer–Mrowka (1993) using gauge theory; reproved combinatorially by Rasmussen (2004) via the s-invariant.">Milnor conjecture</span> \\(g_4(T_{p,q}) = (p-1)(q-1)/2\\) (originally Kronheimer&ndash;Mrowka 1993 via gauge theory).</p>\
+          <details class="kl-example">\
+            <summary>\\(\\tau\\) vs.\u00a0Rasmussen\u2019s \\(s\\): when they differ</summary>\
+            <p>Rasmussen\u2019s \\(s\\)-invariant is the Khovanov-theoretic analogue of \\(2\\tau\\), and on many\
+            classes (torus knots, positive knots, quasi-positive knots) one has \\(s(K) = 2\\tau(K)\\).\
+            However the two invariants are genuinely different homomorphisms. The first explicit pair\
+            of knots with \\(s(K) \\neq 2\\tau(K)\\) was produced by <strong>Hedden&ndash;Ording (2008)</strong>,\
+            ending a period during which it was unclear whether the two invariants agreed on all knots.\
+            The discrepancy demonstrates that the Khovanov and Heegaard-Floer worlds, though\
+            parallel, are not equivalent.</p>\
+          </details>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>6. The categorification slogan</h3>\
+          <p>The pattern is clean and uniform:</p>\
+          <div class="formula-box">\
+            $$\\begin{array}{ccc}\
+              \\text{Khovanov homology} & \\text{categorifies} & \\text{Jones polynomial } V_K(q) \\\\\
+              \\widehat{\\mathrm{HFK}}(K) & \\text{categorifies} & \\text{Alexander polynomial } \\Delta_K(q)\
+            \\end{array}$$\
+          </div>\
+          <p>Each theory assigns a bigraded chain complex whose graded Euler characteristic is the\
+          corresponding polynomial, and each exposes structure (genus, fiberedness, 4-genus bounds,\
+          concordance homomorphisms) invisible to the polynomial alone.</p>\
         </div>';
       mathRender(el);
     }
