@@ -1292,6 +1292,24 @@
       }
       resultHTML += '</h3>';
 
+      if (algebraName !== 'Khovanov') {
+        resultHTML += '<p style="background:#fff3cd;border:1px solid #ffe58f;padding:0.6rem 0.8rem;' +
+          'border-radius:4px;font-size:0.85rem;color:#664d03;margin:0.4rem 0">' +
+          '<strong>Caveat.</strong> The ' + algebraName + ' differential does not preserve ' +
+          'the quantum grading \\(j\\) &mdash; for Lee, multiplication sends ' +
+          '\\(x \\otimes x \\mapsto 1\\) (shifting \\(j\\) by \\(+4\\)); for Bar-Natan, ' +
+          '\\(x \\otimes x \\mapsto x\\) (shifting \\(j\\) by \\(+2\\)). ' +
+          'The bigraded complex shown here retains only the \\(j\\)-preserving part of the ' +
+          'differential, which is exactly the Khovanov differential. Consequently the ' +
+          'bigraded table below is identical to the Khovanov case and represents only the ' +
+          '\\(E_1\\)-page of the Lee/Bar-Natan spectral sequence. ' +
+          'The true (filtered) ' + algebraName + ' homology collapses to rank ' +
+          '\\(2^{c} = ' + Math.pow(2, nComponents) + '\\) over \\(\\mathbb{Q}\\) for this ' +
+          nComponents + '-component ' + (nComponents > 1 ? 'link' : 'knot') +
+          '; it is computed separately in the Rasmussen \\(s\\)-invariant card below ' +
+          'via a singly-graded filtered complex.</p>';
+      }
+
       // Chain group ranks table
       resultHTML += '<details><summary>Chain groups \\(C^{i,j}\\) (ranks)</summary>';
       resultHTML += renderChainGroupTable(complex);
