@@ -1,73 +1,661 @@
 {
   "entries": [
-    {"key": "rolfsen1976", "authors": "Rolfsen, D.", "title": "Knots and Links", "venue": "Publish or Perish; reprinted AMS Chelsea 2003", "year": "1976", "url": "", "note": "Classical reference; source of the Rolfsen knot table used in the Knot Explorer."},
-    {"key": "lickorish1997", "authors": "Lickorish, W. B. R.", "title": "An Introduction to Knot Theory", "venue": "Graduate Texts in Mathematics 175, Springer", "year": "1997", "url": "", "note": "Standard modern textbook: Seifert surfaces, Alexander and Jones polynomials, Temperley-Lieb algebra, quantum invariants."},
-    {"key": "kauffman2001", "authors": "Kauffman, L. H.", "title": "Knots and Physics", "venue": "World Scientific, 3rd ed.", "year": "2001", "url": "", "note": "Bracket polynomial, state-sum models, Yang-Baxter, statistical-mechanics links."},
-    {"key": "kawauchi1996", "authors": "Kawauchi, A.", "title": "A Survey of Knot Theory", "venue": "Birkhaeuser", "year": "1996", "url": "", "note": "Broad survey; extensive coverage of Alexander module, signatures, concordance."},
-    {"key": "murasugi1996", "authors": "Murasugi, K.", "title": "Knot Theory and its Applications", "venue": "Birkhaeuser", "year": "1996", "url": "", "note": "Accessible introduction; worked examples for Seifert's algorithm and polynomial computations."},
-    {"key": "ozsvath-stipsicz-szabo-2015", "authors": "Ozsvath, P.; Stipsicz, A.; Szabo, Z.", "title": "Grid Homology for Knots and Links", "venue": "Mathematical Surveys and Monographs 208, AMS", "year": "2015", "url": "", "note": "Combinatorial approach to knot Floer homology via grid diagrams."},
-    {"key": "bar-natan-1995", "authors": "Bar-Natan, D.", "title": "On the Vassiliev knot invariants", "venue": "Topology 34, 423-472", "year": "1995", "url": "", "note": "Foundational finite-type / Vassiliev invariants reference."},
-    {"key": "khovanov-2000", "authors": "Khovanov, M.", "title": "A categorification of the Jones polynomial", "venue": "Duke Math. J. 101, 359-426", "year": "2000", "url": "", "note": "The original Khovanov homology paper."},
-    {"key": "ozsvath-szabo-2004", "authors": "Ozsvath, P.; Szabo, Z.", "title": "Holomorphic disks and knot invariants", "venue": "Adv. Math. 186, 58-116", "year": "2004", "url": "", "note": "Original definition of knot Floer homology."},
-    {"key": "jones-1985", "authors": "Jones, V. F. R.", "title": "A polynomial invariant for knots via von Neumann algebras", "venue": "Bull. Amer. Math. Soc. 12, 103-111", "year": "1985", "url": "", "note": "The Jones polynomial announcement."},
-    {"key": "alexander-1928", "authors": "Alexander, J. W.", "title": "Topological invariants of knots and links", "venue": "Trans. Amer. Math. Soc. 30, 275-306", "year": "1928", "url": "", "note": "Original Alexander polynomial paper."},
-    {"key": "seifert-1934", "authors": "Seifert, H.", "title": "Ueber das Geschlecht von Knoten", "venue": "Math. Ann. 110, 571-592", "year": "1934", "url": "", "note": "Introduces Seifert surfaces and the algorithm for constructing them."},
-    {"key": "alexander-1923", "authors": "Alexander, J. W.", "title": "A lemma on systems of knotted curves", "venue": "Proc. Nat. Acad. Sci. 9, 93-95", "year": "1923", "url": "", "note": "Alexander's theorem: every tame link is the closure of a braid."},
-    {"key": "markov-1936", "authors": "Markov, A. A.", "title": "Ueber die freie Aequivalenz der geschlossenen Zoepfe", "venue": "Mat. Sb. (N.S.) 1, 73-78", "year": "1936", "url": "", "note": "Markov's theorem: braid closures representing the same link are related by conjugation and stabilization."},
-    {"key": "reidemeister-1927", "authors": "Reidemeister, K.", "title": "Elementare Begruendung der Knotentheorie", "venue": "Abh. Math. Sem. Univ. Hamburg 5, 24-32", "year": "1927", "url": "", "note": "The three Reidemeister moves; combinatorial knot theory."},
-    {"key": "kauffman-1987-bracket", "authors": "Kauffman, L. H.", "title": "State models and the Jones polynomial", "venue": "Topology 26, 395-407", "year": "1987", "url": "", "note": "Introduces the Kauffman bracket and derives the Jones polynomial from it."},
-    {"key": "kauffman-1990-F", "authors": "Kauffman, L. H.", "title": "An invariant of regular isotopy", "venue": "Trans. Amer. Math. Soc. 318, 417-471", "year": "1990", "url": "", "note": "The Kauffman polynomial F."},
-    {"key": "freyd-yetter-hoste-lickorish-millett-ocneanu-1985", "authors": "Freyd, P.; Yetter, D.; Hoste, J.; Lickorish, W. B. R.; Millett, K.; Ocneanu, A.", "title": "A new polynomial invariant of knots and links", "venue": "Bull. Amer. Math. Soc. 12, 239-246", "year": "1985", "url": "", "note": "HOMFLY polynomial; independent (almost-simultaneous) discovery with Przytycki-Traczyk gives HOMFLY-PT."},
-    {"key": "przytycki-traczyk-1987", "authors": "Przytycki, J.; Traczyk, P.", "title": "Invariants of links of Conway type", "venue": "Kobe J. Math. 4, 115-139", "year": "1987", "url": "", "note": "The 'PT' in HOMFLY-PT."},
-    {"key": "kauffman-1999-virtual", "authors": "Kauffman, L. H.", "title": "Virtual knot theory", "venue": "European J. Combin. 20, 663-691", "year": "1999", "url": "", "note": "Definition and theory of virtual knots."},
-    {"key": "witten-1989", "authors": "Witten, E.", "title": "Quantum field theory and the Jones polynomial", "venue": "Comm. Math. Phys. 121, 351-399", "year": "1989", "url": "", "note": "Chern-Simons TQFT interpretation of Jones; sl_N generalizations via Wilson loops."},
-    {"key": "atiyah-1988", "authors": "Atiyah, M.", "title": "Topological quantum field theories", "venue": "Publ. Math. IHES 68, 175-186", "year": "1988", "url": "", "note": "Axiomatization of TQFT."},
-    {"key": "reshetikhin-turaev-1991", "authors": "Reshetikhin, N.; Turaev, V.", "title": "Invariants of 3-manifolds via link polynomials and quantum groups", "venue": "Invent. Math. 103, 547-597", "year": "1991", "url": "", "note": "RT construction: ribbon categories of quantum group modules give link and 3-manifold invariants."},
-    {"key": "kontsevich-1993", "authors": "Kontsevich, M.", "title": "Vassiliev's knot invariants", "venue": "Adv. Soviet Math. 16, Part 2, AMS, 137-150", "year": "1993", "url": "", "note": "The Kontsevich integral: universal finite-type invariant."},
-    {"key": "kronheimer-mrowka-1993", "authors": "Kronheimer, P. B.; Mrowka, T. S.", "title": "Gauge theory for embedded surfaces I", "venue": "Topology 32, 773-826", "year": "1993", "url": "", "note": "Proof of the Milnor conjecture g_4(T_{p,q}) = (p-1)(q-1)/2; genesis of smooth 4-manifold invariants applied to knots."},
-    {"key": "kronheimer-mrowka-2011", "authors": "Kronheimer, P. B.; Mrowka, T. S.", "title": "Khovanov homology is an unknot-detector", "venue": "Publ. Math. IHES 113, 97-208", "year": "2011", "url": "", "note": "Khovanov homology detects the unknot via a spectral sequence to instanton Floer homology."},
-    {"key": "rasmussen-2010", "authors": "Rasmussen, J.", "title": "Khovanov homology and the slice genus", "venue": "Invent. Math. 182, 419-447", "year": "2010", "url": "", "note": "The Rasmussen s-invariant; combinatorial reproof of the Milnor conjecture."},
-    {"key": "gordon-luecke-1989", "authors": "Gordon, C. McA.; Luecke, J.", "title": "Knots are determined by their complements", "venue": "J. Amer. Math. Soc. 2, 371-415", "year": "1989", "url": "", "note": "Gordon-Luecke theorem."},
-    {"key": "papakyriakopoulos-1957", "authors": "Papakyriakopoulos, C. D.", "title": "On Dehn's lemma and the asphericity of knots", "venue": "Ann. of Math. (2) 66, 1-26", "year": "1957", "url": "", "note": "Proof of Dehn's lemma; knot complements are aspherical."},
-    {"key": "trotter-1962", "authors": "Trotter, H. F.", "title": "Homology of group systems with applications to knot theory", "venue": "Ann. of Math. (2) 76, 464-498", "year": "1962", "url": "", "note": "Symmetrized Seifert form; definition of the knot signature."},
-    {"key": "schubert-1954", "authors": "Schubert, H.", "title": "Ueber eine numerische Knoteninvariante", "venue": "Math. Z. 61, 245-288", "year": "1954", "url": "", "note": "Bridge number and additivity under connected sum."},
-    {"key": "schubert-1956", "authors": "Schubert, H.", "title": "Knoten mit zwei Brücken", "venue": "Math. Z. 65, 133-170", "year": "1956", "url": "", "note": "Classification of 2-bridge (rational) knots."},
-    {"key": "morishita-2012", "authors": "Morishita, M.", "title": "Knots and Primes: An Introduction to Arithmetic Topology", "venue": "Springer Universitext", "year": "2012", "url": "", "note": "Definitive modern reference for Morishita's dictionary (knots ↔ primes)."},
-    {"key": "arf-1941", "authors": "Arf, C.", "title": "Untersuchungen ueber quadratische Formen in Koerpern der Charakteristik 2", "venue": "J. Reine Angew. Math. 183, 148-167", "year": "1941", "url": "", "note": "Original Arf invariant paper for quadratic forms over F_2."},
-    {"key": "robertello-1965", "authors": "Robertello, R. A.", "title": "An invariant of knot cobordism", "venue": "Comm. Pure Appl. Math. 18, 543-555", "year": "1965", "url": "", "note": "Arf invariant applied to knots; shown to be a concordance invariant."},
-    {"key": "kervaire-1960", "authors": "Kervaire, M. A.", "title": "A manifold which does not admit any differentiable structure", "venue": "Comment. Math. Helv. 34, 257-270", "year": "1960", "url": "", "note": "Kervaire invariant for framed (4k+2)-manifolds."},
-    {"key": "hill-hopkins-ravenel-2016", "authors": "Hill, M. A.; Hopkins, M. J.; Ravenel, D. C.", "title": "On the nonexistence of elements of Kervaire invariant one", "venue": "Ann. of Math. (2) 184, 1-262", "year": "2016", "url": "", "note": "Resolution of the Kervaire invariant problem for j >= 7; leaves dimension 126 as the only open case."},
-    {"key": "tait-1876", "authors": "Tait, P. G.", "title": "On knots I, II, III", "venue": "Trans. Roy. Soc. Edinburgh", "year": "1876-1885", "url": "", "note": "First systematic knot tabulation; the Tait conjectures."},
-    {"key": "murasugi-1987", "authors": "Murasugi, K.", "title": "Jones polynomials and classical conjectures in knot theory", "venue": "Topology 26, 187-194", "year": "1987", "url": "", "note": "Murasugi's contribution to the proof of Tait conjectures via the Jones polynomial."},
-    {"key": "thistlethwaite-1987", "authors": "Thistlethwaite, M. B.", "title": "A spanning tree expansion of the Jones polynomial", "venue": "Topology 26, 297-309", "year": "1987", "url": "", "note": "Thistlethwaite's contribution to the Tait conjectures."},
-    {"key": "menasco-thistlethwaite-1993", "authors": "Menasco, W.; Thistlethwaite, M.", "title": "The classification of alternating links", "venue": "Ann. of Math. (2) 138, 113-171", "year": "1993", "url": "", "note": "Proof of the Tait flyping conjecture."},
-    {"key": "khovanov-rozansky-2008", "authors": "Khovanov, M.; Rozansky, L.", "title": "Matrix factorizations and link homology", "venue": "Fund. Math. 199, 1-91", "year": "2008", "url": "", "note": "sl(N) Khovanov-Rozansky homology via matrix factorizations."},
-    {"key": "lee-2005", "authors": "Lee, E. S.", "title": "An endomorphism of the Khovanov invariant", "venue": "Adv. Math. 197, 554-586", "year": "2005", "url": "", "note": "Lee deformation and the spectral sequence converging to Rasmussen's s-invariant."},
-    {"key": "iwasawa-1959", "authors": "Iwasawa, K.", "title": "On Gamma-extensions of algebraic number fields", "venue": "Bull. Amer. Math. Soc. 65, 183-226", "year": "1959", "url": "", "note": "Iwasawa modules and the Iwasawa polynomial; arithmetic analogue of Alexander module."},
-    {"key": "mazur-1964", "authors": "Mazur, B.", "title": "Remarks on the Alexander polynomial", "venue": "Unpublished notes", "year": "1963-64", "url": "", "note": "Origin of the Alexander-Iwasawa analogy that seeded arithmetic topology."},
-    {"key": "kirby-1978", "authors": "Kirby, R.", "title": "A calculus for framed links in S^3", "venue": "Invent. Math. 45, 35-56", "year": "1978", "url": "", "note": "Kirby calculus: handle slides and stabilization on framed links."},
-    {"key": "habiro-2008", "authors": "Habiro, K.", "title": "A unified Witten-Reshetikhin-Turaev invariant for integral homology spheres", "venue": "Invent. Math. 171, 1-81", "year": "2008", "url": "", "note": "Cyclotomic expansion of colored Jones; unified WRT invariant."},
-    {"key": "birman-wenzl-1989", "authors": "Birman, J. S.; Wenzl, H.", "title": "Braids, link polynomials and a new algebraic structure", "venue": "Trans. Amer. Math. Soc. 313, 249-273", "year": "1989", "url": "", "note": "The BMW (Birman-Murakami-Wenzl) algebra; two-parameter deformation generalizing Temperley-Lieb and Hecke, with Kauffman F polynomial as Markov trace."},
-    {"key": "murakami-j-1987", "authors": "Murakami, J.", "title": "The Kauffman polynomial of links and representation theory", "venue": "Osaka J. Math. 24, 745-758", "year": "1987", "url": "", "note": "Independent discovery of the BMW algebra via Kauffman F; 'M' in BMW."},
-    {"key": "jones-1987", "authors": "Jones, V. F. R.", "title": "Hecke algebra representations of braid groups and link polynomials", "venue": "Ann. of Math. (2) 126, 335-388", "year": "1987", "url": "", "note": "Full proof of HOMFLY via Hecke algebra; Ocneanu trace. The operator-algebraic foundation for all Hecke-based skein theory."},
-    {"key": "moy-1998", "authors": "Murakami, H.; Ohtsuki, T.; Yamada, S.", "title": "HOMFLY polynomial via an invariant of colored plane graphs", "venue": "L'Enseignement Math. (2) 44, 325-360", "year": "1998", "url": "", "note": "MOY calculus: planar-graph state sum for sl(N) quantum invariants; the decategorified skeleton of Khovanov-Rozansky homology."},
-    {"key": "wenzl-1990", "authors": "Wenzl, H.", "title": "Quantum groups and subfactors of type B, C, and D", "venue": "Comm. Math. Phys. 133, 383-432", "year": "1990", "url": "", "note": "BMW algebra as quotient of Hecke for orthogonal/symplectic quantum groups U_q(so_N), U_q(sp_{2n}); the categorical home of Kauffman F."},
-    {"key": "kauffman-vogel-1992", "authors": "Kauffman, L. H.; Vogel, P.", "title": "Link polynomials and a graphical calculus", "venue": "J. Knot Theory Ramifications 1, 59-104", "year": "1992", "url": "", "note": "Graphical state-sum calculus unifying Jones, HOMFLY, and Kauffman F; precursor to MOY and Khovanov-Rozansky."},
-    {"key": "manolescu-ozsvath-sarkar-2009", "authors": "Manolescu, C.; Ozsvath, P.; Sarkar, S.", "title": "A combinatorial description of knot Floer homology", "venue": "Ann. of Math. (2) 169, 633-660", "year": "2009", "url": "", "note": "Grid-diagram combinatorial model for HFK; makes Knot Floer homology hand-computable."},
-    {"key": "ozsvath-szabo-2008-link", "authors": "Ozsvath, P.; Szabo, Z.", "title": "Holomorphic disks, link invariants and the multi-variable Alexander polynomial", "venue": "Algebr. Geom. Topol. 8, 615-692", "year": "2008", "url": "", "note": "Link Floer homology HFL; categorifies the multivariable Alexander polynomial."},
-    {"key": "ozsvath-stipsicz-szabo-2017", "authors": "Ozsvath, P.; Stipsicz, A.; Szabo, Z.", "title": "Concordance homomorphisms from knot Floer homology", "venue": "Adv. Math. 315, 366-426", "year": "2017", "url": "", "note": "The Upsilon invariant Υ_K(t); piecewise-linear concordance homomorphism refining τ."},
-    {"key": "lipshitz-ozsvath-thurston-2018", "authors": "Lipshitz, R.; Ozsvath, P.; Thurston, D.", "title": "Bordered Heegaard Floer homology", "venue": "Memoirs Amer. Math. Soc. 254, no. 1216", "year": "2018", "url": "", "note": "Bordered Floer package: CFA/CFD modules over the torus algebra, tensor-product gluing theorem."},
-    {"key": "hom-2014", "authors": "Hom, J.", "title": "Bordered Heegaard Floer homology and the tau-invariant of cables of a knot", "venue": "J. Topol. 7, 287-326", "year": "2014", "url": "", "note": "Defines the concordance invariant ε(K) ∈ {-1,0,1} via bordered Floer; classifies CFK∞ stable equivalence."},
-    {"key": "ni-2007", "authors": "Ni, Y.", "title": "Knot Floer homology detects fibred knots", "venue": "Invent. Math. 170, 577-608", "year": "2007", "url": "", "note": "K is fibered iff HFK(K, g(K)) = Z; major application of sutured Floer homology."},
-    {"key": "ozsvath-szabo-2005", "authors": "Ozsvath, P.; Szabo, Z.", "title": "On the Heegaard Floer homology of branched double-covers", "venue": "Adv. Math. 194, 1-33 (arXiv:math/0309170)", "year": "2005", "url": "https://arxiv.org/abs/math/0309170", "note": "Spectral sequence from reduced Khovanov homology of the mirror to HF-hat of the double branched cover; launches the 'Khovanov sees 3-manifolds' program."},
-    {"key": "szabo-2015", "authors": "Szabo, Z.", "title": "A geometric spectral sequence in Khovanov homology", "venue": "J. Topol. 8, 1017-1044 (arXiv:1010.4252)", "year": "2015", "url": "https://arxiv.org/abs/1010.4252", "note": "Combinatorial/geometric formula for the higher differentials d_r of the Ozsvath-Szabo branched-cover spectral sequence."},
-    {"key": "bloom-2011", "authors": "Bloom, J. M.", "title": "A link surgery spectral sequence in monopole Floer homology", "venue": "Adv. Math. 226, 3216-3281 (arXiv:0909.0816)", "year": "2011", "url": "https://arxiv.org/abs/0909.0816", "note": "Monopole analogue of the OS branched-cover spectral sequence: reduced Kh(L) => monopole Floer homology of the branched double cover; E_k pages are mutation invariants."},
-    {"key": "baldwin-2011", "authors": "Baldwin, J. A.", "title": "On the spectral sequence from Khovanov homology to Heegaard Floer homology", "venue": "Int. Math. Res. Not. 2011, 3426-3470 (arXiv:0809.3293)", "year": "2011", "url": "https://arxiv.org/abs/0809.3293", "note": "Shows each E_k page (k >= 2) of the OS spectral sequence is itself a link invariant."},
-    {"key": "dunfield-gukov-rasmussen-2006", "authors": "Dunfield, N. M.; Gukov, S.; Rasmussen, J.", "title": "The superpolynomial for knot homologies", "venue": "Experiment. Math. 15, 129-159 (arXiv:math/0505662)", "year": "2006", "url": "https://arxiv.org/abs/math/0505662", "note": "Conjectures a triply-graded knot homology (HOMFLY homology) unifying sl(N) Khovanov-Rozansky (all N) and knot Floer homology via families of differentials d_N; introduces the superpolynomial."},
-    {"key": "gukov-stosic-2012", "authors": "Gukov, S.; Stosic, M.", "title": "Homological algebra of knots and BPS states", "venue": "Proc. Sympos. Pure Math. 85, 125-172 (arXiv:1112.0030)", "year": "2012", "url": "https://arxiv.org/abs/1112.0030", "note": "Physical framework for colored HOMFLY homology and refined BPS invariants; differentials d_N and d_{-N} on HHH and colored variants."},
-    {"key": "gorsky-negut-rasmussen-2016", "authors": "Gorsky, E.; Negut, A.; Rasmussen, J.", "title": "Flag Hilbert schemes, colored projectors and Khovanov-Rozansky homology", "venue": "Adv. Math. 378, 107542 (arXiv:1608.07308)", "year": "2016", "url": "https://arxiv.org/abs/1608.07308", "note": "Geometric model for triply graded Khovanov-Rozansky homology via flag Hilbert schemes."},
-    {"key": "elias-hogancamp-2019", "authors": "Elias, B.; Hogancamp, M.", "title": "On the computation of torus link homology", "venue": "Compos. Math. 155, 1429-1475 (arXiv:1603.00407)", "year": "2019", "url": "https://arxiv.org/abs/1603.00407", "note": "Recursive categorified-projector method for computing triply graded homology; exact answer for (n,n)-torus links."},
-    {"key": "hogancamp-mellit-2019", "authors": "Hogancamp, M.; Mellit, A.", "title": "Torus link homology", "venue": "arXiv:1909.00418", "year": "2019", "url": "https://arxiv.org/abs/1909.00418", "note": "Triply-graded Khovanov-Rozansky homology for positive torus links and Sym^l-colored torus knots via Soergel bimodule techniques."},
-    {"key": "rouquier-2006", "authors": "Rouquier, R.", "title": "Categorification of the braid groups", "venue": "arXiv:math/0409593", "year": "2006", "url": "https://arxiv.org/abs/math/0409593", "note": "Categorification of braid group actions via complexes of Soergel bimodules; foundational for triply graded Khovanov-Rozansky / HHH homology."}
+    {
+      "key": "rolfsen1976",
+      "authors": "Rolfsen, D.",
+      "title": "Knots and Links",
+      "venue": "Publish or Perish; reprinted AMS Chelsea 2003",
+      "year": "1976",
+      "url": "",
+      "note": "Classical reference; source of the Rolfsen knot table used in the Knot Explorer."
+    },
+    {
+      "key": "lickorish1997",
+      "authors": "Lickorish, W. B. R.",
+      "title": "An Introduction to Knot Theory",
+      "venue": "Graduate Texts in Mathematics 175, Springer",
+      "year": "1997",
+      "url": "",
+      "note": "Standard modern textbook: Seifert surfaces, Alexander and Jones polynomials, Temperley-Lieb algebra, quantum invariants."
+    },
+    {
+      "key": "kauffman2001",
+      "authors": "Kauffman, L. H.",
+      "title": "Knots and Physics",
+      "venue": "World Scientific, 3rd ed.",
+      "year": "2001",
+      "url": "",
+      "note": "Bracket polynomial, state-sum models, Yang-Baxter, statistical-mechanics links."
+    },
+    {
+      "key": "kawauchi1996",
+      "authors": "Kawauchi, A.",
+      "title": "A Survey of Knot Theory",
+      "venue": "Birkhaeuser",
+      "year": "1996",
+      "url": "",
+      "note": "Broad survey; extensive coverage of Alexander module, signatures, concordance."
+    },
+    {
+      "key": "murasugi1996",
+      "authors": "Murasugi, K.",
+      "title": "Knot Theory and its Applications",
+      "venue": "Birkhaeuser",
+      "year": "1996",
+      "url": "",
+      "note": "Accessible introduction; worked examples for Seifert's algorithm and polynomial computations."
+    },
+    {
+      "key": "ozsvath-stipsicz-szabo-2015",
+      "authors": "Ozsvath, P.; Stipsicz, A.; Szabo, Z.",
+      "title": "Grid Homology for Knots and Links",
+      "venue": "Mathematical Surveys and Monographs 208, AMS",
+      "year": "2015",
+      "url": "",
+      "note": "Combinatorial approach to knot Floer homology via grid diagrams."
+    },
+    {
+      "key": "bar-natan-1995",
+      "authors": "Bar-Natan, D.",
+      "title": "On the Vassiliev knot invariants",
+      "venue": "Topology 34, 423-472",
+      "year": "1995",
+      "url": "",
+      "note": "Foundational finite-type / Vassiliev invariants reference."
+    },
+    {
+      "key": "khovanov-2000",
+      "authors": "Khovanov, M.",
+      "title": "A categorification of the Jones polynomial",
+      "venue": "Duke Math. J. 101, 359-426",
+      "year": "2000",
+      "url": "",
+      "note": "The original Khovanov homology paper."
+    },
+    {
+      "key": "ozsvath-szabo-2004",
+      "authors": "Ozsvath, P.; Szabo, Z.",
+      "title": "Holomorphic disks and knot invariants",
+      "venue": "Adv. Math. 186, 58-116",
+      "year": "2004",
+      "url": "",
+      "note": "Original definition of knot Floer homology."
+    },
+    {
+      "key": "jones-1985",
+      "authors": "Jones, V. F. R.",
+      "title": "A polynomial invariant for knots via von Neumann algebras",
+      "venue": "Bull. Amer. Math. Soc. 12, 103-111",
+      "year": "1985",
+      "url": "",
+      "note": "The Jones polynomial announcement."
+    },
+    {
+      "key": "alexander-1928",
+      "authors": "Alexander, J. W.",
+      "title": "Topological invariants of knots and links",
+      "venue": "Trans. Amer. Math. Soc. 30, 275-306",
+      "year": "1928",
+      "url": "",
+      "note": "Original Alexander polynomial paper."
+    },
+    {
+      "key": "seifert-1934",
+      "authors": "Seifert, H.",
+      "title": "Ueber das Geschlecht von Knoten",
+      "venue": "Math. Ann. 110, 571-592",
+      "year": "1934",
+      "url": "",
+      "note": "Introduces Seifert surfaces and the algorithm for constructing them."
+    },
+    {
+      "key": "alexander-1923",
+      "authors": "Alexander, J. W.",
+      "title": "A lemma on systems of knotted curves",
+      "venue": "Proc. Nat. Acad. Sci. 9, 93-95",
+      "year": "1923",
+      "url": "",
+      "note": "Alexander's theorem: every tame link is the closure of a braid."
+    },
+    {
+      "key": "markov-1936",
+      "authors": "Markov, A. A.",
+      "title": "Ueber die freie Aequivalenz der geschlossenen Zoepfe",
+      "venue": "Mat. Sb. (N.S.) 1, 73-78",
+      "year": "1936",
+      "url": "",
+      "note": "Markov's theorem: braid closures representing the same link are related by conjugation and stabilization."
+    },
+    {
+      "key": "reidemeister-1927",
+      "authors": "Reidemeister, K.",
+      "title": "Elementare Begruendung der Knotentheorie",
+      "venue": "Abh. Math. Sem. Univ. Hamburg 5, 24-32",
+      "year": "1927",
+      "url": "",
+      "note": "The three Reidemeister moves; combinatorial knot theory."
+    },
+    {
+      "key": "kauffman-1987-bracket",
+      "authors": "Kauffman, L. H.",
+      "title": "State models and the Jones polynomial",
+      "venue": "Topology 26, 395-407",
+      "year": "1987",
+      "url": "",
+      "note": "Introduces the Kauffman bracket and derives the Jones polynomial from it."
+    },
+    {
+      "key": "kauffman-1990-F",
+      "authors": "Kauffman, L. H.",
+      "title": "An invariant of regular isotopy",
+      "venue": "Trans. Amer. Math. Soc. 318, 417-471",
+      "year": "1990",
+      "url": "",
+      "note": "The Kauffman polynomial F."
+    },
+    {
+      "key": "freyd-yetter-hoste-lickorish-millett-ocneanu-1985",
+      "authors": "Freyd, P.; Yetter, D.; Hoste, J.; Lickorish, W. B. R.; Millett, K.; Ocneanu, A.",
+      "title": "A new polynomial invariant of knots and links",
+      "venue": "Bull. Amer. Math. Soc. 12, 239-246",
+      "year": "1985",
+      "url": "",
+      "note": "HOMFLY polynomial; independent (almost-simultaneous) discovery with Przytycki-Traczyk gives HOMFLY-PT."
+    },
+    {
+      "key": "przytycki-traczyk-1987",
+      "authors": "Przytycki, J.; Traczyk, P.",
+      "title": "Invariants of links of Conway type",
+      "venue": "Kobe J. Math. 4, 115-139",
+      "year": "1987",
+      "url": "",
+      "note": "The 'PT' in HOMFLY-PT."
+    },
+    {
+      "key": "kauffman-1999-virtual",
+      "authors": "Kauffman, L. H.",
+      "title": "Virtual knot theory",
+      "venue": "European J. Combin. 20, 663-691",
+      "year": "1999",
+      "url": "",
+      "note": "Definition and theory of virtual knots."
+    },
+    {
+      "key": "witten-1989",
+      "authors": "Witten, E.",
+      "title": "Quantum field theory and the Jones polynomial",
+      "venue": "Comm. Math. Phys. 121, 351-399",
+      "year": "1989",
+      "url": "",
+      "note": "Chern-Simons TQFT interpretation of Jones; sl_N generalizations via Wilson loops."
+    },
+    {
+      "key": "atiyah-1988",
+      "authors": "Atiyah, M.",
+      "title": "Topological quantum field theories",
+      "venue": "Publ. Math. IHES 68, 175-186",
+      "year": "1988",
+      "url": "",
+      "note": "Axiomatization of TQFT."
+    },
+    {
+      "key": "reshetikhin-turaev-1991",
+      "authors": "Reshetikhin, N.; Turaev, V.",
+      "title": "Invariants of 3-manifolds via link polynomials and quantum groups",
+      "venue": "Invent. Math. 103, 547-597",
+      "year": "1991",
+      "url": "",
+      "note": "RT construction: ribbon categories of quantum group modules give link and 3-manifold invariants."
+    },
+    {
+      "key": "kontsevich-1993",
+      "authors": "Kontsevich, M.",
+      "title": "Vassiliev's knot invariants",
+      "venue": "Adv. Soviet Math. 16, Part 2, AMS, 137-150",
+      "year": "1993",
+      "url": "",
+      "note": "The Kontsevich integral: universal finite-type invariant."
+    },
+    {
+      "key": "kronheimer-mrowka-1993",
+      "authors": "Kronheimer, P. B.; Mrowka, T. S.",
+      "title": "Gauge theory for embedded surfaces I",
+      "venue": "Topology 32, 773-826",
+      "year": "1993",
+      "url": "",
+      "note": "Proof of the Milnor conjecture g_4(T_{p,q}) = (p-1)(q-1)/2; genesis of smooth 4-manifold invariants applied to knots."
+    },
+    {
+      "key": "kronheimer-mrowka-2011",
+      "authors": "Kronheimer, P. B.; Mrowka, T. S.",
+      "title": "Khovanov homology is an unknot-detector",
+      "venue": "Publ. Math. IHES 113, 97-208",
+      "year": "2011",
+      "url": "",
+      "note": "Khovanov homology detects the unknot via a spectral sequence to instanton Floer homology."
+    },
+    {
+      "key": "rasmussen-2010",
+      "authors": "Rasmussen, J.",
+      "title": "Khovanov homology and the slice genus",
+      "venue": "Invent. Math. 182, 419-447",
+      "year": "2010",
+      "url": "",
+      "note": "The Rasmussen s-invariant; combinatorial reproof of the Milnor conjecture."
+    },
+    {
+      "key": "gordon-luecke-1989",
+      "authors": "Gordon, C. McA.; Luecke, J.",
+      "title": "Knots are determined by their complements",
+      "venue": "J. Amer. Math. Soc. 2, 371-415",
+      "year": "1989",
+      "url": "",
+      "note": "Gordon-Luecke theorem."
+    },
+    {
+      "key": "papakyriakopoulos-1957",
+      "authors": "Papakyriakopoulos, C. D.",
+      "title": "On Dehn's lemma and the asphericity of knots",
+      "venue": "Ann. of Math. (2) 66, 1-26",
+      "year": "1957",
+      "url": "",
+      "note": "Proof of Dehn's lemma; knot complements are aspherical."
+    },
+    {
+      "key": "trotter-1962",
+      "authors": "Trotter, H. F.",
+      "title": "Homology of group systems with applications to knot theory",
+      "venue": "Ann. of Math. (2) 76, 464-498",
+      "year": "1962",
+      "url": "",
+      "note": "Symmetrized Seifert form; definition of the knot signature."
+    },
+    {
+      "key": "schubert-1954",
+      "authors": "Schubert, H.",
+      "title": "Ueber eine numerische Knoteninvariante",
+      "venue": "Math. Z. 61, 245-288",
+      "year": "1954",
+      "url": "",
+      "note": "Bridge number and additivity under connected sum."
+    },
+    {
+      "key": "schubert-1956",
+      "authors": "Schubert, H.",
+      "title": "Knoten mit zwei BrÃ¼cken",
+      "venue": "Math. Z. 65, 133-170",
+      "year": "1956",
+      "url": "",
+      "note": "Classification of 2-bridge (rational) knots."
+    },
+    {
+      "key": "morishita-2012",
+      "authors": "Morishita, M.",
+      "title": "Knots and Primes: An Introduction to Arithmetic Topology",
+      "venue": "Springer Universitext",
+      "year": "2012",
+      "url": "",
+      "note": "Definitive modern reference for Morishita's dictionary (knots â†” primes)."
+    },
+    {
+      "key": "arf-1941",
+      "authors": "Arf, C.",
+      "title": "Untersuchungen ueber quadratische Formen in Koerpern der Charakteristik 2",
+      "venue": "J. Reine Angew. Math. 183, 148-167",
+      "year": "1941",
+      "url": "",
+      "note": "Original Arf invariant paper for quadratic forms over F_2."
+    },
+    {
+      "key": "robertello-1965",
+      "authors": "Robertello, R. A.",
+      "title": "An invariant of knot cobordism",
+      "venue": "Comm. Pure Appl. Math. 18, 543-555",
+      "year": "1965",
+      "url": "",
+      "note": "Arf invariant applied to knots; shown to be a concordance invariant."
+    },
+    {
+      "key": "kervaire-1960",
+      "authors": "Kervaire, M. A.",
+      "title": "A manifold which does not admit any differentiable structure",
+      "venue": "Comment. Math. Helv. 34, 257-270",
+      "year": "1960",
+      "url": "",
+      "note": "Kervaire invariant for framed (4k+2)-manifolds."
+    },
+    {
+      "key": "hill-hopkins-ravenel-2016",
+      "authors": "Hill, M. A.; Hopkins, M. J.; Ravenel, D. C.",
+      "title": "On the nonexistence of elements of Kervaire invariant one",
+      "venue": "Ann. of Math. (2) 184, 1-262",
+      "year": "2016",
+      "url": "",
+      "note": "Resolution of the Kervaire invariant problem for j >= 7; leaves dimension 126 as the only open case."
+    },
+    {
+      "key": "tait-1876",
+      "authors": "Tait, P. G.",
+      "title": "On knots I, II, III",
+      "venue": "Trans. Roy. Soc. Edinburgh",
+      "year": "1876-1885",
+      "url": "",
+      "note": "First systematic knot tabulation; the Tait conjectures."
+    },
+    {
+      "key": "murasugi-1987",
+      "authors": "Murasugi, K.",
+      "title": "Jones polynomials and classical conjectures in knot theory",
+      "venue": "Topology 26, 187-194",
+      "year": "1987",
+      "url": "",
+      "note": "Murasugi's contribution to the proof of Tait conjectures via the Jones polynomial."
+    },
+    {
+      "key": "thistlethwaite-1987",
+      "authors": "Thistlethwaite, M. B.",
+      "title": "A spanning tree expansion of the Jones polynomial",
+      "venue": "Topology 26, 297-309",
+      "year": "1987",
+      "url": "",
+      "note": "Thistlethwaite's contribution to the Tait conjectures."
+    },
+    {
+      "key": "menasco-thistlethwaite-1993",
+      "authors": "Menasco, W.; Thistlethwaite, M.",
+      "title": "The classification of alternating links",
+      "venue": "Ann. of Math. (2) 138, 113-171",
+      "year": "1993",
+      "url": "",
+      "note": "Proof of the Tait flyping conjecture."
+    },
+    {
+      "key": "khovanov-rozansky-2008",
+      "authors": "Khovanov, M.; Rozansky, L.",
+      "title": "Matrix factorizations and link homology",
+      "venue": "Fund. Math. 199, 1-91",
+      "year": "2008",
+      "url": "",
+      "note": "sl(N) Khovanov-Rozansky homology via matrix factorizations."
+    },
+    {
+      "key": "lee-2005",
+      "authors": "Lee, E. S.",
+      "title": "An endomorphism of the Khovanov invariant",
+      "venue": "Adv. Math. 197, 554-586",
+      "year": "2005",
+      "url": "",
+      "note": "Lee deformation and the spectral sequence converging to Rasmussen's s-invariant."
+    },
+    {
+      "key": "iwasawa-1959",
+      "authors": "Iwasawa, K.",
+      "title": "On Gamma-extensions of algebraic number fields",
+      "venue": "Bull. Amer. Math. Soc. 65, 183-226",
+      "year": "1959",
+      "url": "",
+      "note": "Iwasawa modules and the Iwasawa polynomial; arithmetic analogue of Alexander module."
+    },
+    {
+      "key": "mazur-1964",
+      "authors": "Mazur, B.",
+      "title": "Remarks on the Alexander polynomial",
+      "venue": "Unpublished notes",
+      "year": "1963-64",
+      "url": "",
+      "note": "Origin of the Alexander-Iwasawa analogy that seeded arithmetic topology."
+    },
+    {
+      "key": "kirby-1978",
+      "authors": "Kirby, R.",
+      "title": "A calculus for framed links in S^3",
+      "venue": "Invent. Math. 45, 35-56",
+      "year": "1978",
+      "url": "",
+      "note": "Kirby calculus: handle slides and stabilization on framed links."
+    },
+    {
+      "key": "habiro-2008",
+      "authors": "Habiro, K.",
+      "title": "A unified Witten-Reshetikhin-Turaev invariant for integral homology spheres",
+      "venue": "Invent. Math. 171, 1-81",
+      "year": "2008",
+      "url": "",
+      "note": "Cyclotomic expansion of colored Jones; unified WRT invariant."
+    },
+    {
+      "key": "birman-wenzl-1989",
+      "authors": "Birman, J. S.; Wenzl, H.",
+      "title": "Braids, link polynomials and a new algebraic structure",
+      "venue": "Trans. Amer. Math. Soc. 313, 249-273",
+      "year": "1989",
+      "url": "",
+      "note": "The BMW (Birman-Murakami-Wenzl) algebra; two-parameter deformation generalizing Temperley-Lieb and Hecke, with Kauffman F polynomial as Markov trace."
+    },
+    {
+      "key": "murakami-j-1987",
+      "authors": "Murakami, J.",
+      "title": "The Kauffman polynomial of links and representation theory",
+      "venue": "Osaka J. Math. 24, 745-758",
+      "year": "1987",
+      "url": "",
+      "note": "Independent discovery of the BMW algebra via Kauffman F; 'M' in BMW."
+    },
+    {
+      "key": "jones-1987",
+      "authors": "Jones, V. F. R.",
+      "title": "Hecke algebra representations of braid groups and link polynomials",
+      "venue": "Ann. of Math. (2) 126, 335-388",
+      "year": "1987",
+      "url": "",
+      "note": "Full proof of HOMFLY via Hecke algebra; Ocneanu trace. The operator-algebraic foundation for all Hecke-based skein theory."
+    },
+    {
+      "key": "moy-1998",
+      "authors": "Murakami, H.; Ohtsuki, T.; Yamada, S.",
+      "title": "HOMFLY polynomial via an invariant of colored plane graphs",
+      "venue": "L'Enseignement Math. (2) 44, 325-360",
+      "year": "1998",
+      "url": "",
+      "note": "MOY calculus: planar-graph state sum for sl(N) quantum invariants; the decategorified skeleton of Khovanov-Rozansky homology."
+    },
+    {
+      "key": "wenzl-1990",
+      "authors": "Wenzl, H.",
+      "title": "Quantum groups and subfactors of type B, C, and D",
+      "venue": "Comm. Math. Phys. 133, 383-432",
+      "year": "1990",
+      "url": "",
+      "note": "BMW algebra as quotient of Hecke for orthogonal/symplectic quantum groups U_q(so_N), U_q(sp_{2n}); the categorical home of Kauffman F."
+    },
+    {
+      "key": "kauffman-vogel-1992",
+      "authors": "Kauffman, L. H.; Vogel, P.",
+      "title": "Link polynomials and a graphical calculus",
+      "venue": "J. Knot Theory Ramifications 1, 59-104",
+      "year": "1992",
+      "url": "",
+      "note": "Graphical state-sum calculus unifying Jones, HOMFLY, and Kauffman F; precursor to MOY and Khovanov-Rozansky."
+    },
+    {
+      "key": "manolescu-ozsvath-sarkar-2009",
+      "authors": "Manolescu, C.; Ozsvath, P.; Sarkar, S.",
+      "title": "A combinatorial description of knot Floer homology",
+      "venue": "Ann. of Math. (2) 169, 633-660",
+      "year": "2009",
+      "url": "",
+      "note": "Grid-diagram combinatorial model for HFK; makes Knot Floer homology hand-computable."
+    },
+    {
+      "key": "ozsvath-szabo-2008-link",
+      "authors": "Ozsvath, P.; Szabo, Z.",
+      "title": "Holomorphic disks, link invariants and the multi-variable Alexander polynomial",
+      "venue": "Algebr. Geom. Topol. 8, 615-692",
+      "year": "2008",
+      "url": "",
+      "note": "Link Floer homology HFL; categorifies the multivariable Alexander polynomial."
+    },
+    {
+      "key": "ozsvath-stipsicz-szabo-2017",
+      "authors": "Ozsvath, P.; Stipsicz, A.; Szabo, Z.",
+      "title": "Concordance homomorphisms from knot Floer homology",
+      "venue": "Adv. Math. 315, 366-426",
+      "year": "2017",
+      "url": "",
+      "note": "The Upsilon invariant Î¥_K(t); piecewise-linear concordance homomorphism refining Ï„."
+    },
+    {
+      "key": "lipshitz-ozsvath-thurston-2018",
+      "authors": "Lipshitz, R.; Ozsvath, P.; Thurston, D.",
+      "title": "Bordered Heegaard Floer homology",
+      "venue": "Memoirs Amer. Math. Soc. 254, no. 1216",
+      "year": "2018",
+      "url": "",
+      "note": "Bordered Floer package: CFA/CFD modules over the torus algebra, tensor-product gluing theorem."
+    },
+    {
+      "key": "hom-2014",
+      "authors": "Hom, J.",
+      "title": "Bordered Heegaard Floer homology and the tau-invariant of cables of a knot",
+      "venue": "J. Topol. 7, 287-326",
+      "year": "2014",
+      "url": "",
+      "note": "Defines the concordance invariant Îµ(K) âˆˆ {-1,0,1} via bordered Floer; classifies CFKâˆž stable equivalence."
+    },
+    {
+      "key": "ni-2007",
+      "authors": "Ni, Y.",
+      "title": "Knot Floer homology detects fibred knots",
+      "venue": "Invent. Math. 170, 577-608",
+      "year": "2007",
+      "url": "",
+      "note": "K is fibered iff HFK(K, g(K)) = Z; major application of sutured Floer homology."
+    },
+    {
+      "key": "ozsvath-szabo-2005",
+      "authors": "Ozsvath, P.; Szabo, Z.",
+      "title": "On the Heegaard Floer homology of branched double-covers",
+      "venue": "Adv. Math. 194, 1-33 (arXiv:math/0309170)",
+      "year": "2005",
+      "url": "https://arxiv.org/abs/math/0309170",
+      "note": "Spectral sequence from reduced Khovanov homology of the mirror to HF-hat of the double branched cover; launches the 'Khovanov sees 3-manifolds' program."
+    },
+    {
+      "key": "szabo-2015",
+      "authors": "Szabo, Z.",
+      "title": "A geometric spectral sequence in Khovanov homology",
+      "venue": "J. Topol. 8, 1017-1044 (arXiv:1010.4252)",
+      "year": "2015",
+      "url": "https://arxiv.org/abs/1010.4252",
+      "note": "Combinatorial/geometric formula for the higher differentials d_r of the Ozsvath-Szabo branched-cover spectral sequence."
+    },
+    {
+      "key": "bloom-2011",
+      "authors": "Bloom, J. M.",
+      "title": "A link surgery spectral sequence in monopole Floer homology",
+      "venue": "Adv. Math. 226, 3216-3281 (arXiv:0909.0816)",
+      "year": "2011",
+      "url": "https://arxiv.org/abs/0909.0816",
+      "note": "Monopole analogue of the OS branched-cover spectral sequence: reduced Kh(L) => monopole Floer homology of the branched double cover; E_k pages are mutation invariants."
+    },
+    {
+      "key": "baldwin-2011",
+      "authors": "Baldwin, J. A.",
+      "title": "On the spectral sequence from Khovanov homology to Heegaard Floer homology",
+      "venue": "Int. Math. Res. Not. 2011, 3426-3470 (arXiv:0809.3293)",
+      "year": "2011",
+      "url": "https://arxiv.org/abs/0809.3293",
+      "note": "Shows each E_k page (k >= 2) of the OS spectral sequence is itself a link invariant."
+    },
+    {
+      "key": "dunfield-gukov-rasmussen-2006",
+      "authors": "Dunfield, N. M.; Gukov, S.; Rasmussen, J.",
+      "title": "The superpolynomial for knot homologies",
+      "venue": "Experiment. Math. 15, 129-159 (arXiv:math/0505662)",
+      "year": "2006",
+      "url": "https://arxiv.org/abs/math/0505662",
+      "note": "Conjectures a triply-graded knot homology (HOMFLY homology) unifying sl(N) Khovanov-Rozansky (all N) and knot Floer homology via families of differentials d_N; introduces the superpolynomial."
+    },
+    {
+      "key": "gukov-stosic-2012",
+      "authors": "Gukov, S.; Stosic, M.",
+      "title": "Homological algebra of knots and BPS states",
+      "venue": "Proc. Sympos. Pure Math. 85, 125-172 (arXiv:1112.0030)",
+      "year": "2012",
+      "url": "https://arxiv.org/abs/1112.0030",
+      "note": "Physical framework for colored HOMFLY homology and refined BPS invariants; differentials d_N and d_{-N} on HHH and colored variants."
+    },
+    {
+      "key": "gorsky-negut-rasmussen-2016",
+      "authors": "Gorsky, E.; Negut, A.; Rasmussen, J.",
+      "title": "Flag Hilbert schemes, colored projectors and Khovanov-Rozansky homology",
+      "venue": "Adv. Math. 378, 107542 (arXiv:1608.07308)",
+      "year": "2016",
+      "url": "https://arxiv.org/abs/1608.07308",
+      "note": "Geometric model for triply graded Khovanov-Rozansky homology via flag Hilbert schemes."
+    },
+    {
+      "key": "elias-hogancamp-2019",
+      "authors": "Elias, B.; Hogancamp, M.",
+      "title": "On the computation of torus link homology",
+      "venue": "Compos. Math. 155, 1429-1475 (arXiv:1603.00407)",
+      "year": "2019",
+      "url": "https://arxiv.org/abs/1603.00407",
+      "note": "Recursive categorified-projector method for computing triply graded homology; exact answer for (n,n)-torus links."
+    },
+    {
+      "key": "hogancamp-mellit-2019",
+      "authors": "Hogancamp, M.; Mellit, A.",
+      "title": "Torus link homology",
+      "venue": "arXiv:1909.00418",
+      "year": "2019",
+      "url": "https://arxiv.org/abs/1909.00418",
+      "note": "Triply-graded Khovanov-Rozansky homology for positive torus links and Sym^l-colored torus knots via Soergel bimodule techniques."
+    },
+    {
+      "key": "rouquier-2006",
+      "authors": "Rouquier, R.",
+      "title": "Categorification of the braid groups",
+      "venue": "arXiv:math/0409593",
+      "year": "2006",
+      "url": "https://arxiv.org/abs/math/0409593",
+      "note": "Categorification of braid group actions via complexes of Soergel bimodules; foundational for triply graded Khovanov-Rozansky / HHH homology."
+    },
+    {
+      "key": "lin-wang-xu-2024",
+      "authors": "Lin, W.; Wang, G.; Xu, Z.",
+      "title": "On the last Kervaire invariant problem",
+      "venue": "arXiv preprint",
+      "year": "2024",
+      "url": "https://arxiv.org/abs/2412.10879",
+      "note": "Proves Θ_5 ≠ 0, so the Kervaire invariant-one element exists in dimension 126 — the final case, resolving the Kervaire invariant problem completely after Hill–Hopkins–Ravenel 2009."
+    },
+    {
+      "key": "bar-natan-2005",
+      "authors": "Bar-Natan, D.",
+      "title": "Khovanov’s homology for tangles and cobordisms",
+      "venue": "Geometry & Topology 9 (2005), 1443–1499",
+      "year": "2005",
+      "url": "https://arxiv.org/abs/math/0410495",
+      "note": "Cobordism-based reformulation of Khovanov homology; source of the Bar-Natan slide / delooping and Gaussian-elimination arguments used in the R1/R2/R3 invariance proofs."
+    },
+    {
+      "key": "soergel-1990",
+      "authors": "Soergel, W.",
+      "title": "Kategorie O, perverse Garben und Moduln über den Koinvarianten zur Weylgruppe",
+      "venue": "Journal of the AMS 3 (1990), 421–445",
+      "year": "1990",
+      "url": "",
+      "note": "Introduces what are now called Soergel bimodules; later used by Khovanov (2007) and Khovanov–Rozansky for triply-graded HOMFLY homology HHH."
+    },
+    {
+      "key": "morishita-2010-milnor-reciprocity",
+      "authors": "Morishita, M.",
+      "title": "Analogies between knots and primes, 3-manifolds and number rings",
+      "venue": "Sugaku Expositions 23 (2010), 1–30",
+      "year": "2010",
+      "url": "",
+      "note": "Complement to morishita-2012; explicit Rédei symbol / Milnor triple linking analogy used on the Number Theory tab."
+    }
   ]
 }
