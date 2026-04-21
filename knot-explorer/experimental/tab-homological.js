@@ -1280,29 +1280,108 @@
       // For Lee / Bar-Natan we show a single explanatory card instead.
       var isBigradedMeaningful = (algebraName === 'Khovanov');
       if (!isBigradedMeaningful) {
+        // Explanatory card — why the bigraded view is absent.
         resultHTML += '<div class="exp-card">';
-        resultHTML += '<h3>Bigraded complex, homology, and categorification</h3>';
+        resultHTML += '<h3>Why no bigraded table for ' + algebraName + '?</h3>';
         resultHTML += '<p style="background:#fff3cd;border:1px solid #ffe58f;padding:0.6rem 0.8rem;' +
           'border-radius:4px;font-size:0.9rem;color:#664d03">' +
-          '<strong>Not shown for ' + algebraName + '.</strong> The ' + algebraName +
-          ' multiplication breaks the quantum grading \\(j\\) ' +
+          'The ' + algebraName + ' multiplication breaks the quantum grading \\(j\\) ' +
           '(\\(x \\otimes x \\mapsto ' + (algebraName === 'Lee' ? '1' : 'x') + '\\)), so ' +
-          'the bigraded chain complex, bigraded homology \\(Kh^{i,j}\\), graded Euler ' +
-          'characteristic \\(\\chi_q\\), and the categorification identity ' +
-          '\\(\\chi_q(Kh) = (-1)^{c-1}(q+q^{-1})V(q^{-2})\\) are Khovanov-specific and ' +
-          'would be misleading here. Select <strong>Khovanov</strong> to view them.</p>';
-        resultHTML += '<p style="font-size:0.9rem">' +
-          'The meaningful ' + algebraName + ' invariant is the filtered, singly-graded ' +
-          'homology, which for a ' + nComponents + '-component ' +
-          (nComponents > 1 ? 'link' : 'knot') + ' collapses to rank \\(2^{c} = ' +
-          Math.pow(2, nComponents) + '\\) over \\(\\mathbb{Q}\\). ' +
-          (algebraName === 'Lee'
-            ? 'This rank-' + Math.pow(2, nComponents) + ' Lee homology underlies the ' +
-              'Rasmussen \\(s\\)-invariant shown in the card below.'
-            : 'The analogous Bar-Natan statement produces Rasmussen-type concordance ' +
-              'invariants studied by Mackaay-Turner-Vaz.') +
-          '</p>';
+          '\\(Kh^{i,j}\\), the graded Euler characteristic \\(\\chi_q\\), and the ' +
+          'categorification identity \\(\\chi_q(Kh) = (-1)^{c-1}(q+q^{-1})V(q^{-2})\\) are ' +
+          'Khovanov-specific. The natural ' + algebraName + ' invariant is the ' +
+          'singly-graded filtered homology, shown below.</p>';
         resultHTML += '</div>';
+
+        // --- Filtered singly-graded complex + homology ---
+        try {
+          var filt = buildFilteredKhovanovComplex(pdCode, crossingSigns, algebra, ring);
+          var fcx = filt.complex;
+          var fver = fcx.verify();
+          var fhom = fcx.homology();
+
+          resultHTML += '<div class="exp-card">';
+          resultHTML += '<h3>Filtered ' + algebraName + ' chain complex \\(C^{\\bullet}\\)';
+          if (fver.valid) resultHTML += ' <span class="exp-badge pass">d&sup2; = 0</span>';
+          else resultHTML += ' <span class="exp-badge fail">d&sup2; &ne; 0</span>';
+          resultHTML += '</h3>';
+          resultHTML += '<p style="font-size:0.9rem">Unlike the bigraded construction, this ' +
+            'complex keeps every edge map &mdash; including the cross-\\(j\\) terms ' +
+            '(\\(\\Delta j = ' + (algebraName === 'Lee' ? '+4' : '+2') + '\\)) that the ' +
+            'deformation introduces. The result is a \\(\\mathbb{Z}\\)-filtered complex; ' +
+            'the quantum grading survives only as a filtration.</p>';
+
+          // Chain group ranks with j-filtration spectrum
+          var degs = Object.keys(fcx.groups).map(Number).sort(function (a, b) { return a - b; });
+          resultHTML += '<p><strong>Chain group ranks and quantum filtration spectrum:</strong></p>';
+          resultHTML += '<div class="exp-matrix" style="font-size:0.85rem">';
+          resultHTML += 'i     rk C^i   j-filtration levels\n';
+          resultHTML += '----  ------   -------------------\n';
+          for (var di = 0; di < degs.length; di++) {
+            var i_ = degs[di];
+            var rk = fcx.groups[i_];
+            var js = (filt.jGradings[i_] || []).slice().sort(function (a, b) { return a - b; });
+            var jstr = js.length ? ('[' + js[0] + ' … ' + js[js.length - 1] + '], ' + js.length + ' gens') : '—';
+            var padI = String(i_).padStart(4, ' ');
+            var padR = String(rk).padStart(6, ' ');
+            resultHTML += padI + '  ' + padR + '   ' + jstr + '\n';
+          }
+          resultHTML += '</div>';
+          resultHTML += '</div>';
+
+          // Filtered homology
+          resultHTML += '<div class="exp-card">';
+          resultHTML += '<h3>Filtered ' + algebraName + ' homology \\(H^{\\bullet}\\)</h3>';
+          var totalRank = 0;
+          var homDegs = [];
+          fhom.forEach(function (_, k) { homDegs.push(k); });
+          homDegs.sort(function (a, b) { return a - b; });
+          resultHTML += '<div class="exp-matrix" style="font-size:0.85rem">';
+          resultHTML += 'i     rank H^i   torsion\n';
+          resultHTML += '----  --------   -------\n';
+          for (var hi = 0; hi < homDegs.length; hi++) {
+            var idx = homDegs[hi];
+            var h = fhom.get(idx);
+            totalRank += h.rank;
+            var torStr = h.torsion.length
+              ? h.torsion.map(function (t) { return 'Z/' + t; }).join(' ⊕ ')
+              : '—';
+            resultHTML += String(idx).padStart(4, ' ') + '  ' +
+              String(h.rank).padStart(8, ' ') + '   ' + torStr + '\n';
+          }
+          if (homDegs.length === 0) resultHTML += '(homology vanishes in all computed degrees)\n';
+          resultHTML += '</div>';
+          var expected = Math.pow(2, nComponents);
+          var rankMatches = (totalRank === expected);
+          resultHTML += '<p><strong>Total free rank over \\(\\mathbb{Z}\\):</strong> \\(' +
+            totalRank + '\\). ' +
+            '<strong>Expected over \\(\\mathbb{Q}\\):</strong> \\(2^{c} = ' + expected +
+            '\\) for this ' + nComponents + '-component ' +
+            (nComponents > 1 ? 'link' : 'knot') + '. ' +
+            (rankMatches
+              ? '<span style="color:#2e7d32">\u2713 matches</span> &mdash; the ' +
+                (algebraName === 'Lee' ? 'Lee' : 'Bar-Natan') + ' rank theorem is ' +
+                'verified at the integral level for this diagram.'
+              : '<span style="color:#c62828">differs from \\(2^{c}\\)</span> &mdash; ' +
+                'integral torsion or ring-specific effects can shift the free rank; ' +
+                'over \\(\\mathbb{Q}\\) the theorem forces rank \\(2^{c}\\).') + '</p>';
+
+          if (algebraName === 'Lee') {
+            resultHTML += '<p style="font-size:0.85rem;color:#555">The two Lee generators ' +
+              '(one per orientation) of a knot have quantum filtration levels ' +
+              '\\(j_\\pm = s \\pm 1\\), where \\(s\\) is the Rasmussen invariant &mdash; ' +
+              'see the \\(s\\)-invariant card below.</p>';
+          } else {
+            resultHTML += '<p style="font-size:0.85rem;color:#555">Bar-Natan homology has ' +
+              'an analogous canonical-generator description; projecting the resulting ' +
+              'filtration onto its extreme levels yields Mackaay\u2013Turner\u2013Vaz ' +
+              'concordance invariants refining Rasmussen\u2019s \\(s\\).</p>';
+          }
+          resultHTML += '</div>';
+        } catch (err) {
+          resultHTML += '<div class="exp-card"><p style="color:#c62828">' +
+            'Filtered complex computation failed: ' + (err && err.message || err) + '</p></div>';
+        }
       }
       var complexT0 = performance.now();
       var complex = buildKhovanovComplex(pdCode, crossingSigns, algebra, ring);
