@@ -9,6 +9,7 @@
     { id: 'khovanov',  label: 'Khovanov Homology' },
     { id: 'floer',     label: 'Knot Floer Homology' },
     { id: 'kr',        label: 'Khovanov-Rozansky Homology' },
+    { id: 'specseq',   label: 'Spectral Sequences' },
     { id: 'comments',  label: 'Comments' }
   ];
 
@@ -37,6 +38,7 @@
       if (state.subTab === 'khovanov')       renderKhovanov(content);
       else if (state.subTab === 'floer')     renderFloer(content);
       else if (state.subTab === 'kr')        renderKR(content);
+      else if (state.subTab === 'specseq')   renderSpecseq(content);
       else if (state.subTab === 'comments')  renderComments(content);
     }
 
@@ -232,6 +234,132 @@
           </ul>\
           <p>These geometric perspectives have led to new computational techniques and structural\
           results, including proofs of various conjectures about the homology of torus knots.</p>\
+        </div>';
+      mathRender(el);
+    }
+
+    // ── Spectral Sequences ───────────────────────────────────
+    function renderSpecseq(el) {
+      el.innerHTML = '\
+        <div class="expo-panel">\
+          <h3>What is a Spectral Sequence?</h3>\
+          <p>A <span class="kl-term" title="Spectral sequence: a sequence of bigraded pages (E_r, d_r) with d_r a differential, E_{r+1} = H(E_r, d_r), converging to the graded pieces of a filtered target. Standard bookkeeping device for computing homology of a filtered complex or double complex.">spectral sequence</span> is a bookkeeping device for computing the homology of a\
+          <span class="kl-term" title="Filtration: an increasing (or decreasing) sequence of subcomplexes F_p C ⊂ C whose union is C. Induces a spectral sequence with E_1 = H(gr F C) converging (under mild hypotheses) to H(C).">filtration</span>ed\
+          chain complex (or double complex) by successive approximations. One obtains a family of pages\
+          \\(E_r\\) (the <span class="kl-term" title="E_r page: the r-th approximation in a spectral sequence; a bigraded vector space equipped with a differential d_r. Successive pages refine one another: E_{r+1} = H(E_r, d_r).">E_r page</span>), each carrying a <span class="kl-term" title="d_r differential: the differential on the E_r page of a spectral sequence, of bidegree (r, 1−r) (homological conventions) or similar. Its homology gives E_{r+1}. Longer-length differentials detect deeper filtration data.">differential \\(d_r\\)</span> of\
+          increasing length; successive homology yields \\(E_{r+1}\\), and the <span class="kl-term" title="E_∞ page: the stable limit of a spectral sequence; isomorphic (under convergence) to the associated graded of the filtered target.">E_∞ page</span> is the\
+          associated graded of the target. We do not prove the exact-couple construction here &mdash; see\
+          Weibel, <em>An Introduction to Homological Algebra</em>, or McCleary, <em>A User&rsquo;s Guide to\
+          Spectral Sequences</em>.</p>\
+          <p><strong>Why this matters for knot theory.</strong> Virtually every knot homology carries a natural\
+          filtration &mdash; Lee&rsquo;s deformation of the Khovanov differential, Bar-Natan&rsquo;s universal deformation,\
+          Alexander filtrations on \\(\\widehat{CFK}\\), equivariant or branched-cover filtrations, the\
+          instanton/Khovanov comparison. Each filtration yields a spectral sequence, and each spectral\
+          sequence is a <em>theorem</em> relating two invariants: one on the \\(E_2\\) page, another at \\(E_\\infty\\).</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>Lee Spectral Sequence &amp; the Rasmussen \\(s\\)-Invariant</h3>\
+          <p>Lee (2005) perturbed the Khovanov differential by a term shifting \\(q\\)-grading, producing\
+          <span class="kl-term" title="Lee homology: the homology of Khovanov&rsquo;s chain complex with differential deformed by Lee&rsquo;s extra term (dual to 1 on the Frobenius algebra). For a knot, Kh_Lee(K) ≅ ℚ² regardless of K; the q-gradings of the surviving generators encode the Rasmussen s-invariant.">Lee homology</span> \\(\\mathrm{Kh}_{\\mathrm{Lee}}(K)\\). The striking result: for every knot,\
+          \\(\\mathrm{Kh}_{\\mathrm{Lee}}(K) \\cong \\mathbb{Q}^2\\) as a vector space. As an abstract group it is\
+          trivial &mdash; but the <em>\\(q\\)-grading</em> on the two surviving generators encodes deep information.</p>\
+          <p>The Lee perturbation is a filtered chain map, yielding a spectral sequence:</p>\
+          <div class="formula-box">$$E_2 \\;=\\; \\mathrm{Kh}(K;\\mathbb{Q}) \\;\\Longrightarrow\\; E_\\infty \\;=\\; \\mathrm{Kh}_{\\mathrm{Lee}}(K) \\;\\cong\\; \\mathbb{Q}^2.$$</div>\
+          <p>The higher differentials \\(d_r\\) shift bigrading \\((1, 4r)\\). The two \\(E_\\infty\\) generators\
+          \\(\\mathfrak{s}_\\pm\\) sit in \\(q\\)-gradings \\(s(K) \\pm 1\\) for a unique even integer \\(s(K)\\) &mdash; the\
+          <span class="kl-term" title="Rasmussen s-invariant (Rasmussen 2010): even-integer concordance invariant extracted from the q-gradings of the two surviving generators on the E_∞ page of the Lee spectral sequence. Concordance homomorphism with |s(K)| ≤ 2g_4(K); gives a combinatorial proof of the Milnor conjecture for torus knots.">Rasmussen \\(s\\)-invariant</span>.</p>\
+          <p><strong>Theorem (Rasmussen 2010).</strong> \\(|s(K)| \\le 2 g_4(K)\\), with equality for positive knots.\
+          In particular, for torus knots:</p>\
+          <div class="formula-box">$$s(T_{p,q}) \\;=\\; (p-1)(q-1) \\;=\\; 2 g_4(T_{p,q}),$$</div>\
+          <p>giving a re-proof of the <strong>Milnor conjecture</strong> entirely without gauge theory. This\
+          matches \\(|2\\tau|\\) for positive torus knots and is the flagship combinatorial application of\
+          Khovanov homology to smooth 4-manifold topology.</p>\
+          <details class="kl-example">\
+            <summary>Worked example: \\(s(T_{2,3}) = 2\\) and the trefoil</summary>\
+            <p>For the right-handed trefoil \\(T_{2,3} = 3_1\\), the formula gives \\(s(3_1) = (2-1)(3-1) = 2\\). The\
+            unknotting number \\(u(3_1) = 1\\) forces \\(g_4(3_1) \\le 1\\), and \\(g_3(3_1) = 1\\) with \\(g_4 \\le g_3\\) gives\
+            \\(g_4 \\le 1\\). Rasmussen&rsquo;s bound reads \\(2 = |s| \\le 2 g_4 \\le 2\\), so \\(g_4(3_1) = 1\\)\
+            &mdash; equality throughout.</p>\
+          </details>\
+          <p><em>Cross-ref:</em> see the Khovanov Homology sub-tab for the Lee remark and \\(s\\)-invariant tooltip.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>Bar-Natan Spectral Sequence</h3>\
+          <p>Bar-Natan (2005) considered the universal deformation of Khovanov over \\(\\mathbb{Z}[h,t]\\)\
+          (equivalently \\(\\mathbb{Q}[H]\\)). Specializations recover familiar theories:</p>\
+          <ul>\
+            <li>\\((h,t) = (0,0)\\): ordinary <strong>Khovanov homology</strong>;</li>\
+            <li>\\((h,t) = (0,1)\\): <strong>Lee homology</strong>;</li>\
+            <li>\\((h,t) = (1,0)\\): <span class="kl-term" title="Bar-Natan homology Kh_BN: the specialization (h,t)=(1,0) of the universal Khovanov deformation. For a knot, free of rank 2 over the ground ring; its s-invariant agrees with Rasmussen&rsquo;s over ℚ but differs over 𝔽_2 (Lipshitz–Sarkar).">Bar-Natan homology</span> \\(\\mathrm{Kh}_{\\mathrm{BN}}(K)\\).</li>\
+          </ul>\
+          <p>The filtration on the universal complex yields a spectral sequence</p>\
+          <div class="formula-box">$$E_2 \\;=\\; \\mathrm{Kh}(K) \\;\\Longrightarrow\\; \\mathrm{Kh}_{\\mathrm{BN}}(K).$$</div>\
+          <p>For any knot, \\(\\mathrm{Kh}_{\\mathrm{BN}}(K) \\cong \\mathbb{Z}^2\\); the filtration gradings on the two\
+          surviving generators define an invariant \\(s_{\\mathrm{BN}}\\). Over \\(\\mathbb{Q}\\) this agrees with\
+          Rasmussen&rsquo;s \\(s\\); over \\(\\mathbb{F}_2\\) <em>they differ</em>, and Lipshitz&ndash;Sarkar showed\
+          \\(s_{\\mathrm{BN}}^{\\mathbb{F}_2}\\) detects features invisible to Lee.</p>\
+          <p><strong>Unifying viewpoint.</strong> The family \\(\\mathrm{Kh}_{h,t}\\) interpolates between these\
+          specializations; each choice of \\((h,t)\\) is a different spectral sequence, each with its own\
+          slice-genus bound.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>Ozsv&aacute;th&ndash;Szab&oacute; Branched-Cover Spectral Sequence</h3>\
+          <p>Ozsv&aacute;th&ndash;Szab&oacute; (2005): for a link \\(L\\), the reduced Khovanov homology of the\
+          mirror carries a spectral sequence converging to Heegaard Floer homology of the\
+          <span class="kl-term" title="Double branched cover Σ(L): the closed 3-manifold obtained as the double cover of S³ branched along the link L. Classical construction; turns link invariants of L into 3-manifold invariants of Σ(L).">double branched cover</span>:</p>\
+          <div class="formula-box">$$\\widetilde{\\mathrm{Kh}}(\\overline{L}; \\mathbb{F}_2) \\;\\Longrightarrow\\; \\widehat{HF}\\bigl(\\Sigma(L); \\mathbb{F}_2\\bigr).$$</div>\
+          <p>This implies rank inequalities \\(\\operatorname{rk} \\widehat{HF}(\\Sigma(L)) \\le \\operatorname{rk} \\widetilde{\\mathrm{Kh}}(L)\\)\
+          and was refined by Baldwin, Levine, and others to\
+          <span class="kl-term" title="Heegaard Floer homology (Ozsváth–Szabó): package of 3- and 4-manifold invariants defined via Lagrangian Floer homology on symmetric products of Heegaard surfaces. ĤF is the &lsquo;hat&rsquo; flavor.">Heegaard Floer</span> spectral sequences with target branched covers of more general manifolds.\
+          Szab&oacute; (2015) gave a combinatorial, bordered-Floer-inspired formula for the higher\
+          differentials \\(d_r\\), \\(r \\ge 2\\).</p>\
+          <p>This was a key piece of evidence that Khovanov homology &ldquo;sees&rdquo; 3-manifold topology,\
+          not merely knot data &mdash; and it launched an industry of categorified spectral sequences.</p>\
+          <p><em>Cross-ref:</em> see the Knot Floer Homology sub-tab for the definition of \\(\\widehat{HF}\\) and its relatives.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>Khovanov&ndash;Rozansky \\(\\mathfrak{sl}(N)\\) Spectral Sequences</h3>\
+          <p>Rasmussen constructs, for each \\(N \\ge 2\\), a spectral sequence</p>\
+          <div class="formula-box">$$\\mathrm{Kh}(K) \\;\\Longrightarrow\\; \\mathrm{KR}_N(K),$$</div>\
+          <p>and a tower of comparisons \\(\\mathrm{KR}_N(K) \\Longrightarrow \\mathrm{KR}_{N-1}(K)\\), assembling\
+          into an infinite family indexed by rank. At the top sits the triply-graded HOMFLY homology\
+          \\(\\mathrm{HHH}(K)\\); Gukov&ndash;Sto&scaron;i&cacute;, Rasmussen, and Gorsky&ndash;Rasmussen showed that\
+          \\(\\mathrm{HHH}(K)\\) degenerates to the \\(\\mathfrak{sl}(N)\\) homologies by collapsing one grading\
+          along a differential \\(d_N\\):</p>\
+          <div class="formula-box">$$\\mathrm{HHH}(K) \\;\\xrightarrow{\\;d_N\\;}\\; \\mathrm{KR}_N(K).$$</div>\
+          <p>Each page yields its own <span class="kl-term" title="Concordance invariant: a knot invariant depending only on the smooth (or topological) concordance class. Examples: τ, s, s_N, υ, Υ. Gives lower bounds on the slice genus g_4.">concordance invariant</span> \\(s_N(K)\\), refining Rasmussen&rsquo;s\
+          \\(s = s_2\\) to an infinite tower \\(\\{s_N\\}_{N \\ge 2}\\) of slice-genus bounds.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>Instanton &amp; Monopole Spectral Sequences</h3>\
+          <p>Kronheimer&ndash;Mrowka (2011) constructed a spectral sequence from <span class="kl-term" title="Reduced Khovanov homology: variant of Khovanov homology obtained by pinning a basepoint and quotienting by X at that point. Bigraded like Kh but with one fewer copy of ℤ[X]/(X²); closely related to the full theory via a splitting.">reduced Khovanov homology</span>\
+          to <span class="kl-term" title="Instanton knot homology I^♮ (Kronheimer–Mrowka): knot homology defined via gauge theory on the knot complement with singular boundary conditions. Detects the unknot. Related to Khovanov homology by a spectral sequence.">instanton knot homology</span>:</p>\
+          <div class="formula-box">$$\\mathrm{Kh}^r(K; \\mathbb{C}) \\;\\Longrightarrow\\; I^{\\natural}(K).$$</div>\
+          <p><strong>Corollary (Kronheimer&ndash;Mrowka).</strong> If \\(\\mathrm{Kh}^r(K) = \\mathbb{C}\\) then\
+          \\(I^{\\natural}(K) = \\mathbb{C}\\), so \\(K\\) is the unknot by the gauge-theoretic unknot-detection\
+          theorem. Hence <strong>Khovanov homology detects the unknot</strong> &mdash; one of the deepest\
+          applications in the subject.</p>\
+          <p>There are analogous <span class="kl-term" title="Monopole Floer homology (Kronheimer–Mrowka): Seiberg–Witten-theoretic 3-manifold invariant; three flavors HM̂, ȞM, H̄M. Equivalent to Heegaard Floer by theorems of Kutluhan–Lee–Taubes and Colin–Ghiggini–Honda.">monopole Floer</span> spectral sequences (Bloom;\
+          Bloom&ndash;Sarkar) of the form \\(\\mathrm{Kh}(\\overline{L}) \\Rightarrow \\widehat{HM}(\\Sigma(L))\\), and\
+          Bar-Natan\\(\\Rightarrow\\)instanton sequences (Daemi&ndash;Scaduto) linking the universal deformation\
+          to gauge theory.</p>\
+          <p><em>Cross-ref:</em> the Khovanov unknot-detection remark appears in the Comments sub-tab under &ldquo;Open Questions&rdquo;.</p>\
+        </div>\
+        <div class="expo-panel">\
+          <h3>Summary Table</h3>\
+          <table class="kl-table">\
+            <thead>\
+              <tr><th>Name</th><th>Source (\\(E_2\\))</th><th>Target (\\(E_\\infty\\))</th><th>Key corollary / invariant</th></tr>\
+            </thead>\
+            <tbody>\
+              <tr><td>Lee</td><td>\\(\\mathrm{Kh}(K;\\mathbb{Q})\\)</td><td>\\(\\mathbb{Q}^2\\)</td><td>Rasmussen \\(s\\); \\(|s| \\le 2 g_4\\)</td></tr>\
+              <tr><td>Bar-Natan</td><td>\\(\\mathrm{Kh}(K)\\)</td><td>\\(\\mathrm{Kh}_{\\mathrm{BN}} \\cong \\mathbb{Z}^2\\)</td><td>\\(s_{\\mathrm{BN}}\\); char-2 refinement</td></tr>\
+              <tr><td>OS branched cover</td><td>\\(\\widetilde{\\mathrm{Kh}}(\\overline{L}; \\mathbb{F}_2)\\)</td><td>\\(\\widehat{HF}(\\Sigma(L); \\mathbb{F}_2)\\)</td><td>rank ineq.; 3-mfd topology</td></tr>\
+              <tr><td>KR \\(\\mathfrak{sl}(N)\\)</td><td>\\(\\mathrm{Kh}(K)\\)</td><td>\\(\\mathrm{KR}_N(K)\\)</td><td>\\(s_N\\); HHH tower</td></tr>\
+              <tr><td>Instanton</td><td>\\(\\mathrm{Kh}^r(K; \\mathbb{C})\\)</td><td>\\(I^{\\natural}(K)\\)</td><td>Kh detects the unknot</td></tr>\
+              <tr><td>Monopole</td><td>reduced \\(\\mathrm{Kh}\\)</td><td>\\(\\widehat{HM}(\\Sigma(K))\\)</td><td>analogous detection results</td></tr>\
+            </tbody>\
+          </table>\
         </div>';
       mathRender(el);
     }
