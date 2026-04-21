@@ -748,10 +748,12 @@
       var ux = -0.777, uy = 0.629;
       s += '<line x1="' + XR + '" y1="' + (yc - 26) + '" x2="' + (-ux * G) + '" y2="' + (yc - uy * G) + '" stroke="#1f3a5f" stroke-width="3.4" stroke-linecap="round" />';
       s += '<line x1="' + (ux * G) + '" y1="' + (yc + uy * G) + '" x2="' + XL + '" y2="' + (yc + 26) + '" stroke="#1f3a5f" stroke-width="3.4" stroke-linecap="round" />';
-      // Crossing label X_k with a tiny white halo so it stays legible off the strand.
-      s += '<g transform="translate(' + (XR + 28) + ' ' + (yc + 4) + ')">' +
-           '<text font-size="15" font-weight="700" fill="#b84900">X<tspan font-size="10" dy="3">' + (k + 1) + '</tspan></text>' +
-           '</g>';
+      // Crossing label X_k positioned just right of the crossing body (x > XR so no overlap
+      // with strands, and well left of the right closure arc at x ~ 84).  A white halo rect
+      // keeps it readable even if anything crosses behind it.
+      var lxc = XR + 18, lyc = yc + 2;
+      s += '<rect x="' + (lxc - 10) + '" y="' + (lyc - 11) + '" width="22" height="16" fill="#ffffff" opacity="0.92" />' +
+           '<text x="' + lxc + '" y="' + (lyc + 2) + '" text-anchor="middle" font-size="14" font-weight="700" fill="#b84900">X<tspan font-size="9" dy="3">' + (k + 1) + '</tspan></text>';
     }
     // --- Straight inter-crossing runs (4 inner verticals) ---
     // arc 4: X1 bot-right -> X2 top-right (inner right upper)

@@ -653,7 +653,7 @@
     }
     traces.push({
       type: 'cone', x, y, z, u, v, w,
-      sizemode: 'absolute', sizeref: 0.14, anchor: 'tail',
+      sizemode: 'absolute', sizeref: 0.05, anchor: 'tail',
       showscale: false, colorscale: [[0,'#1a365d'],[1,'#1a365d']],
       hoverinfo: 'none'
     });
@@ -968,7 +968,7 @@
           });
           traces.push({
             type: 'cone', x: xs, y: ys, z: zs, u: us, v: vs, w: ws,
-            sizemode: 'absolute', sizeref: 0.05, anchor: 'tail',
+            sizemode: 'absolute', sizeref: 0.02, anchor: 'tail',
             colorscale: [[0, COLORS[i]], [1, COLORS[i]]], showscale: false,
             hoverinfo: 'none'
           });

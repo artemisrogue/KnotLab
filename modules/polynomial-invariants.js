@@ -1902,11 +1902,23 @@
         '<div class="expo-panel">' +
           '<h3>6. Interactive: verify YBE numerically</h3>' +
           '<p>Pick a value of \\(q\\). The widget builds the \\(8\\times 8\\) matrices ' +
-          '\\(R_1 = R\\otimes\\mathrm{id}\\) and \\(R_2 = \\mathrm{id}\\otimes R\\) ' +
-          'numerically, computes both sides of the Yang&ndash;Baxter equation, and reports the ' +
-          'Frobenius norm of the difference (should be \\(\\sim 10^{-15}\\), i.e. machine zero). ' +
-          'It also computes a quantum trace of \\(R^3\\) on \\(V\\otimes V\\) as a sanity check ' +
-          'against \\(V_{3_1}(q) = -q^{-4} + q^{-3} + q^{-1}\\).</p>' +
+          '\\(R_1 = R\\otimes\\mathrm{id}\\) and \\(R_2 = \\mathrm{id}\\otimes R\\) numerically ' +
+          'and reports two things:</p>' +
+          '<ol>' +
+            '<li><strong>Primary check &mdash; the Yang&ndash;Baxter equation itself.</strong> ' +
+            'We form the matrix \\(R_1 R_2 R_1 - R_2 R_1 R_2\\) and print its Frobenius norm. ' +
+            '<em>The relation holds identically, so you should see a value on the order of ' +
+            '\\(10^{-15}\\) (machine zero) for every \\(q\\).</em> If you see a larger number, ' +
+            'something is wrong.</li>' +
+            '<li><strong>Sanity check &mdash; Jones polynomial of the trefoil.</strong> ' +
+            'We compute the quantum trace of \\(R^{3}\\) on \\(V\\otimes V\\) (i.e. the closure ' +
+            'of the 2-braid \\(\\sigma_1^{3}\\), which is the right-handed trefoil) and display it ' +
+            'alongside \\(V_{3_1}(q) = -q^{-4}+q^{-3}+q^{-1}\\) so you can see the two match in ' +
+            'magnitude &mdash; up to the global \\((q+q^{-1})\\) normalisation and the framing ' +
+            'prefactor \\(q^{-9/2}\\) that convert the unnormalised bracket into the Jones ' +
+            'polynomial.  <em>This is illustrative, not a second identity:</em> the YBE line ' +
+            'above is the theorem being tested.</li>' +
+          '</ol>' +
           '<div class="kl-interactive">' +
             '<div class="kl-controls">' +
               '<label>Value of \\(q\\): ' +
@@ -2062,17 +2074,20 @@
         var qi4 = cMul(qi3, qi);
         var target = cAdd(cAdd([-qi4[0], -qi4[1]], qi3), qi);
         yout.innerHTML =
-          '<div><strong>Frobenius norm of YBE difference:</strong> ' +
+          '<div><strong>(1) \\(\\lVert R_1 R_2 R_1 - R_2 R_1 R_2 \\rVert_F\\):</strong> ' +
           diff.toExponential(3) + ' &nbsp; ' +
-          (diff < 1e-10 ? '<span style="color:#27ae60">\u2713 YBE holds</span>' :
-           '<span style="color:#c0392b">\u2717 mismatch</span>') + '</div>' +
-          '<div style="margin-top:0.4rem"><strong>\\(q^{-9/2}\\,\\mathrm{tr}_q(R^3)\\):</strong> ' +
+          (diff < 1e-10 ? '<span style="color:#27ae60">\u2713 YBE holds (machine zero)</span>' :
+           '<span style="color:#c0392b">\u2717 mismatch &mdash; this should not happen</span>') + '</div>' +
+          '<div style="margin-top:0.6rem;padding-top:0.4rem;border-top:1px dashed #bbb">' +
+          '<strong>(2) Sanity check on the trefoil (illustrative):</strong></div>' +
+          '<div style="margin-top:0.2rem"><strong>\\(q^{-9/2}\\,\\mathrm{tr}_q(R^3)\\):</strong> ' +
           cFmt(jones) + '</div>' +
-          '<div style="margin-top:0.2rem"><strong>Target \\(V_{3_1}(q) = -q^{-4} + q^{-3} + q^{-1}\\):</strong> ' +
+          '<div style="margin-top:0.2rem"><strong>\\(V_{3_1}(q) = -q^{-4} + q^{-3} + q^{-1}\\):</strong> ' +
           cFmt(target) + '</div>' +
-          '<div style="margin-top:0.2rem;color:#555"><em>The Jones value and target agree up to the ' +
-          'choice of branch for \\(q^{1/2}\\); the YBE check is basis-independent and should be ' +
-          'machine zero for every \\(q\\).</em></div>';
+          '<div style="margin-top:0.2rem;color:#555;font-size:0.9em"><em>These two numbers ' +
+          'differ by the unknot normalisation \\([2]_q = q + q^{-1}\\) and (for non-real \\(q\\)) ' +
+          'by the branch of \\(q^{1/2}\\); they are not expected to be equal as complex numbers. ' +
+          'The only identity being <strong>verified</strong> is (1) above.</em></div>';
         mathRender(yout);
       }
       if (ysel) ysel.addEventListener('change', updateYbe);
@@ -2203,7 +2218,7 @@
           '<p>of <strong>skein algebras</strong> of increasing rank, each with its own Markov trace, ' +
           'each producing a polynomial invariant as the trace of a braid closure.</p>' +
 
-          '<details class="kl-proof" open>' +
+          '<details class="kl-proof">' +
             '<summary><strong>1. From rank to two-variable skein.</strong> One more eigenvalue = one more variable.</summary>' +
             '<p>Write the image of the braid generator in each quotient and its eigenvalue spectrum:</p>' +
             '<ul>' +
