@@ -386,14 +386,18 @@
     if (opts.orientation) {
       strandPts.forEach((sp, i) => {
         const step = Math.max(10, Math.floor(sp.length / 8));
-        const ax0 = [], ay0 = [];
+        const ax0 = [], ay0 = [], angs = [];
         for (let j = 0; j < sp.length - 1; j += step) {
+          const dx = sp[j+1][ax[0]] - sp[j][ax[0]];
+          const dy = sp[j+1][ax[1]] - sp[j][ax[1]];
           ax0.push(sp[j][ax[0]]); ay0.push(sp[j][ax[1]]);
+          // Plotly marker.angle: 0 deg = up; positive = clockwise.
+          angs.push(Math.atan2(dx, dy) * 180 / Math.PI);
         }
         traces.push({
           type: 'scatter', mode: 'markers', x: ax0, y: ay0,
-          marker: { symbol: 'triangle-up', size: 10, color: strandColor(i),
-                    line: { width: 1, color: '#000' } },
+          marker: { symbol: 'triangle-up', size: 10, angle: angs,
+                    color: strandColor(i), line: { width: 1, color: '#000' } },
           hoverinfo: 'none', showlegend: false
         });
       });
@@ -653,7 +657,7 @@
     }
     traces.push({
       type: 'cone', x, y, z, u, v, w,
-      sizemode: 'absolute', sizeref: 0.05, anchor: 'tail',
+      sizemode: 'absolute', sizeref: 0.015, anchor: 'tail',
       showscale: false, colorscale: [[0,'#1a365d'],[1,'#1a365d']],
       hoverinfo: 'none'
     });
@@ -867,19 +871,19 @@
 
     // Orientation arrows along the curve
     if (opts.orientation) {
-      const arrX = [], arrY = [], arrU = [], arrV = [];
+      const arrX = [], arrY = [], angs = [];
       const step = Math.max(10, Math.floor(pts.length / 8));
       for (let i = 0; i < pts.length - 1; i += step) {
         arrX.push(pts[i][ax[0]]); arrY.push(pts[i][ax[1]]);
-        arrU.push(pts[i+1][ax[0]] - pts[i][ax[0]]);
-        arrV.push(pts[i+1][ax[1]] - pts[i][ax[1]]);
+        const dx = pts[i+1][ax[0]] - pts[i][ax[0]];
+        const dy = pts[i+1][ax[1]] - pts[i][ax[1]];
+        angs.push(Math.atan2(dx, dy) * 180 / Math.PI);
       }
-      // Represent arrows as annotation-free markers with direction triangles
       traces.push({
         type: 'scatter', mode: 'markers',
         x: arrX, y: arrY,
-        marker: { symbol: 'triangle-up', size: 12, color: opts.color || '#2171b5',
-                  line: { width: 1, color: '#000' } },
+        marker: { symbol: 'triangle-up', size: 12, angle: angs,
+                  color: opts.color || '#2171b5', line: { width: 1, color: '#000' } },
         hoverinfo: 'none', showlegend: false
       });
     }

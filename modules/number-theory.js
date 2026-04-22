@@ -56,15 +56,16 @@
         'but a remarkably fruitful heuristic: concepts on one side translate into concepts on the other, ' +
         'and many (though not all) theorems carry across.</p>' +
         '<p>The central identification is</p>' +
-        '<div class="formula-box">$$\\text{knot } K \\subset S^3 \\;\\longleftrightarrow\\; \\text{prime } (p) \\subset \\operatorname{Spec}(\\mathbb{Z}).$$</div>' +
+        '<div class="formula-box">$$\\text{knot } K \\hookrightarrow S^3 \\;\\longleftrightarrow\\; \\text{prime } (p) \\hookrightarrow \\operatorname{Spec}(\\mathbb{Z}).$$</div>' +
       '</div>' +
 
       // Paired-columns intro
       twoCol(
         '<p>Topologically, \\(S^3\\) is the simplest closed \\(3\\)-manifold: simply-connected, ' +
-        'homogeneous, and the base of all knot theory. A <span class="kl-term" title="Knot: a smooth embedding S\u00b9 \u21aa S\u00b3 (or its image), considered up to ambient isotopy. A 1-dimensional submanifold of S\u00b3.">knot</span> \\(K \\subset S^3\\) is a smoothly embedded ' +
+        'homogeneous, and the base of all knot theory. A <span class="kl-term" title="Knot: a smooth embedding S\u00b9 \u21aa S\u00b3 (or its image), considered up to ambient isotopy. A 1-dimensional submanifold of S\u00b3.">knot</span> \\(K \\hookrightarrow S^3\\) is a smoothly embedded ' +
         'circle; the geometry of the <span class="kl-term" title="Knot complement: the open 3-manifold S\u00b3 \u2216 K obtained by deleting a knot; determines K up to mirror by the Gordon\u2013Luecke theorem.">complement</span> \\(S^3 \\setminus K\\) ' +
-        'carries everything about \\(K\\) (Gordon&ndash;Luecke).</p>',
+        'carries everything about \\(K\\) (Gordon&ndash;Luecke). The inclusion \\(K \\hookrightarrow S^3\\) ' +
+        'is the basic geometric datum.</p>',
 
         '<p>Arithmetically, ' +
         '<span class="kl-term" title="Spec(\u2124): the prime spectrum of the integers; as a scheme it consists of the generic point (0) and one closed point (p) for every prime p. Behaves like a 3-dimensional arithmetic manifold.">\\(\\operatorname{Spec}(\\mathbb{Z})\\)</span> is the universal base ' +
@@ -87,7 +88,7 @@
           '</tr></thead>' +
           '<tbody>' +
             '<tr><td style="padding:4px 10px">\\(S^3\\)</td><td style="padding:4px 10px">\\(\\operatorname{Spec}(\\mathbb{Z})\\)</td></tr>' +
-            '<tr><td style="padding:4px 10px">Knot \\(K \\subset S^3\\)</td><td style="padding:4px 10px">Prime ideal \\((p) \\subset \\operatorname{Spec}(\\mathbb{Z})\\)</td></tr>' +
+            '<tr><td style="padding:4px 10px">Knot \\(K \\hookrightarrow S^3\\)</td><td style="padding:4px 10px">Prime ideal \\((p) \\hookrightarrow \\operatorname{Spec}(\\mathbb{Z})\\)</td></tr>' +
             '<tr><td style="padding:4px 10px">Link \\(L = K_1 \\cup \\cdots \\cup K_n\\)</td><td style="padding:4px 10px">Finite set of primes \\(\\{p_1,\\ldots,p_n\\}\\)</td></tr>' +
             '<tr><td style="padding:4px 10px">Knot complement \\(S^3 \\setminus K\\)</td><td style="padding:4px 10px">\\(\\operatorname{Spec}(\\mathbb{Z}) \\setminus \\{(p)\\} = \\operatorname{Spec}(\\mathbb{Z}[1/p])\\)</td></tr>' +
             '<tr><td style="padding:4px 10px">Knot group \\(\\pi_1(S^3 \\setminus K)\\)</td><td style="padding:4px 10px">\u00c9tale fundamental group \\(\\pi_1^{\\mathrm{\u00e9t}}(\\operatorname{Spec}(\\mathbb{Z}[1/p]))\\)</td></tr>' +
@@ -191,10 +192,14 @@
           'fundamental group is the Galois group ' +
           '\\(G_{\\mathbb{Q}, \\{p\\}} := \\mathrm{Gal}(\\mathbb{Q}^{\\{p\\}}/\\mathbb{Q})\\) of the maximal ' +
           'extension of \\(\\mathbb{Q}\\) unramified outside \\(p\\).</p>' +
-          '<p>Its <strong>abelianisation</strong> is ' +
-          '\\(\\hat{\\mathbb{Z}}^{\\times}_{(p)}\\), matching the topological \\(\\mathbb{Z}\\) after ' +
-          'profinite completion. The arithmetic of quadratic, cubic, \u2026, cyclotomic extensions unramified ' +
-          'outside \\(p\\) is packaged into this group.</p>'
+          '<p>Its <strong>abelianisation</strong> is computed by class field theory + ' +
+          'Kronecker&ndash;Weber: every abelian extension of \\(\\mathbb{Q}\\) unramified outside ' +
+          '\\(\\{p, \\infty\\}\\) lies in \\(\\mathbb{Q}(\\zeta_{p^{\\infty}})\\), so</p>' +
+          '<div class="formula-box">$$G_{\\mathbb{Q},\\{p\\}}^{\\,\\mathrm{ab}} \\;\\cong\\; ' +
+          '\\mathrm{Gal}(\\mathbb{Q}(\\zeta_{p^{\\infty}})/\\mathbb{Q}) \\;\\cong\\; \\mathbb{Z}_p^{\\times}.$$</div>' +
+          '<p>For odd \\(p\\), \\(\\mathbb{Z}_p^{\\times} \\cong \\mu_{p-1} \\times \\mathbb{Z}_p\\); ' +
+          'the \\(\\mathbb{Z}_p\\)-factor is the topological analogue of the meridian-generated ' +
+          '\\(\\mathbb{Z} \\subset H_1(X_K)\\), after \\(p\\)-adic completion.</p>'
         ) +
       '</div>' +
 
@@ -379,13 +384,14 @@
           'to \\(\\pi_1(X_K) \\twoheadrightarrow \\mathbb{Z} \\twoheadrightarrow \\mathbb{Z}/n\\)) by gluing ' +
           'back solid tori over the branch locus \\(K\\). When \\(K\\) is the unknot, ' +
           '\\(\\Sigma_n = S^3\\) for all \\(n\\); for the trefoil, \\(\\Sigma_2(3_1) = L(3,1)\\) (a lens ' +
-          'space), and \\(\\Sigma_3(3_1) = S^3/Q_8\\) (a Brieskorn sphere).</p>',
+          'space), and \\(\\Sigma_3(3_1) = S^3/Q_8\\) (the quaternion space, a spherical space form ' +
+          'with \\(H_1 = (\\mathbb{Z}/2)^2\\)).</p>',
 
           '<p>The <strong>\\(n\\)-th cyclotomic field</strong> ' +
           '\\(\\mathbb{Q}(\\zeta_n) = \\mathbb{Q}[x]/(\\Phi_n(x))\\), where \\(\\zeta_n = e^{2\\pi i/n}\\), ' +
           'is obtained from \\(\\mathbb{Q}\\) by adjoining a primitive \\(n\\)-th root of unity. Its ring ' +
           'of integers is \\(\\mathbb{Z}[\\zeta_n]\\); the degree \\([\\mathbb{Q}(\\zeta_n):\\mathbb{Q}] = \\varphi(n)\\) ' +
-          'and the extension is <span class="kl-term" title="Ramified prime: a prime p at which the factorisation (p) = \ud835\udd13\u2081^{e\u2081}\u22ef has some e_i > 1 in the ring of integers of the extension; for \u2124[\u03b6_n] the ramified primes are exactly those dividing n.">ramified exactly at primes dividing \\(n\\)</span>.</p>'
+          'and (for \\(n > 2\\)) the extension is <span class="kl-term" title="Ramified prime: a prime p at which the factorisation (p) = \ud835\udd13\u2081^{e\u2081}\u22ef has some e_i > 1 in the ring of integers of the extension; for \u2124[\u03b6_n] the ramified primes are exactly those odd primes dividing n, plus 2 if 4 | n.">ramified exactly at primes dividing \\(n\\)</span> (with the standard caveat that 2 ramifies in \\(\\mathbb{Q}(\\zeta_n)\\) iff \\(4 \\mid n\\), since \\(\\mathbb{Q}(\\zeta_{2m}) = \\mathbb{Q}(\\zeta_m)\\) for odd \\(m\\)).</p>'
         ) +
       '</div>' +
 
